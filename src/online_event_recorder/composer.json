@@ -1,0 +1,10 @@
+{
+    "require": {
+        "catfan/medoo": "^2.1",
+        "hashids/hashids": "^4.1",
+        "components/jquery": "^3.7",
+        "twbs/bootstrap": "^5.3",
+        "components/modernizr": "^3.5",
+        "datatables/datatables": "^1.10"
+    }
+}
