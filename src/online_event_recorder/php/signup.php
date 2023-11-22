@@ -3,6 +3,7 @@ use Medoo\Medoo;
 
 if(isset($_POST['fname']) && 
    isset($_POST['uname']) && 
+   isset($_POST['email']) && 
    isset($_POST['pass1']) &&
    isset($_POST['pass2'])){
 
@@ -12,8 +13,9 @@ if(isset($_POST['fname']) &&
     $uname = $_POST['uname'];
     $pass1 = $_POST['pass1'];
 	$pass2 = $_POST['pass2'];
+	$email = $_POST['email'];
 
-    $data = "fname=".$fname."&uname=".$uname;
+    $data = "fname=".$fname."&uname=".$uname."&email=".$email;
 
     
     if (empty($fname)) {
@@ -39,21 +41,28 @@ if(isset($_POST['fname']) &&
 
 		try {
 			global $database;
-			$user_data = $database->select("users", "*", ["UserName" => $uname]);
-			if (count($user_data) == 0){
-				$database -> insert("users",["UserFullName"=> $fname, "UserName"=> $uname, "UserPwd" => $pass_hash]);
+			$user_name_data = $database->select("users", "*", ["UserName" => $uname]);
+			$user_email_data = $database->select("users", "*", ["UserEmail" => $email]);	
+			if (count($user_name_data) == 0 && count($user_email_data)==0){
+				$database -> insert("users",["UserFullName"=> $fname, "UserName"=> $uname, "UserPwd" => $pass_hash,
+			"UserEmail"=>$email]);
 				header("Location: ../index.php?success=Your account has been created successfully");
 			}
 			else{
-				if($user_data[0]["CanResetPassword"] == 1){
+				if($user_name_data[0]["CanResetPassword"] == 1){
 
 					$database -> update("users",["UserPwd"=> $pass_hash, "CanResetPassword"=> 0,"PasswordChanged"=>Medoo::raw('NOW()')],
 										[ "UserName" => $uname]);
 					header("Location: ../index.php?success=Your password has been changed successfully");
 				}
 				else{
-					$em = "User already exists.";
-					header("Location: ../index.php?error=$em&$data");
+					if(count($user_name_data) > 0){
+						$em = "User already exists.";
+						header("Location: ../index.php?error=$em&$data");
+					}else{
+						$em = "E-mail address already in use.";
+						header("Location: ../index.php?error=$em&$data");
+					}
 				}
 			}
 			
@@ -61,7 +70,7 @@ if(isset($_POST['fname']) &&
 
 		}catch(PDOException $e){
 			if ($e->getCode() == 23000){
-				$em = "User already exists.";
+				$em = "'E-mail' or 'User name' is not unique";
 				header("Location: ../index.php?error=$em&$data");
 				exit;
 			}

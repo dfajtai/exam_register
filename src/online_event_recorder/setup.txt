@@ -17,8 +17,9 @@ socket   = /var/run/mysqld/mysqld.sock
 mysql -u debian-sys-maint -p
 
 CREATE DATABASE exam_logger_test;
+USE exam_logger_test;
 CREATE USER 'exam_logger_user'@'localhost' IDENTIFIED BY 'asdfqwer1234';
-GRANT CREATE, SELECT, ALTER, DROP, UPDATE, DELETE, INSERT on exam_logger_test.* TO 'exam_logger_user'@'localhost';
+GRANT SELECT, UPDATE, INSERT on exam_logger_test.* TO 'exam_logger_user'@'localhost';
 FLUSH PRIVILEGES;
 
 REVOKE DROP ON exam_logger_test.* FROM 'exam_logger_user'@'localhost';
