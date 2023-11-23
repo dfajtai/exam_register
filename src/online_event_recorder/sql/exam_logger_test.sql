@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 15, 2023 at 03:41 PM
+-- Generation Time: Nov 23, 2023 at 12:07 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.2.12
 
@@ -35,6 +35,22 @@ CREATE TABLE `asset_definitions` (
   `AssetOwner` varchar(128) NOT NULL DEFAULT 'MEDICOPUS'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Triggers `asset_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `asset_definitions_insert` AFTER INSERT ON `asset_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "asset_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `asset_definitions_update` AFTER UPDATE ON `asset_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "asset_definitions"
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -49,6 +65,22 @@ CREATE TABLE `consumable_definitions` (
   `ConsumableUnitType` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Triggers `consumable_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `consumable_definitions_insert` AFTER INSERT ON `consumable_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "consumable_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `consumable_definitions_update` AFTER UPDATE ON `consumable_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "consumable_definitions"
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -61,6 +93,34 @@ CREATE TABLE `consumable_type_definitions` (
   `ConsumableTypeDesc` varchar(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `consumable_type_definitions`
+--
+
+INSERT INTO `consumable_type_definitions` (`ConsumableTypeID`, `ConsumableTypeName`, `ConsumableTypeDesc`) VALUES
+(1, 'catheter', NULL),
+(2, 'braunüle', NULL),
+(3, 'solution', NULL),
+(4, 'medicine', NULL),
+(5, 'bandage', NULL),
+(6, 'food', NULL);
+
+--
+-- Triggers `consumable_type_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `consumable_type_definitions_insert` AFTER INSERT ON `consumable_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "consumable_type_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `consumable_type_definitions_update` AFTER UPDATE ON `consumable_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "consumable_type_definitions"
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -69,26 +129,44 @@ CREATE TABLE `consumable_type_definitions` (
 
 CREATE TABLE `definition_tables` (
   `TableID` int NOT NULL,
-  `TableName` varchar(127) NOT NULL
+  `TableName` varchar(127) NOT NULL,
+  `LastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `definition_tables`
 --
 
-INSERT INTO `definition_tables` (`TableID`, `TableName`) VALUES
-(1, 'asset_definitions'),
-(2, 'event_status_definitions'),
-(3, 'location_definitions'),
-(4, 'measurement_definitions'),
-(5, 'specimen_bodypart_definitions'),
-(6, 'specimen_status_definitions'),
-(7, 'unit_definitions'),
-(8, 'unit_type_definitions'),
-(9, 'side_definitions'),
-(10, 'sex_definitions'),
-(11, 'measurement_definitions'),
-(12, 'consumable_type_definitions');
+INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`) VALUES
+(1, 'asset_definitions', '2023-11-23 11:37:03'),
+(2, 'event_status_definitions', '2023-11-23 11:37:03'),
+(3, 'location_definitions', '2023-11-23 11:37:03'),
+(5, 'specimen_bodypart_definitions', '2023-11-23 11:37:03'),
+(6, 'specimen_status_definitions', '2023-11-23 11:37:03'),
+(7, 'unit_definitions', '2023-11-23 11:37:03'),
+(8, 'unit_type_definitions', '2023-11-23 11:50:47'),
+(9, 'specimen_side_definitions', '2023-11-23 11:37:03'),
+(10, 'specimen_sex_definitions', '2023-11-23 11:37:03'),
+(12, 'consumable_type_definitions', '2023-11-23 11:37:03'),
+(13, 'consumable_definitions', '2023-11-23 11:37:03'),
+(14, 'event_type_definitions', '2023-11-23 11:37:03'),
+(15, 'event_definitions', '2023-11-23 12:03:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_change_log`
+--
+
+CREATE TABLE `event_change_log` (
+  `EventChangeLogIndex` int NOT NULL,
+  `EventIndex` int NOT NULL,
+  `EventStudy` int NOT NULL,
+  `EventSpecimen` int NOT NULL,
+  `EventInfo` json DEFAULT NULL,
+  `EventModifiedBy` int NOT NULL,
+  `EventModifiedAt` timestamp NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -103,6 +181,22 @@ CREATE TABLE `event_definitions` (
   `EventType` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Triggers `event_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `event_definitions_insert` AFTER INSERT ON `event_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `event_definitions_update` AFTER UPDATE ON `event_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_definitions"
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -114,11 +208,11 @@ CREATE TABLE `event_log` (
   `EventID` varchar(32) NOT NULL COMMENT 'event_definitions.eventid',
   `EventStatus` int NOT NULL COMMENT 'event_status.eventstatusid',
   `EventComment` varchar(255) NOT NULL,
-  `EventData` text NOT NULL,
+  `EventData` json NOT NULL,
   `EventStudy` int NOT NULL COMMENT 'studies.studyid',
   `EventSpecimen` int NOT NULL COMMENT 'specimens.specimenID',
   `EventLocation` int NOT NULL COMMENT 'locations.locationid',
-  `EventModified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `EventModifiedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `EventModifiedBy` int NOT NULL COMMENT 'users.userid'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -145,6 +239,22 @@ INSERT INTO `event_status_definitions` (`EventStatusID`, `EventStatusName`, `Eve
 (4, 'finished', ''),
 (5, 'deleted', 'The event is hidden from the web application.');
 
+--
+-- Triggers `event_status_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `event_status_definitions_insert` AFTER INSERT ON `event_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_status_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `event_status_definitions_update` AFTER UPDATE ON `event_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_status_definitions"
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -164,7 +274,24 @@ CREATE TABLE `event_type_definitions` (
 INSERT INTO `event_type_definitions` (`EventTypeID`, `EventTypeName`, `EventTypeDesc`) VALUES
 (1, 'measurement', NULL),
 (2, 'treatment', NULL),
-(3, 'transport', NULL);
+(3, 'transport', NULL),
+(4, 'examination', NULL);
+
+--
+-- Triggers `event_type_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `event_type_definitions_insert` AFTER INSERT ON `event_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_type_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `event_type_definitions_update` AFTER UPDATE ON `event_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "event_type_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -185,63 +312,24 @@ CREATE TABLE `location_definitions` (
 INSERT INTO `location_definitions` (`LocationID`, `LocationName`, `LocationDesc`) VALUES
 (1, 'angio', ''),
 (2, 'muto', ''),
-(3, 'telep', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `measurement_definitions`
---
-
-CREATE TABLE `measurement_definitions` (
-  `MeasurementID` int NOT NULL,
-  `MeasurementName` varchar(127) NOT NULL,
-  `MeasurementDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `MeasurementUnitType` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+(3, 'telep', NULL),
+(4, 'ketrec', NULL);
 
 --
--- Table structure for table `sex_definitions`
+-- Triggers `location_definitions`
 --
-
-CREATE TABLE `sex_definitions` (
-  `SexID` int NOT NULL,
-  `SexName` varchar(32) NOT NULL,
-  `SexDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `sex_definitions`
---
-
-INSERT INTO `sex_definitions` (`SexID`, `SexName`, `SexDesc`) VALUES
-(1, 'male', ''),
-(2, 'female', ''),
-(3, 'unknown', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `side_definitions`
---
-
-CREATE TABLE `side_definitions` (
-  `SideID` int NOT NULL,
-  `SideName` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `SideShortName` char(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `side_definitions`
---
-
-INSERT INTO `side_definitions` (`SideID`, `SideName`, `SideShortName`) VALUES
-(1, 'left', 'L'),
-(2, 'right', 'R'),
-(3, 'both', 'B'),
-(4, 'no_side', 'NA');
+DELIMITER $$
+CREATE TRIGGER `location_definitions_insert` AFTER INSERT ON `location_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "location_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `location_definitions_update` AFTER UPDATE ON `location_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "location_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -259,8 +347,10 @@ CREATE TABLE `specimens` (
   `SpecimenContainer` int DEFAULT NULL,
   `SpecimenWeight` double DEFAULT NULL,
   `SpecimenHeight` double DEFAULT NULL,
+  `SpecimenLocation` int DEFAULT NULL,
   `SpecimenLastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `SpecimenStatus` int NOT NULL
+  `SpecimenModifiedBy` int NOT NULL,
+  `SpecimenStatus` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -275,6 +365,116 @@ CREATE TABLE `specimen_bodypart_definitions` (
   `SpecimenBodypartDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `SpecimenBodypartSide` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Triggers `specimen_bodypart_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `specimen_bodypart_definitions_insert` AFTER INSERT ON `specimen_bodypart_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_bodypart_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `specimen_bodypart_definitions_update` AFTER UPDATE ON `specimen_bodypart_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_bodypart_definitions"
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `specimen_change_log`
+--
+
+CREATE TABLE `specimen_change_log` (
+  `SpecimenLogIndex` int NOT NULL,
+  `SpecimenIndex` int NOT NULL,
+  `SpecimenID` varchar(32) DEFAULT NULL,
+  `StudyID` int NOT NULL,
+  `SpecimenName` varchar(32) DEFAULT NULL,
+  `SpecimenGroup` varchar(32) DEFAULT NULL,
+  `SpecimenData` json DEFAULT NULL,
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ChangedBy` int NOT NULL COMMENT 'user id of the original specimen state (since the last is stored in the specimens table)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `specimen_sex_definitions`
+--
+
+CREATE TABLE `specimen_sex_definitions` (
+  `SexID` int NOT NULL,
+  `SexName` varchar(32) NOT NULL,
+  `SexDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `specimen_sex_definitions`
+--
+
+INSERT INTO `specimen_sex_definitions` (`SexID`, `SexName`, `SexDesc`) VALUES
+(1, 'male', ''),
+(2, 'female', ''),
+(3, 'unknown', ''),
+(4, 'castrated', NULL);
+
+--
+-- Triggers `specimen_sex_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `specimen_sex_definitions_insert` AFTER INSERT ON `specimen_sex_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_sex_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `specimen_sex_definitions_update` AFTER UPDATE ON `specimen_sex_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_sex_definitions"
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `specimen_side_definitions`
+--
+
+CREATE TABLE `specimen_side_definitions` (
+  `SideID` int NOT NULL,
+  `SideName` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `SideShortName` char(3) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `specimen_side_definitions`
+--
+
+INSERT INTO `specimen_side_definitions` (`SideID`, `SideName`, `SideShortName`) VALUES
+(1, 'left', 'L'),
+(2, 'right', 'R'),
+(3, 'both', 'B'),
+(4, 'no_side', 'NA');
+
+--
+-- Triggers `specimen_side_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `specimen_side_definitions_insert` AFTER INSERT ON `specimen_side_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_side_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `specimen_side_definitions_update` AFTER UPDATE ON `specimen_side_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_side_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -298,6 +498,22 @@ INSERT INTO `specimen_status_definitions` (`StatusID`, `StatusName`, `StatusDesc
 (6, 'terminated', NULL),
 (7, 'dead', NULL),
 (8, 'deleted', NULL);
+
+--
+-- Triggers `specimen_status_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `specimen_status_definitions_insert` AFTER INSERT ON `specimen_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_status_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `specimen_status_definitions_update` AFTER UPDATE ON `specimen_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "specimen_status_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -334,9 +550,25 @@ CREATE TABLE `unit_definitions` (
   `UnitType` int NOT NULL,
   `UnitName` varchar(32) NOT NULL,
   `UnitUnit` varchar(16) NOT NULL,
-  `UnitAmount` double NOT NULL DEFAULT '0',
-  `UnitComment` varchar(255) DEFAULT NULL
+  `UnitAmount` double DEFAULT '1',
+  `UnitDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Triggers `unit_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `unit_def_insert` AFTER INSERT ON `unit_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "unit_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `unit_def_update` AFTER UPDATE ON `unit_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "unit_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -359,9 +591,28 @@ INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc
 (2, 'mass', 'Mass in g, mg, kg and so on.'),
 (3, 'count', 'Count as count.'),
 (4, 'unit', 'Unit as international unit or whatever.'),
-(5, 'length', 'length in m, cm, mm, and so on.'),
+(5, 'length', 'Length in m, cm, mm, and so on.'),
 (6, 'duration', 'Duration in min, s, and so on.'),
-(7, 'other', 'Other kind of units.');
+(7, 'flow', 'Fluid flow speed in ml/s ml/h and so on.'),
+(8, 'other', 'Other kind of units'),
+(47, 'asd', 'qwe'),
+(48, 'qweqerwr', 'qwe');
+
+--
+-- Triggers `unit_type_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `unit_type_def_insert` AFTER INSERT ON `unit_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "unit_type_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `unit_type_def_update` AFTER UPDATE ON `unit_type_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "unit_type_definitions"
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -370,11 +621,15 @@ INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
-  `fname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `register_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UserID` int NOT NULL,
+  `UserFullName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `UserEmail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `UserName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `UserPwd` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `RegisterTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `LastLogin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CanResetPassword` tinyint(1) NOT NULL DEFAULT '0',
+  `PasswordChanged` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `IsAdmin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -382,9 +637,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `fname`, `username`, `password`, `register_time`, `IsAdmin`) VALUES
-(4, 'Fajtai Dániel', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', 1),
-(5, 'asd', 'asd', '$2y$10$cEzyrV3gWjP5xhok8EiSbOIWUgrFqJ4/pHW4QuX4MuKyJjlASrpjG', '2023-11-15 15:10:09', 0);
+INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`) VALUES
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2023-11-20 12:07:20', 0, '2023-11-16 11:21:08', 1),
+(15, 'asd', 'asd@asd.asd', 'asd', '$2y$10$qvVyOzQ1qoMM7irFLLZuB.tbM2EJJfW2K/fPJ8KvFCStS2lf8cr7O', '2023-11-21 10:43:38', '2023-11-21 10:49:26', 0, '2023-11-21 11:43:38', 0);
 
 --
 -- Indexes for dumped tables
@@ -412,7 +667,14 @@ ALTER TABLE `consumable_type_definitions`
 -- Indexes for table `definition_tables`
 --
 ALTER TABLE `definition_tables`
-  ADD PRIMARY KEY (`TableID`);
+  ADD PRIMARY KEY (`TableID`),
+  ADD UNIQUE KEY `TableName` (`TableName`);
+
+--
+-- Indexes for table `event_change_log`
+--
+ALTER TABLE `event_change_log`
+  ADD PRIMARY KEY (`EventChangeLogIndex`);
 
 --
 -- Indexes for table `event_definitions`
@@ -445,24 +707,6 @@ ALTER TABLE `location_definitions`
   ADD PRIMARY KEY (`LocationID`);
 
 --
--- Indexes for table `measurement_definitions`
---
-ALTER TABLE `measurement_definitions`
-  ADD PRIMARY KEY (`MeasurementID`);
-
---
--- Indexes for table `sex_definitions`
---
-ALTER TABLE `sex_definitions`
-  ADD PRIMARY KEY (`SexID`);
-
---
--- Indexes for table `side_definitions`
---
-ALTER TABLE `side_definitions`
-  ADD PRIMARY KEY (`SideID`);
-
---
 -- Indexes for table `specimens`
 --
 ALTER TABLE `specimens`
@@ -473,6 +717,24 @@ ALTER TABLE `specimens`
 --
 ALTER TABLE `specimen_bodypart_definitions`
   ADD PRIMARY KEY (`SpecimenBodypartID`);
+
+--
+-- Indexes for table `specimen_change_log`
+--
+ALTER TABLE `specimen_change_log`
+  ADD PRIMARY KEY (`SpecimenLogIndex`);
+
+--
+-- Indexes for table `specimen_sex_definitions`
+--
+ALTER TABLE `specimen_sex_definitions`
+  ADD PRIMARY KEY (`SexID`);
+
+--
+-- Indexes for table `specimen_side_definitions`
+--
+ALTER TABLE `specimen_side_definitions`
+  ADD PRIMARY KEY (`SideID`);
 
 --
 -- Indexes for table `specimen_status_definitions`
@@ -502,8 +764,10 @@ ALTER TABLE `unit_type_definitions`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD PRIMARY KEY (`UserID`),
+  ADD UNIQUE KEY `username` (`UserName`),
+  ADD UNIQUE KEY `UserName_2` (`UserName`),
+  ADD UNIQUE KEY `UserEmail` (`UserEmail`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -525,13 +789,19 @@ ALTER TABLE `consumable_definitions`
 -- AUTO_INCREMENT for table `consumable_type_definitions`
 --
 ALTER TABLE `consumable_type_definitions`
-  MODIFY `ConsumableTypeID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `ConsumableTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `definition_tables`
 --
 ALTER TABLE `definition_tables`
-  MODIFY `TableID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `TableID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `event_change_log`
+--
+ALTER TABLE `event_change_log`
+  MODIFY `EventChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `event_definitions`
@@ -555,43 +825,43 @@ ALTER TABLE `event_status_definitions`
 -- AUTO_INCREMENT for table `event_type_definitions`
 --
 ALTER TABLE `event_type_definitions`
-  MODIFY `EventTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `EventTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `location_definitions`
 --
 ALTER TABLE `location_definitions`
-  MODIFY `LocationID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `measurement_definitions`
---
-ALTER TABLE `measurement_definitions`
-  MODIFY `MeasurementID` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `sex_definitions`
---
-ALTER TABLE `sex_definitions`
-  MODIFY `SexID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `side_definitions`
---
-ALTER TABLE `side_definitions`
-  MODIFY `SideID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `LocationID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `specimens`
 --
 ALTER TABLE `specimens`
-  MODIFY `SpecimenIndex` int NOT NULL AUTO_INCREMENT;
+  MODIFY `SpecimenIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `specimen_bodypart_definitions`
 --
 ALTER TABLE `specimen_bodypart_definitions`
   MODIFY `SpecimenBodypartID` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `specimen_change_log`
+--
+ALTER TABLE `specimen_change_log`
+  MODIFY `SpecimenLogIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `specimen_sex_definitions`
+--
+ALTER TABLE `specimen_sex_definitions`
+  MODIFY `SexID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `specimen_side_definitions`
+--
+ALTER TABLE `specimen_side_definitions`
+  MODIFY `SideID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `specimen_status_definitions`
@@ -615,13 +885,13 @@ ALTER TABLE `unit_definitions`
 -- AUTO_INCREMENT for table `unit_type_definitions`
 --
 ALTER TABLE `unit_type_definitions`
-  MODIFY `UnitTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `UnitTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

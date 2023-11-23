@@ -45,5 +45,5 @@ if(isset($_POST['specimen_index']) && isset($_POST['specimen_info'])){// && isse
 
     unset($_POST['specimen_index']);
     unset($_POST['specimen_info']);
-    // echo json_encode($res);
+    echo json_encode($res);
 }

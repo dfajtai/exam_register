@@ -44,5 +44,5 @@ if(isset($_POST['event_index']) && isset($_POST['event_info'])){// && isset($_SE
 
     unset($_POST['event_index']);
     unset($_POST['event_info']);
-    // echo json_encode($res);
+    echo json_encode($res);
 }

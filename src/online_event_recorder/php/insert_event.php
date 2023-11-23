@@ -25,5 +25,5 @@ if(isset($_POST['event_info'])){// && isset($_SESSION['id']) && isset($_SESSION[
 
     unset($_POST['event_index']);
     unset($_POST['event_info']);
-    // echo json_encode($res);
+    echo json_encode($res);
 }

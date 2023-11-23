@@ -28,9 +28,18 @@
 	<script
 		src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js"></script>
 
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.2/crc32.min.js"></script>
+
 	<script defer src="js/database_view_bootstrap_table.js"></script>
 	<script defer src="js/forms/table_creation.js"></script>
 	<script defer src="js/forms/unit_type_definitions_form.js"></script>
+
+	<script defer src="js/forms/definition_handler.js"></script>
+
 
 </head>
 
@@ -48,6 +57,9 @@
 	<script>
 
 		$(document).ready(function () {
+			updateRemoteDefinitionChecksum();
+			updateLocalDefinitionDatabase();
+
 			var tableName = "unitTypeDefinitionsTable"
 			createTable($("#tablecontainer"), tableName, 500);
 			initUnitTypeDefinitionsTable(tableName);

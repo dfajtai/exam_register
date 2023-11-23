@@ -16,5 +16,6 @@ if(isset($_POST['table_name']) && isset($_POST['key_info']) && isset($_POST['upd
     unset($_POST['table_name']);
     unset($_POST['key_info']);
     unset($_POST['updated_info']);
-
+    
+    echo json_encode($res);
 }

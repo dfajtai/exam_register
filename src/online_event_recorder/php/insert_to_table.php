@@ -14,5 +14,5 @@ if(isset($_POST['table_name'])  && isset($_POST['new_info'])){// && isset($_SESS
 
     unset($_POST['table_name']);
     unset($_POST['new_info']);
-
+    echo json_encode($res);
 }
