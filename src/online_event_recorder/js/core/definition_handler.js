@@ -98,8 +98,8 @@ function updateLocalDefinitionDatabase(){
                 let local_version = Object.fromEntries(local_definition_tables.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
                 let remote_version = Object.fromEntries(result.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
                 
-                console.log(local_version);
-                console.log(remote_version);
+                // console.log(local_version);
+                // console.log(remote_version);
 
                 $.each(remote_version, function(table_name, table_info){
                     if(localStorage.getItem(table_name) === null){

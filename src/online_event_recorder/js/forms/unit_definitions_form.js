@@ -1,14 +1,3 @@
-function unit_type_definition_retrieve_ajax(params) {
-    $.ajax({
-    type: "GET",
-    url: 'php/retrieve_table.php',
-    dataType: "json",
-    data: ({table_name: "unit_type_definitions"}),
-    success: function (result) {
-        params.success({"rows":result, "total":result.length})
-    }});
-}
-
 function unit_definition_retrieve_ajax(params) {
     $.ajax({
     type: "GET",
@@ -50,16 +39,27 @@ function unit_definition_update_ajax(key_info,params,callback) {
     });
 }
 
+function unitTypeFormatter(value,row){
+    var type_defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
+    var match = $.grep(type_defs, function(type_def) {
+        return type_def.UnitTypeID ===  value;
+    });
+    
+    if (match.length){return match[0].UnitTypeName}
+    else {return "Unknown type '" + String(value) + "'"}
+    
+}
 
-function initUnitDefinitionsTable(table_id){
-    $('#'+table_id).bootstrapTable("destroy").bootstrapTable({
+function initUnitDefinitionsTable(container,tableId){
+    var table = $('#'+tableId);
+    table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'Type', field : 'UnitType', align:'center', sortable:true, searchable:true},
+                {title: 'Type', field : 'UnitType', align:'center', sortable:true, searchable:true, formatter: 'unitTypeFormatter'},
                 {title: 'Name', field : 'UnitName', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'UnitUnit', align:'center', sortable:true, searchable:true},
                 {title: 'Amount', field : 'UnitAmount', align:'center', sortable:true, searchable:false},
-                {title: 'Desc', field : 'Desc', align:'center', sortable:true, searchable:false},
+                {title: 'Desc', field : 'UnitDesc', align:'center', sortable:true, searchable:false},
             ],
             search:true,
             pagination:true,
@@ -67,6 +67,7 @@ function initUnitDefinitionsTable(table_id){
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],
             exportDataType: 'all',
             clickToSelect:true,
+            checkboxHeader:false,
             multipleSelectRow:true,
             smartDisplay:true,
             autoRefresh:true,
@@ -74,106 +75,56 @@ function initUnitDefinitionsTable(table_id){
             showAutoRefresh:true
         });
     
-    $('#'+table_id).bootstrapTable('refreshOptions', { ajax:unit_definition_retrieve_ajax });
+    table.bootstrapTable('refreshOptions', { ajax:unit_definition_retrieve_ajax });
+
+    modalInsert("Unit", container,"unit_modal_add_new",tableId, unitDefinitionInputs, unit_definition_insert_ajax);
+    modalUpdate("Unit", container,"unit_modal_edit_selected",tableId, unitDefinitionInputs, unit_definition_update_ajax,"UnitID");
 }
 
-function createUnitDefinitionsForm(container, form_id, table, lookup){
-    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
-    var formTitle = $("<h4/>").addClass("display-4 fs-1").html("Add new unit definition");
+function unitDefinitionInputs(container){
+    var type_defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
 
     var typeForm = $("<div/>").addClass("row mb-3");
-    typeForm.append($("<label/>").addClass("col-sm-2 col-form-label").html("Type"));
-    var typeSelect = $("<div/>").addClass("col-sm-4");
-    typeSelect.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","UnitType").prop('required',true));
+    typeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Type"));
+    var typeSelect = $("<div/>").addClass("col-sm-9");
+
+    var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","UnitType").prop('required',true);
+    type_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    $.each(type_defs,function(key,entry){
+        type_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
+    });
+
+    typeSelect.append(type_select_dropdow);
     typeForm.append(typeSelect);
 
     var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-2 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-4");
+    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
+    var nameInput = $("<div/>").addClass("col-sm-9");
     nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","UnitName").prop('required',true));
     nameForm.append(nameInput);
 
     var unitForm = $("<div/>").addClass("row mb-3");
-    unitForm.append($("<label/>").addClass("col-sm-2 col-form-label").html("Unit"));
-    var unitInput = $("<div/>").addClass("col-sm-4");
-    unitInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","UnitUnit").prop('required',true));
+    unitForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Unit"));
+    var unitInput = $("<div/>").addClass("col-sm-9");
+    unitInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","unit").attr("name","UnitUnit").prop('required',true));
     unitForm.append(unitInput);
 
     var amountForm = $("<div/>").addClass("row mb-3");
-    amountForm.append($("<label/>").addClass("col-sm-2 col-form-label").html("Amount"));
-    var amountInput = $("<div/>").addClass("col-sm-4");
-    amountInput.append($("<input/>").addClass("form-control").attr("type","numeric").attr("id","name").attr("name","UnitAmount").prop('required',true));
+    amountForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Amount"));
+    var amountInput = $("<div/>").addClass("col-sm-9");
+    amountInput.append($("<input/>").addClass("form-control").attr("type","number").attr("step","0.01").attr("id","amount").attr("name","UnitAmount").prop('required',true));
     amountForm.append(amountInput);
 
     var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-2 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-4");
+    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
+    var descInput = $("<div/>").addClass("col-sm-9");
     descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","UnitDesc").prop('required',true));
     descForm.append(descInput);
-    
-    var submitForm = $("<div/>").addClass("row mb-3");
-    submitForm.append($("<button/>").addClass("col-sm-2 ms-2 btn btn-primary").attr("type","subbmit").html("Add as New"));
-    submitForm.append($("<button/>").addClass("col-sm-2 ms-2 btn btn-primary").attr("id","update").attr("type","button").html("Update Selected"));
 
-    form.append(formTitle);
-    form.append(typeForm);
-    form.append(nameForm);
-    form.append(descForm);
-    form.append(submitForm);
 
-    form.on('submit',function(e){
-        e.preventDefault();
-        var values = {};
-        $.each($(this).serializeArray(), function(i, field) {
-            values[field.name] = field.value;
-        });
-        unit_definition_insert_ajax(values,function(){table.bootstrapTable('refresh')});
-
-    });
-
-    table.on('check.bs.table uncheck.bs.table ' +
-      'check-all.bs.table uncheck-all.bs.table',
-    function () {
-        var selection =  table.bootstrapTable('getSelections');
-        if(selection.length>0){
-            selection=selection[0];
-        }
-        else{
-            return;
-        }
-        form.find("input[name]").each(function(){
-            var name = $(this).attr("name");
-            if(name in selection){
-                $(this).val(selection[name]);
-            }
-        });
-    });
-
-    form.find("#update").click(function(e){
-        var selection =  table.bootstrapTable('getSelections');
-        if(selection.length>0){
-            selection=selection[0];
-        }
-        else{
-            return;
-        }
-        if(! form[0].checkValidity()){
-            console.log("invalid update");
-            form[0].reportValidity();
-            return;
-        }
-
-        var key_name = "UnitID";
-        var key_info = {key:key_name,value:selection[key_name]}
-
-        var values = {};
-        form.find("input[name]").each(function(){
-            //console.log($(this).attr("name") +":" +  $(this).val() );
-            values[$(this).attr("name") ] = $(this).val();
-        });
-        unit_definition_update_ajax(key_info,values,function(){table.bootstrapTable('refresh')});
-
-    });
-
-    container.html(form);
+    container.append(typeForm);
+    container.append(nameForm);
+    container.append(unitForm);
+    container.append(amountForm);
+    container.append(descForm);
 }

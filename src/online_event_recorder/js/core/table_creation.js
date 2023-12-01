@@ -1,6 +1,16 @@
-function createTable(container, table_id, height){
+function createAdminTable(container, table_id, height){
+    var table_with_controls = $("<div/>");
+
+
+    var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
+    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-plus").attr("aria-hidden","true")).append(" Add New"));
+    toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
+
     var table = $("<table/>").attr("id",table_id);
     table.attr("data-toggle","table");
+
+    table.attr("data-toolbar","#"+table_id+"_toolbar");
+
     table.attr("data-height",String(height));
 
     table.attr("data-search","true");
@@ -27,5 +37,9 @@ function createTable(container, table_id, height){
     table.attr("data-show-footer","true");
 
     table.attr("data-locale","hu-HU");
-    container.html(table);
+
+    table_with_controls.append(toolbar);
+    table_with_controls.append(table);
+
+    container.html(table_with_controls);
 }
