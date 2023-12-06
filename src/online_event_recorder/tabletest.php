@@ -42,10 +42,25 @@
 	<script defer src="js/core/admin_definition_form_handler.js"></script>
 	<script defer src="js/core/definition_handler.js"></script>
 	<script defer src="js/core/table_creation.js"></script>
+
+	<script defer src="js/forms/table_formatters.js"></script>
 	
+	<script defer src="js/forms/study_definition_form.js"></script>
+
 	<script defer src="js/forms/unit_type_definitions_form.js"></script>
 	<script defer src="js/forms/unit_definitions_form.js"></script>
 
+	<script defer src="js/forms/location_definitions_form.js"></script>
+
+	<script defer src="js/forms/specimen_bodypart_definitions.js"></script>
+
+	<script defer src="js/forms/consumable_definitions_form.js"></script>
+	<script defer src="js/forms/consumable_type_definitions_form.js"></script>
+
+	<script defer src="js/forms/asset_definitions_form.js"></script>
+
+	<script defer src="js/forms/event_type_definitions_form.js"></script>
+	<script defer src="js/forms/event_definitions_form.js"></script>
 
 
 
@@ -54,16 +69,7 @@
 <body>
 	<main class="container">
 		<div class="row">
-			<div class="display-3 fs-1">Unit type definitions</div>
-		</div>
-		<div class="row">
-			<div id="tablecontainer"></div>
-		</div>
-		<div class="row">
-			<div class="display-3 fs-1">Unit definitions</div>
-		</div>
-		<div class="row">
-			<div id="tablecontainer2"></div>
+			<div id="main_container"></div>
 		</div>
 
 	</main>
@@ -74,18 +80,38 @@
 		$(document).ready(function () {
 			updateRemoteDefinitionChecksum();
 			updateLocalDefinitionDatabase();
+			
+			var defintitions_to_show = {
+										"Location definitions":initLocationDefinitionsTable,
+										"Bodypart definitions":initSpecimenBodypartDefinitionsTable,
+										"Unit Type definitions": initUnitTypeDefinitionsTable,
+										"Unit definitions": initUnitDefinitionsTable,
+										"Consumable Type definitions": initConsumableTypeDefinitionsTable,
+										"Consumable definitons": initConsumableDefinitionsTable,
+										"Asset definitons": initAssetDefinitionsTable,
+										// "Event type definitons": initEventTypeDefinitionsTable,
+										"Event definitons": initEventDefinitionsTable,
+										"Studies": initStudyDefinitionsTable,
+										}
+			
+			var main_container = $("#main_container");
 
-			var tableId = "unitTypeDefinitionsTable"
-			var container = $("#tablecontainer");
+			$.each(defintitions_to_show,function(title,fun){
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-1").html(title));
+				container_id = String(title).split(" ").join("_").toLowerCase()+ "_container";
 
-			createAdminTable(container, tableId, 500);
-			initUnitTypeDefinitionsTable(container,tableId);
+				table_id = String(title).split(" ").join("_").toLowerCase()+ "_table";
 
-			var tableId2 = "unitDefinitionsTable"
-			var container2 = $("#tablecontainer2");
+				var _table = $("<div/>").addClass("row").attr("id",container_id);
 
-			createAdminTable(container2, tableId2, 500);
-			initUnitDefinitionsTable(container2,tableId2);
+				main_container.append(_title);
+				main_container.append(_table);
+	
+				createAdminTable(_table, table_id, 500);
+				fun(_table,table_id);
+
+    		});
+
 		});
 
 	</script>

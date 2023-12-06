@@ -63,7 +63,7 @@ function modalInsert(data_name, container, modal_id, table_id,
     });
 
     modal_footer.find("#clear_form").click(function(){
-        $('#add_new_form')[0].reset();
+        modal_body.find('#add_new_form')[0].reset();
     })
 
     modal_footer.find("#copy_selected").click(function(){
@@ -74,13 +74,19 @@ function modalInsert(data_name, container, modal_id, table_id,
         else{
             return;
         }
-        $('#add_new_form').find("input[name]").each(function(){
+        modal_body.find('#add_new_form').find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
                 $(this).val(selection[name]);
             }
         });
-        $('#add_new_form').find("select[name]").each(function(){
+        modal_body.find('#add_new_form').find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in selection){
+                $(this).val(selection[name]);
+            }
+        });
+        modal_body.find('#add_new_form').find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
                 $(this).val(selection[name]);
@@ -117,6 +123,13 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
                 $(this).val(selection[name]);
             }
         });
+        form.find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in selection){
+                $(this).val(selection[name]);
+            }
+        });
+        
         form.find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
@@ -153,6 +166,9 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
 
         var values = {};
         form.find("input[name]").each(function(){
+            values[$(this).attr("name") ] = $(this).val();
+        });
+        form.find("textarea[name]").each(function(){
             values[$(this).attr("name") ] = $(this).val();
         });
         form.find("select[name]").each(function(){
@@ -200,7 +216,7 @@ function modalUpdate(data_name, container, modal_id, table_id,
     container.append(modal_root);
 
 
-    modalUpdateForm(modal_body, "edit_form", form_input_function, table, modal_root, update_ajax,key_name);
+    modalUpdateForm(modal_body, "edit_form", form_input_function, table, modal_root, update_ajax, key_name);
 
     table.on('check.bs.table uncheck.bs.table ' +
     'check-all.bs.table uncheck-all.bs.table load-success.bs.table',
@@ -228,13 +244,19 @@ function modalUpdate(data_name, container, modal_id, table_id,
         else{
             return;
         }
-        $("#edit_form").find("input[name]").each(function(){
+        modal_body.find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
                 $(this).val(selection[name]);
             }
         });
-        $('#edit_form').find("select[name]").each(function(){
+        modal_body.find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in selection){
+                $(this).val(selection[name]);
+            }
+        });
+        modal_body.find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
                 $(this).val(selection[name]);

@@ -39,17 +39,6 @@ function unit_definition_update_ajax(key_info,params,callback) {
     });
 }
 
-function unitTypeFormatter(value,row){
-    var type_defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
-    var match = $.grep(type_defs, function(type_def) {
-        return type_def.UnitTypeID ===  value;
-    });
-    
-    if (match.length){return match[0].UnitTypeName}
-    else {return "Unknown type '" + String(value) + "'"}
-    
-}
-
 function initUnitDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
     table.bootstrapTable("destroy").bootstrapTable({
@@ -118,7 +107,7 @@ function unitDefinitionInputs(container){
     var descForm = $("<div/>").addClass("row mb-3");
     descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
     var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","UnitDesc").prop('required',true));
+    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","UnitDesc").prop('required',false));
     descForm.append(descInput);
 
 

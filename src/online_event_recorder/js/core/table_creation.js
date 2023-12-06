@@ -1,5 +1,5 @@
 function createAdminTable(container, table_id, height){
-    var table_with_controls = $("<div/>");
+    // var table_with_controls = $("<div/>");
 
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
@@ -38,8 +38,11 @@ function createAdminTable(container, table_id, height){
 
     table.attr("data-locale","hu-HU");
 
-    table_with_controls.append(toolbar);
-    table_with_controls.append(table);
+    // table_with_controls.append(toolbar);
+    // table_with_controls.append(table);
 
-    container.html(table_with_controls);
+    // container.html(table_with_controls);
+
+    container.append(toolbar);
+    container.append(table);
 }
