@@ -1,38 +1,4 @@
-function initializeLocalDefinitionDatabase(){
-    return $.when({
-
-        unit_type_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"unit_type_definitions"})}),
-        unit_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"unit_definitions"})}),
-        specimen_status_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"specimen_status_definitions"})}),
-        specimen_side_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"specimen_side_definitions"})}),
-        specimen_sex_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"specimen_sex_definitions"})}),
-        specimen_bodypart_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"specimen_bodypart_definitions"})}),
-        location_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"location_definitions"})}), 
-        event_type_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"event_type_definitions"})}), 
-        event_status_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"event_status_definitions"})}), 
-        event_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"event_definitions"})}), 
-        consumable_type_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"consumable_type_definitions"})}), 
-        consumable_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"consumable_definitions"})}), 
-        asset_definitions: $.ajax({type:"GET",url:"php/retrieve_table.php",dataType:"json",data:({table_name:"asset_definitions"})}),
-
-
-    }).then(function(resp){
-        localStorage.setItem("unit_type_definitons",resp.unit_type_definitions);
-        localStorage.setItem("unit_definitions",resp.unit_definitions);
-        localStorage.setItem("specimen_status_definitions",resp.specimen_status_definitions);
-        localStorage.setItem("specimen_side_definitions",resp.specimen_side_definitions);
-        localStorage.setItem("specimen_sex_definitions",resp.specimen_sex_definitions);
-        localStorage.setItem("specimen_bodypart_definitions",resp.specimen_bodypart_definitions);
-        localStorage.setItem("location_definitions",resp.location_definitions);
-        localStorage.setItem("event_type_definitions",resp.event_type_definitions);
-        localStorage.setItem("event_status_definitions",resp.event_status_definitions);
-        localStorage.setItem("event_type_definitions",resp.event_type_definitions);
-        localStorage.setItem("event_definitions",resp.event_definitions);
-        localStorage.setItem("consumable_type_definitions",resp.consumable_type_definitions);
-        localStorage.setItem("consumable_definitions",resp.consumable_definitions);
-        localStorage.setItem("asset_definitions",resp.asset_definitions);
-    });
-}
+var defs = Object();
 
 function simpleChecksum(input){
     return (CRC32.str(JSON.stringify(input))>>>0).toString(16);
@@ -81,7 +47,7 @@ function updateRemoteDefinitionChecksum(){
 }
 
 
-function updateLocalDefinitionDatabase(){
+function updateLocalDefinitionDatabase(callback){
     $.ajax({type:"GET",
             url:"php/retrieve_table.php",
             dataType:"json",
@@ -105,14 +71,16 @@ function updateLocalDefinitionDatabase(){
                     if(localStorage.getItem(table_name) === null){
                         // table not exists in local storage
                         $.ajax({type:"GET",
-                                            url:"php/retrieve_table.php",
-                                            dataType:"json",
-                                            data:({table_name:table_name}),
-                                            success:function(_result){
-                                            localStorage.setItem(table_name,JSON.stringify(_result),
-                                            console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version."));
-                                            localStorage.setItem("definition_tables",JSON.stringify(result));
-                                        }})
+                                url:"php/retrieve_table.php",
+                                dataType:"json",
+                                data:({table_name:table_name}),
+                                success:function(_result){
+                                    localStorage.setItem(table_name,JSON.stringify(_result));
+                                    defs[table_name] = _result;
+
+                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                    localStorage.setItem("definition_tables",JSON.stringify(result));
+                                }});
                         return;
                     }
 
@@ -126,44 +94,51 @@ function updateLocalDefinitionDatabase(){
                     if(!local_version.hasOwnProperty(table_name)){
                         // local definition tables missing the entry
                         $.ajax({type:"GET",
-                                            url:"php/retrieve_table.php",
-                                            dataType:"json",
-                                            data:({table_name:table_name}),
-                                            success:function(_result){
-                                            localStorage.setItem(table_name,JSON.stringify(_result),
-                                            console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version."));
-                                            localStorage.setItem("definition_tables",JSON.stringify(result));
-                                        }})
+                                url:"php/retrieve_table.php",
+                                dataType:"json",
+                                data:({table_name:table_name}),
+                                success:function(_result){
+                                    localStorage.setItem(table_name,JSON.stringify(_result));
+                                    defs[table_name] = _result;
+
+                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                    localStorage.setItem("definition_tables",JSON.stringify(result));
+                                }});
                         return;
                     }
                     else if(moment(table_info.timestamp).isAfter(local_version[table_name].timestamp)){
                         // local version is outdated
                         $.ajax({type:"GET",
-                                            url:"php/retrieve_table.php",
-                                            dataType:"json",
-                                            data:({table_name:table_name}),
-                                            success:function(_result){
-                                            localStorage.setItem(table_name,JSON.stringify(_result),
-                                            console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version."));
-                                            localStorage.setItem("definition_tables",JSON.stringify(result));
-                                        }})
+                                url:"php/retrieve_table.php",
+                                dataType:"json",
+                                data:({table_name:table_name}),
+                                success:function(_result){
+                                    localStorage.setItem(table_name,JSON.stringify(_result));
+                                    defs[table_name] = _result;
+
+                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                    localStorage.setItem("definition_tables",JSON.stringify(result));
+                                }})
                         return;
                     }
                     else if(table_info.checksum!= local_version_checksum){
                         // local version is altered
                         $.ajax({type:"GET",
-                                            url:"php/retrieve_table.php",
-                                            dataType:"json",
-                                            data:({table_name:table_name}),
-                                            success:function(_result){
-                                            localStorage.setItem(table_name,JSON.stringify(_result),
-                                            console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version."));
-                                            localStorage.setItem("definition_tables",JSON.stringify(result));
-                                        }})
+                                url:"php/retrieve_table.php",
+                                dataType:"json",
+                                data:({table_name:table_name}),
+                                success:function(_result){
+                                    localStorage.setItem(table_name,JSON.stringify(_result));
+                                    defs[table_name] = _result;
+
+                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                    localStorage.setItem("definition_tables",JSON.stringify(result));
+                                }})
                         return;
                     }
+                    defs[table_name] = JSON.parse(localStorage.getItem(table_name));
                 });
-                
+                if (callback != null) callback();
             }
         })
 

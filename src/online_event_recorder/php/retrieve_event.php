@@ -1,6 +1,7 @@
 <?php
+session_start();
 
-if(isset($_GET['event_index'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+if(isset($_GET['event_index']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $event_index = $_GET['event_index'];
     global $database;
     if(is_null($database)) {

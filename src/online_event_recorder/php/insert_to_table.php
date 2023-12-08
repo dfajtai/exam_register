@@ -1,7 +1,8 @@
 <?php
 use Medoo\Medoo;
+session_start();
 
-if(isset($_POST['table_name'])  && isset($_POST['new_info'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+if(isset($_POST['table_name'])  && isset($_POST['new_info']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $table_name = $_POST['table_name'];
     $new_info = $_POST['new_info'];
     global $database;

@@ -1,6 +1,7 @@
 <?php
+session_start();
 
-if(isset($_GET['table_name'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+if(isset($_GET['table_name']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $selected_table_name = $_GET['table_name'];
     global $database;
     if(is_null($database)) {

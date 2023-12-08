@@ -1,7 +1,8 @@
 <?php
 use Medoo\Medoo;
+session_start();
 
-if(isset($_POST['event_info'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+if(isset($_POST['event_info']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $event_info = $_POST['event_info'];
     global $database;
     if(is_null($database)) {

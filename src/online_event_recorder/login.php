@@ -8,12 +8,13 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<title>LOGIN</title>
+	<title>ExamLogger - Login</title>
 </head>
 <body>
-<main class="container d-flex p-2 justify-content-center align-items-center vh-100">
+<main class="container vh-20">
+
 		<form
-			class="shadow w-450 p-3 needs-validation" 
+			class="shadow p-5 needs-validation col-sm-6 offset-sm-3" 
     	    action="php/login.php" 
     	    method="post">
 			<h4 class="display-4 fs-1">LOGIN</h4><br>
@@ -30,21 +31,24 @@
 			</div>
 		    <?php } ?>
 
-
-			<div class="form-group">
+			<div class="form-group mb-2">
 				<label for="usernameInput">User name</label>
 				<input type="text" class="form-control" id="uname" placeholder="User Name" name = "uname"
 				value="<?php echo (isset($_GET['uname']))?$_GET['uname']:"" ?>" required>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group mb-3">
 				<label for="password1Input">Password</label>
 				<input type="password" class="form-control" id="password1" placeholder="Password" name="pass" required>
 			</div>
-			<button type="submit" class="btn btn-primary">Login</button>
-		  	<a href="index.php" class="link-secondary">Sign Up</a>
+			<div class="d-grid gap-2 d-md-flex">
+				<button type="submit" class="btn btn-primary md-me-2">Login</button>
+				<a href="index.php" class="btn btn-outline-primary">Sign Up</a>
+			</div>
+			
+
 		</form>
-	</main>
+</main>
 
 </body>
 </html>

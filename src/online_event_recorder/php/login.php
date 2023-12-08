@@ -33,7 +33,14 @@ if(isset($_POST['uname']) &&
          $username =  $user['UserName'];
          $password =  $user['UserPwd'];
          $fname =  $user['UserFullName'];
+         $isActivated =  $user['IsActivated'];
          $id =  $user['UserID'];
+         if(! $isActivated){
+            $em = "This account is not activated or had been disactivated.";
+            header("Location: ../login.php?error=$em&$data");
+            exit;
+         }
+
          if($username === $uname){
             if(password_verify($pass, $password)){
                $_SESSION['id'] = $id;

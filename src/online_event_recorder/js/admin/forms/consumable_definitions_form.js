@@ -46,6 +46,7 @@ function initConsumableDefinitionsTable(container,tableId){
     table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
+                {title: 'ID', field : 'ConsumableID', align:'center', sortable:true, searchable:false},
                 {title: 'Name', field : 'ConsumableName', align:'center', sortable:true, searchable:true},
                 {title: 'Consumable Type', field : 'ConsumableType', align:'center', sortable:true, searchable:true, formatter: 'consumableTypeFormatter'},
                 {title: 'Desc', field : 'ConsumableDesc', align:'center', sortable:true, searchable:false},
@@ -62,7 +63,8 @@ function initConsumableDefinitionsTable(container,tableId){
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
-            showAutoRefresh:true
+            showAutoRefresh:true,
+            detailFormatter:simpleFlatFormatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:consumable_definition_retrieve_ajax });
@@ -72,15 +74,13 @@ function initConsumableDefinitionsTable(container,tableId){
 }
 
 function consumableDefinitionInputs(container){
-    var consumabletype_defs = JSON.parse(localStorage.getItem("consumable_type_definitions"));
-
     var consumabletypeForm = $("<div/>").addClass("row mb-3");
     consumabletypeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Cons.Type"));
     var consumabletypeSelect = $("<div/>").addClass("col-sm-9");
 
     var consumabletype_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","consumabletype").attr("name","ConsumableType").prop('required',true);
     consumabletype_select_dropdow.append($("<option/>").html("Choose ConsumableType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
-    $.each(consumabletype_defs,function(key,entry){
+    $.each(defs.consumable_type_definitions,function(key,entry){
         consumabletype_select_dropdow.append($("<option/>").html(entry.ConsumableTypeName).attr("value",entry.ConsumableTypeID))
     });
 
@@ -99,15 +99,13 @@ function consumableDefinitionInputs(container){
     descInput.append($("<input/>").addClass("form-control").attr("unittype","text").attr("id","desc").attr("name","ConsumableDesc").prop('required',false));
     descForm.append(descInput);
 
-    var unittype_defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
-
     var unittypeForm = $("<div/>").addClass("row mb-3");
     unittypeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("UnitType"));
     var unittypeSelect = $("<div/>").addClass("col-sm-9");
 
     var unittype_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","unittype").attr("name","ConsumableUnitType").prop('required',true);
     unittype_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
-    $.each(unittype_defs,function(key,entry){
+    $.each(defs.unit_type_definitions,function(key,entry){
         unittype_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
     });
 

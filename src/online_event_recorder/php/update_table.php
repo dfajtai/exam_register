@@ -1,7 +1,9 @@
 <?php
 use Medoo\Medoo;
 
-if(isset($_POST['table_name']) && isset($_POST['key_info']) && isset($_POST['updated_info'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+session_start();
+
+if(isset($_POST['table_name']) && isset($_POST['key_info']) && isset($_POST['updated_info']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $table_name = $_POST['table_name'];
     $key_info = $_POST['key_info'];
     $updated_info = $_POST['updated_info'];

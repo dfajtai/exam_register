@@ -53,7 +53,7 @@ function initStudyDefinitionsTable(container,tableId){
     table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                //{title: 'ID', field : 'UnitTypeID', align:'center', sortable:true, searchable:true},
+                {title: 'ID', field : 'StudyID', align:'center', sortable:true, searchable:false},
                 {title: 'Name', field : 'StudyName', align:'center', sortable:true, searchable:true},
                 {title: 'Desc', field : 'StudyDesc', align:'center', sortable:true, searchable:true, formatter: studyDescriptionFormatter},
                 {title: 'Species', field : 'StudySpecies', align:'center', sortable:true, searchable:true},
@@ -72,7 +72,8 @@ function initStudyDefinitionsTable(container,tableId){
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
-            showAutoRefresh:true
+            showAutoRefresh:true,
+            detailFormatter:simpleFlatFormatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:study_definition_retrieve_ajax });

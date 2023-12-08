@@ -1,7 +1,8 @@
 <?php
 use Medoo\Medoo;
+session_start();
 
-if(isset($_POST['event_index']) && isset($_POST['event_info'])){// && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $event_index = $_POST['event_index'];
     $event_info = $_POST['event_info'];
     global $database;
@@ -20,7 +21,7 @@ if(isset($_POST['event_index']) && isset($_POST['event_info'])){// && isset($_SE
         $updated_values["EventModifiedAt"] = Medoo::raw('NOW()');
     }
     $updated_values["EventModifiedBy"] = $_SESSION['id'];
-    $updated_values["EventData"] = json_encode($updated_values["EventData"]);
+    $updated_values["EventDataJSON"] = json_encode($updated_values["EventDataJSON"]);
 
     $old_event_data = $database -> select("event_log", "*", ["EventIndex"=>$event_index]);
     if(count($old_event_data) >0){
@@ -33,10 +34,10 @@ if(isset($_POST['event_index']) && isset($_POST['event_info'])){// && isset($_SE
         $database -> insert("specimen_change_log", [
             "EventIndex"=>$event_index, 
             "EventStudy"=>$_old_data["EventStudy"], 
-            "EventSpecimen"=>$_old_data["EventSpecimen"],
+            "EventAnimal"=>$_old_data["EventAnimal"],
             "EventModifiedBy" => $_old_data["EventModifiedBy"],
             "EventModifiedAt" => $_old_data["EventModified"],
-            "EventInfo" => json_encode($event_info)
+            "EventInfoJSON" => json_encode($event_info)
         ]);
     }
 

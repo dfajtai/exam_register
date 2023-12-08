@@ -44,6 +44,7 @@ function initUnitDefinitionsTable(container,tableId){
     table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
+                {title: 'ID', field : 'UnitID', align:'center', sortable:true, searchable:false},
                 {title: 'Type', field : 'UnitType', align:'center', sortable:true, searchable:true, formatter: 'unitTypeFormatter'},
                 {title: 'Name', field : 'UnitName', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'UnitUnit', align:'center', sortable:true, searchable:true},
@@ -61,7 +62,8 @@ function initUnitDefinitionsTable(container,tableId){
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
-            showAutoRefresh:true
+            showAutoRefresh:true,
+            detailFormatter:simpleFlatFormatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:unit_definition_retrieve_ajax });
@@ -71,15 +73,13 @@ function initUnitDefinitionsTable(container,tableId){
 }
 
 function unitDefinitionInputs(container){
-    var type_defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
-
     var typeForm = $("<div/>").addClass("row mb-3");
     typeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Type"));
     var typeSelect = $("<div/>").addClass("col-sm-9");
 
     var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","UnitType").prop('required',true);
     type_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
-    $.each(type_defs,function(key,entry){
+    $.each(defs.unit_type_definitions,function(key,entry){
         type_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
     });
 

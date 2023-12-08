@@ -45,7 +45,7 @@ function initEventDefinitionsTable(container,tableId){
     table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                //{title: 'ID', field : 'UnitTypeID', align:'center', sortable:true, searchable:true},
+                {title: 'ID', field : 'EventID', align:'center', sortable:true, searchable:false},
                 {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: 'eventTypeFormatter'},
                 {title: 'Desc', field : 'EventDesc', align:'center', sortable:true, searchable:true},
@@ -61,7 +61,8 @@ function initEventDefinitionsTable(container,tableId){
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
-            showAutoRefresh:true
+            showAutoRefresh:true,
+            detailFormatter:simpleFlatFormatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:event_definition_retrieve_ajax });
@@ -72,15 +73,13 @@ function initEventDefinitionsTable(container,tableId){
 }
 
 function eventDefinitionInputs(container){
-    var type_defs = JSON.parse(localStorage.getItem("event_type_definitions"));
-
     var typeForm = $("<div/>").addClass("row mb-3");
     typeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Type"));
     var typeSelect = $("<div/>").addClass("col-sm-9");
 
     var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","EventType").prop('required',true);
-    type_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
-    $.each(type_defs,function(key,entry){
+    type_select_dropdow.append($("<option/>").html("Choose EventType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    $.each(defs.event_type_definitions,function(key,entry){
         type_select_dropdow.append($("<option/>").html(entry.EventTypeName).attr("value",entry.EventTypeID))
     });
 
@@ -99,7 +98,15 @@ function eventDefinitionInputs(container){
     descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","EventDesc"));
     descForm.append(descInput);
 
+    var eventParamsForm = $("<div/>").addClass("row mb-3");
+    eventParamsForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Event form params"));
+    var eventParamsInput = $("<div/>").addClass("col-sm-9");
+    eventParamsInput.append($("<textarea/>").addClass("form-control").attr("type","text").attr("id","params").attr("name","EventFormJSON"));
+    eventParamsForm.append(eventParamsInput);
+
+
     container.append(nameForm);
     container.append(typeForm);
     container.append(descForm);
+    container.append(eventParamsForm);
 }

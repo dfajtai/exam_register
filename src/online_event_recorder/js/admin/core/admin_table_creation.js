@@ -27,14 +27,14 @@ function createAdminTable(container, table_id, height){
     table.attr("data-page-list","[5, 10, 25, 50, 100, all]");
     table.attr("data-show-pagination-switch","true");
 
-    table.attr("data-show-toggle","true");
     table.attr("data-minimum-count-columns","2");
     table.attr("data-show-columns","true");
     table.attr("data-show-columns-toggle-all","true");
 
+    table.attr("data-show-toggle","true");
     table.attr("data-detail-view","true");
 
-    table.attr("data-show-footer","true");
+    table.attr("data-show-footer","false");
 
     table.attr("data-locale","hu-HU");
 

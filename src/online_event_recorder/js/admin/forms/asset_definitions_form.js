@@ -44,6 +44,7 @@ function initAssetDefinitionsTable(container,tableId){
     table.bootstrapTable("destroy").bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
+                {title: 'ID', field : 'AssetID', align:'center', sortable:true, searchable:false},
                 {title: 'Name', field : 'AssetName', align:'center', sortable:true, searchable:true},
                 {title: 'Location', field : 'AssetLocation', align:'center', sortable:true, searchable:true, formatter: 'locationFormatter'},
                 {title: 'Owner', field : 'AssetOwner', align:'center', sortable:true, searchable:false},
@@ -60,7 +61,8 @@ function initAssetDefinitionsTable(container,tableId){
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
-            showAutoRefresh:true
+            showAutoRefresh:true,
+            detailFormatter:simpleFlatFormatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:asset_definition_retrieve_ajax });
@@ -77,7 +79,6 @@ function assetDefinitionInputs(container){
     nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","AssetName").prop('required',true));
     nameForm.append(nameInput);
 
-    var location_defs = JSON.parse(localStorage.getItem("location_definitions"));
 
     var locationForm = $("<div/>").addClass("row mb-3");
     locationForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Location"));
@@ -85,7 +86,7 @@ function assetDefinitionInputs(container){
 
     var location_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","AssetLocation").prop('required',true);
     location_select_dropdow.append($("<option/>").html("Choose Location...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
-    $.each(location_defs,function(key,entry){
+    $.each(defs.location_definitions,function(key,entry){
         location_select_dropdow.append($("<option/>").html(entry.LocationName).attr("value",entry.LocationID))
     });
 

@@ -4,7 +4,7 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
     form_input_function(form);
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","subbmit").html("Add new");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add new");
     submitForm.append(submitButton);
 
 
@@ -14,7 +14,12 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
         e.preventDefault();
         var values = {};
         $.each($(this).serializeArray(), function(i, field) {
-            values[field.name] = field.value;
+            if(field.name.includes("JSON")){
+                values[field.name]= field.value;
+            }
+            else{
+                values[field.name] = field.value;
+            }
         });
         insert_ajax(values,function(){table.bootstrapTable('refresh')});
         modal.modal('hide');
@@ -23,6 +28,11 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
     container.append(form);
 }
 
+function removeModalInsert(table_id){
+    var toolbar_id = table_id + "_toolbar";
+    var toolbar = $("#"+toolbar_id)
+    toolbar.find("#toolbar_add").remove();
+}
 
 function modalInsert(data_name, container, modal_id, table_id,
     form_input_function, insert_ajax){
@@ -83,7 +93,16 @@ function modalInsert(data_name, container, modal_id, table_id,
         modal_body.find('#add_new_form').find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
-                $(this).val(selection[name]);
+                if(name.includes("JSON")){
+                    let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
+                    console.log(pretty_json);
+                    // $(this).val(selection[name]);
+                    $(this).val(pretty_json);
+                }
+                else{
+                    $(this).val(selection[name]);
+                }
+                
             }
         });
         modal_body.find('#add_new_form').find("select[name]").each(function(){
@@ -102,7 +121,7 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
     form_input_function(form);
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","subbmit").html("Save changes");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Save changes");
     submitForm.append(submitButton);
 
     form.append(submitForm);
@@ -126,7 +145,15 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
         form.find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
-                $(this).val(selection[name]);
+                if(name.includes("JSON")){
+                    let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
+                    console.log(pretty_json);
+                    // $(this).val(selection[name]);
+                    $(this).val(pretty_json);
+                }
+                else{
+                    $(this).val(selection[name]);
+                }
             }
         });
         
@@ -169,7 +196,14 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
             values[$(this).attr("name") ] = $(this).val();
         });
         form.find("textarea[name]").each(function(){
-            values[$(this).attr("name") ] = $(this).val();
+            var name = $(this).attr("name");
+            if(name.includes("JSON")){
+                values[name] = $(this).val();
+            }
+            else{
+                values[name] = $(this).val();
+            }
+
         });
         form.find("select[name]").each(function(){
             values[$(this).attr("name") ] = $(this).val();
@@ -183,6 +217,11 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
     container.append(form);
 }
 
+function removeModalUpdate(table_id){
+    var toolbar_id = table_id + "_toolbar";
+    var toolbar = $("#"+toolbar_id)
+    toolbar.find("#toolbar_edit").remove();
+}
 
 function modalUpdate(data_name, container, modal_id, table_id,
     form_input_function, update_ajax,key_name){
@@ -253,7 +292,15 @@ function modalUpdate(data_name, container, modal_id, table_id,
         modal_body.find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
-                $(this).val(selection[name]);
+                if(name.includes("JSON")){
+                    let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
+                    console.log(pretty_json);
+                    // $(this).val(selection[name]);
+                    $(this).val(pretty_json);
+                }
+                else{
+                    $(this).val(selection[name]);
+                }
             }
         });
         modal_body.find("select[name]").each(function(){
