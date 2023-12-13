@@ -95,9 +95,11 @@ function modalInsert(data_name, container, modal_id, table_id,
             if(name in selection){
                 if(name.includes("JSON")){
                     let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
-                    console.log(pretty_json);
+                    // console.log(pretty_json);
                     // $(this).val(selection[name]);
-                    $(this).val(pretty_json);
+
+                    // $(this).val(pretty_json);
+                    $(this).val(selection[name]);
                 }
                 else{
                     $(this).val(selection[name]);
@@ -147,9 +149,11 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
             if(name in selection){
                 if(name.includes("JSON")){
                     let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
-                    console.log(pretty_json);
+                    // console.log(pretty_json);
                     // $(this).val(selection[name]);
-                    $(this).val(pretty_json);
+
+                    // $(this).val(pretty_json);
+                    $(this).val(selection[name]);
                 }
                 else{
                     $(this).val(selection[name]);

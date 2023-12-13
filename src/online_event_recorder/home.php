@@ -74,7 +74,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 
 					<li class="nav-item">
-					<a class="nav-link active" href = "#" onclick="show_study_specimens()">Show aimals</a>
+					<a class="nav-link active" href = "#" onclick="show_study_subjects()">Show aimals</a>
 					</li>
 					
 					<li class="nav-item">

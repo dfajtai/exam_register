@@ -8,7 +8,7 @@ if(isset($_GET['study_id']) && isset($_SESSION['id']) && isset($_SESSION['fname'
         require_once 'db_conn.php';
         global $database;
     }
-    $table_data = $database -> select("animals", "*", ["StudyID"=>$study_id]);
+    $table_data = $database -> select("subjects", "*", ["StudyID"=>$study_id]);
     unset($_GET['study_id']);
     echo json_encode($table_data);
 }

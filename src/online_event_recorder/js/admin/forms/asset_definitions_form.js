@@ -85,7 +85,7 @@ function assetDefinitionInputs(container){
     var locationSelect = $("<div/>").addClass("col-sm-9");
 
     var location_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","AssetLocation").prop('required',true);
-    location_select_dropdow.append($("<option/>").html("Choose Location...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    location_select_dropdow.append($("<option/>").html("Choose Location...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     $.each(defs.location_definitions,function(key,entry){
         location_select_dropdow.append($("<option/>").html(entry.LocationName).attr("value",entry.LocationID))
     });

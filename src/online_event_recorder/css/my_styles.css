@@ -1,5 +1,6 @@
 .admin-table-toolbar-btn {
     margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 .mt-6 {
@@ -11,3 +12,6 @@
 } */
 
 
+.copy-popover {
+    --bs-popover-bg: lightgreen;
+  }

@@ -78,7 +78,7 @@ function unitDefinitionInputs(container){
     var typeSelect = $("<div/>").addClass("col-sm-9");
 
     var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","UnitType").prop('required',true);
-    type_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    type_select_dropdow.append($("<option/>").html("Choose UnitType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     $.each(defs.unit_type_definitions,function(key,entry){
         type_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
     });

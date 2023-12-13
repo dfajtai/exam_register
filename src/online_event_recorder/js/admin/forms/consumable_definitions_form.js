@@ -79,7 +79,7 @@ function consumableDefinitionInputs(container){
     var consumabletypeSelect = $("<div/>").addClass("col-sm-9");
 
     var consumabletype_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","consumabletype").attr("name","ConsumableType").prop('required',true);
-    consumabletype_select_dropdow.append($("<option/>").html("Choose ConsumableType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    consumabletype_select_dropdow.append($("<option/>").html("Choose ConsumableType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     $.each(defs.consumable_type_definitions,function(key,entry){
         consumabletype_select_dropdow.append($("<option/>").html(entry.ConsumableTypeName).attr("value",entry.ConsumableTypeID))
     });
@@ -104,7 +104,7 @@ function consumableDefinitionInputs(container){
     var unittypeSelect = $("<div/>").addClass("col-sm-9");
 
     var unittype_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","unittype").attr("name","ConsumableUnitType").prop('required',true);
-    unittype_select_dropdow.append($("<option/>").html("Choose UnitType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    unittype_select_dropdow.append($("<option/>").html("Choose UnitType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     $.each(defs.unit_type_definitions,function(key,entry){
         unittype_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
     });

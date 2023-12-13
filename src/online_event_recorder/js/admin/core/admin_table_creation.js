@@ -37,6 +37,9 @@ function createAdminTable(container, table_id, height){
     table.attr("data-show-footer","false");
 
     table.attr("data-locale","hu-HU");
+    
+    table.attr("data-maintain-meta-data","true");
+
 
     // table_with_controls.append(toolbar);
     // table_with_controls.append(table);

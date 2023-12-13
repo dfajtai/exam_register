@@ -9,7 +9,7 @@ function showSelectActiveStudyForm(container){
     selectForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Studies"));
     var studySelect = $("<div/>").addClass("col-sm-6");
     var study_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","selectedStudy").attr("name","activeStudy").prop('required',true);
-    study_select_dropdow.append($("<option/>").html("Choose Active Study...").attr('selected',"selected").attr("value",-1).attr("disabled","disabled").attr("value",""));
+    study_select_dropdow.append($("<option/>").html("Choose Active Study...").prop('selected',true).attr("value",-1).attr("disabled","disabled").attr("value",""));
 
     $.each(defs.studies,function(key,entry){
         study_select_dropdow.append($("<option/>").html(entry.StudyName).attr("value",entry.StudyID))
@@ -39,8 +39,8 @@ function showSelectActiveStudyForm(container){
 
 
     selectActiveStudyForm.find("#selectedStudy").on("change",function(e){
-        if(this.value!=-1){
-            selectedStudyInfoBlock.html(createFlatDefInfoBlock("Selected study's info","studies","StudyID",JSON.parse(this.value)));
+        if($(this).val()!=-1){
+            selectedStudyInfoBlock.html(createFlatDefInfoBlock("Selected study's info","studies","StudyID",JSON.parse($(this).val())));
         }
     })
 

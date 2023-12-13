@@ -31,10 +31,10 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
                         'EventData' => $_old_data["EventData"],
                         'EventLocation' => $_old_data["EventLocation"]];
 
-        $database -> insert("specimen_change_log", [
+        $database -> insert("subject_change_log", [
             "EventIndex"=>$event_index, 
             "EventStudy"=>$_old_data["EventStudy"], 
-            "EventAnimal"=>$_old_data["EventAnimal"],
+            "EventSubject"=>$_old_data["EventSubject"],
             "EventModifiedBy" => $_old_data["EventModifiedBy"],
             "EventModifiedAt" => $_old_data["EventModified"],
             "EventInfoJSON" => json_encode($event_info)

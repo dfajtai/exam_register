@@ -78,7 +78,7 @@ function eventDefinitionInputs(container){
     var typeSelect = $("<div/>").addClass("col-sm-9");
 
     var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","EventType").prop('required',true);
-    type_select_dropdow.append($("<option/>").html("Choose EventType...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    type_select_dropdow.append($("<option/>").html("Choose EventType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     $.each(defs.event_type_definitions,function(key,entry){
         type_select_dropdow.append($("<option/>").html(entry.EventTypeName).attr("value",entry.EventTypeID))
     });
@@ -101,7 +101,7 @@ function eventDefinitionInputs(container){
     var eventParamsForm = $("<div/>").addClass("row mb-3");
     eventParamsForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Event form params"));
     var eventParamsInput = $("<div/>").addClass("col-sm-9");
-    eventParamsInput.append($("<textarea/>").addClass("form-control").attr("type","text").attr("id","params").attr("name","EventFormJSON"));
+    eventParamsInput.append($("<textarea/>").addClass("form-control").attr("type","text").attr("id","params").attr("name","EventFormJSON").attr("rows",10));
     eventParamsForm.append(eventParamsInput);
 
 

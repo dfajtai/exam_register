@@ -123,7 +123,7 @@ function usersDefinitionInputs(container){
     activatedForm.append($("<label/>").addClass("col-sm-4 col-form-label").html("Acivate/Disactivate"));
     var activatedSelect = $("<div/>").addClass("col-sm-8");
     var activated_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","IsActivated").prop('required',true);
-    activated_select_dropdow.append($("<option/>").html("Choose operation...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    activated_select_dropdow.append($("<option/>").html("Choose operation...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     activated_select_dropdow.append($("<option/>").html("Activate account").attr("value",1));
     activated_select_dropdow.append($("<option/>").html("Disactivate account").attr("value",0));
     activatedSelect.append(activated_select_dropdow);
@@ -133,7 +133,7 @@ function usersDefinitionInputs(container){
     resetForm.append($("<label/>").addClass("col-sm-4 col-form-label").html("Password reset"));
     var resetSelect = $("<div/>").addClass("col-sm-8");
     var reset_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","CanResetPassword").prop('required',true);
-    reset_select_dropdow.append($("<option/>").html("Choose operation...").attr('selected',"selected").attr("disabled","disabled").attr("value",""));
+    reset_select_dropdow.append($("<option/>").html("Choose operation...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     reset_select_dropdow.append($("<option/>").html("Allow password reset").attr("value",1));
     reset_select_dropdow.append($("<option/>").html("Deny password reset").attr("value",0));
     resetSelect.append(reset_select_dropdow);

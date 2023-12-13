@@ -24,12 +24,12 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `animals`
+-- Tábla szerkezet ehhez a táblához `subjects`
 --
 
-CREATE TABLE `animals` (
-  `AnimalIndex` int NOT NULL,
-  `AnimalID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+CREATE TABLE `subjects` (
+  `SubjectIndex` int NOT NULL,
+  `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `StudyID` int NOT NULL,
   `Name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `Group` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -46,57 +46,57 @@ CREATE TABLE `animals` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `animal_change_log`
+-- Tábla szerkezet ehhez a táblához `subject_change_log`
 --
 
-CREATE TABLE `animal_change_log` (
-  `AnimalLogIndex` int NOT NULL,
-  `AnimalIndex` int NOT NULL,
-  `AnimalID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+CREATE TABLE `subject_change_log` (
+  `SubjectLogIndex` int NOT NULL,
+  `SubjectIndex` int NOT NULL,
+  `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `StudyID` int NOT NULL,
-  `AnimalName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `AnimalGroup` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `AnimalData` json DEFAULT NULL,
+  `SubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `SubjectGroup` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `SubjectData` json DEFAULT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ChangedBy` int NOT NULL COMMENT 'user id of the original specimen state (since the last is stored in the specimens table)'
+  `ChangedBy` int NOT NULL COMMENT 'user id of the original subject state (since the last is stored in the subjects table)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `animal_status_definitions`
+-- Tábla szerkezet ehhez a táblához `subject_status_definitions`
 --
 
-CREATE TABLE `animal_status_definitions` (
+CREATE TABLE `subject_status_definitions` (
   `StatusID` int NOT NULL,
   `StatusName` varchar(16) NOT NULL,
   `StatusDescription` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `animal_status_definitions`
+-- A tábla adatainak kiíratása `subject_status_definitions`
 --
 
-INSERT INTO `animal_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
-(1, 'pending', 'The specimen has not been delivered yet.'),
-(2, 'alive', 'The specimen is alive.'),
+INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
+(1, 'pending', 'The subject has not been delivered yet.'),
+(2, 'alive', 'The subject is alive.'),
 (6, 'terminated', NULL),
 (7, 'dead', NULL),
 (8, 'deleted', NULL);
 
 --
--- Eseményindítók `animal_status_definitions`
+-- Eseményindítók `subject_status_definitions`
 --
 DELIMITER $$
-CREATE TRIGGER `animal_status_definitions_insert` AFTER INSERT ON `animal_status_definitions` FOR EACH ROW UPDATE definition_tables
+CREATE TRIGGER `subject_status_definitions_insert` AFTER INSERT ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
-WHERE TableName = "animal_status_definitions"
+WHERE TableName = "subject_status_definitions"
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `animal_status_definitions_update` AFTER UPDATE ON `animal_status_definitions` FOR EACH ROW UPDATE definition_tables
+CREATE TRIGGER `subject_status_definitions_update` AFTER UPDATE ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
-WHERE TableName = "animal_status_definitions"
+WHERE TableName = "subject_status_definitions"
 $$
 DELIMITER ;
 
@@ -295,7 +295,7 @@ CREATE TABLE `event_change_log` (
   `EventChangeLogIndex` int NOT NULL,
   `EventIndex` int NOT NULL,
   `EventStudy` int NOT NULL,
-  `EventAnimal` int NOT NULL,
+  `EventSubject` int NOT NULL,
   `EventInfoJSON` json DEFAULT NULL,
   `EventModifiedBy` int NOT NULL,
   `EventModifiedAt` timestamp NOT NULL
@@ -355,7 +355,7 @@ CREATE TABLE `event_log` (
   `EventComment` varchar(255) NOT NULL,
   `EventDataJSON` json NOT NULL,
   `EventStudy` int NOT NULL COMMENT 'studies.studyid',
-  `EventAnimal` int NOT NULL COMMENT 'animals.animalID',
+  `EventSubject` int NOT NULL COMMENT 'subjects.subjectID',
   `EventLocation` int NOT NULL COMMENT 'locations.locationid',
   `EventModifiedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `EventModifiedBy` int NOT NULL COMMENT 'users.userid'
@@ -417,7 +417,7 @@ CREATE TABLE `event_type_definitions` (
 --
 
 INSERT INTO `event_type_definitions` (`EventTypeID`, `EventTypeName`, `EventTypeDesc`) VALUES
-(1, 'measurement', 'any kind of measurement / assession performed on the specimen'),
+(1, 'measurement', 'any kind of measurement / assession performed on the subject'),
 (2, 'treatment', NULL),
 (3, 'transport', 'transport form one location to an another'),
 (5, 'care', 'feeding, cleaning, brooming');
@@ -719,21 +719,21 @@ INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd
 --
 
 --
--- A tábla indexei `animals`
+-- A tábla indexei `subjects`
 --
-ALTER TABLE `animals`
-  ADD PRIMARY KEY (`AnimalIndex`);
+ALTER TABLE `subjects`
+  ADD PRIMARY KEY (`SubjectIndex`);
 
 --
--- A tábla indexei `animal_change_log`
+-- A tábla indexei `subject_change_log`
 --
-ALTER TABLE `animal_change_log`
-  ADD PRIMARY KEY (`AnimalLogIndex`);
+ALTER TABLE `subject_change_log`
+  ADD PRIMARY KEY (`SubjectLogIndex`);
 
 --
--- A tábla indexei `animal_status_definitions`
+-- A tábla indexei `subject_status_definitions`
 --
-ALTER TABLE `animal_status_definitions`
+ALTER TABLE `subject_status_definitions`
   ADD PRIMARY KEY (`StatusID`);
 
 --
@@ -847,21 +847,21 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT a táblához `animals`
+-- AUTO_INCREMENT a táblához `subjects`
 --
-ALTER TABLE `animals`
-  MODIFY `AnimalIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `subjects`
+  MODIFY `SubjectIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT a táblához `animal_change_log`
+-- AUTO_INCREMENT a táblához `subject_change_log`
 --
-ALTER TABLE `animal_change_log`
-  MODIFY `AnimalLogIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+ALTER TABLE `subject_change_log`
+  MODIFY `SubjectLogIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT a táblához `animal_status_definitions`
+-- AUTO_INCREMENT a táblához `subject_status_definitions`
 --
-ALTER TABLE `animal_status_definitions`
+ALTER TABLE `subject_status_definitions`
   MODIFY `StatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
