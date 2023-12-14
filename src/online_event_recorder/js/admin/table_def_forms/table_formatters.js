@@ -10,7 +10,7 @@ function unitTypeFormatter(value,row){
 }
 
 function sideFormatter(value,row){
-    var defs = JSON.parse(localStorage.getItem("subject_side_definitions"));
+    var defs = JSON.parse(localStorage.getItem("side_definitions"));
     var match = $.grep(defs, function(def) {
         return def.SideID ===  value;
     });

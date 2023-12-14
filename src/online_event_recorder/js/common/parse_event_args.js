@@ -258,7 +258,7 @@ function eventAssetSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-4 col-form-label").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
     _select_dropdow.append($("<option/>").html("Choose asset...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-    showAllDefs(_select_dropdow,"Asset_definitions","AssetID","AssetName");
+    showAllDefs(_select_dropdow,"asset_definitions","AssetID","AssetName");
 
     container.append(_label);
     container.append($("<div/>").addClass("col-md-8").append(_select_dropdow));
