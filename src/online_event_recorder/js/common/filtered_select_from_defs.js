@@ -95,9 +95,15 @@ function showDefWhereAttrEqualsValueByVisibility(select_object, def_name, def_fi
 
     // populate the select with options
     let options = select_object.find("option");
+
+    options.eq(0).prop('selected', true); // select default element
     
     // iterate over previously defined select entries
-    $.each(options,function(key,entry){
+    $.each(options,function(index,entry){
+        if(index==0){//default entry
+            select_object.
+            return // continue
+        }
 
         let rematch = $.grep(match, function(_match) { 
             return String(_match[select_value_attr]) === String($(entry).attr(select_value_attr)); // a selected prop. is equal to a specific attr.
@@ -111,6 +117,7 @@ function showDefWhereAttrEqualsValueByVisibility(select_object, def_name, def_fi
             $(this).attr("hidden","hidden");
         }
     });
+
 }
 
 function connectSelectByAttr(parent_contaner, child_contaner, child_def_name, child_def_filter_key, parent_key_attr, child_value_attr){
@@ -128,7 +135,7 @@ function connectSelectByAttr(parent_contaner, child_contaner, child_def_name, ch
     // parent container contains a select which has changed
     parent_contaner.find("select").on("change",function(e){
         if($(this).val()!=-1){
-            // console.log($(this).val());
+            
             var selected_parent_DOM = $(this).find(":selected");
 
             showDefWhereAttrEqualsValueByVisibility(child_contaner.find("select"),

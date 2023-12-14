@@ -65,6 +65,7 @@ function createFieldsTable(container, table_id, height){
     toolbar.append($("<button/>").attr("id","toolbar_removeAll").addClass("btn btn-danger admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-trash fa-solid").attr("aria-hidden","true")).append(" Remove All"));
     toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-file-import fa-solid").attr("aria-hidden","true")).append(" Load JSON"));
     toolbar.append($("<button/>").attr("id","toolbar_createJSON").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-code fa-solid").attr("aria-hidden","true")).append(" Generate JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_previewForm").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-eye fa-solid").attr("aria-hidden","true")).append(" Preview"));
 
     table.attr("data-height",String(height));
 
@@ -96,6 +97,7 @@ function createFieldsTable(container, table_id, height){
                 {title: 'Label', field : 'FieldLabel', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'FieldType', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'FieldUnit', align:'center', sortable:true, searchable:true},
+                {title: 'Required', field : 'FieldRequired', align:'center', sortable:true, searchable:true},
                 {title: 'Item Operate', field: 'operate', align: 'center', clickToSelect: false, 
                 events: window.operateEvents, formatter: operateFormatter}
             ],
@@ -188,6 +190,7 @@ function inputFormFields(container){
     var dtype_dropdown = $("<select/>").addClass("form-select required").attr("type","text").attr("id","dtypeSelect").attr("name","FieldDataType").prop('required',true);
     dtype_dropdown.append($("<option/>").html("Choose Field Data Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     dtype_dropdown.append($("<option/>").html("text").attr("value","text"));
+    dtype_dropdown.append($("<option/>").html("longtext").attr("value","longtext"));
     dtype_dropdown.append($("<option/>").html("date").attr("value","date"));
     dtype_dropdown.append($("<option/>").html("time").attr("value","time"));
     dtype_dropdown.append($("<option/>").html("datetime").attr("value","datetime"));
@@ -210,7 +213,7 @@ function inputFormFields(container){
             dtypeNumericGroup.empty();
             var _step = $("<div/>").addClass("col-md-4");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
-            _step.append($("<input/>").addClass("form-control col-md-3").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
+            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
             var _unitType = $("<div/>").addClass("col-md-4");
@@ -223,7 +226,7 @@ function inputFormFields(container){
 
             var _unit = $("<div/>").addClass("col-md-4");
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
-            var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit");
+            var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit").prop('required',true);;
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
             showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit");
             _unit.append(unit_select_dropdow);
@@ -236,17 +239,17 @@ function inputFormFields(container){
             dtypeNumericGroup.empty();
             var _step = $("<div/>").addClass("col-md-2");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
-            _step.append($("<input/>").addClass("form-control col-md-3").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
+            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
             var _min = $("<div/>").addClass("col-md-2");
             _min.append($("<label/>").addClass("form-label").attr("for","dtypeMinInput").html("Field Min"));
-            _min.append($("<input/>").addClass("form-control col-md-3").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMinInput").attr("name","FieldDataMin").prop('required',true).attr("placeholder","e.g. 0, ..."));
+            _min.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMinInput").attr("name","FieldDataMin").prop('required',true).attr("placeholder","e.g. 0, ..."));
             dtypeNumericGroup.append(_min);
 
             var _max = $("<div/>").addClass("col-md-2");
             _max.append($("<label/>").addClass("form-label").attr("for","dtypeMaxInput").html("Field Max"));
-            _max.append($("<input/>").addClass("form-control col-md-3").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMaxInput").attr("name","FieldDataMax").prop('required',true).attr("placeholder","e.g. 100, ..."));
+            _max.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMaxInput").attr("name","FieldDataMax").prop('required',true).attr("placeholder","e.g. 100, ..."));
             dtypeNumericGroup.append(_max);
 
             var _unitType = $("<div/>").addClass("col-md-3");
@@ -295,7 +298,6 @@ function showAddForm(container,form_id, table){
 
     var typeGroup = $("<div/>").addClass("col-md-4");
     typeGroup.append($("<label/>").addClass("form-label").attr("for","typeRadios").html("Field Type"));
-    
     var inlineRadio = $("<div/>").attr("id","typeRadios");
     var inputGroup = $("<div/>").addClass("form-check form-check-inline");
     inputGroup.append($("<input/>").addClass("form-check-input").attr("type","radio").attr("id","inputRadio").attr("name","FieldType").prop('required',true).attr("value","input"));
@@ -304,13 +306,20 @@ function showAddForm(container,form_id, table){
     selectGroup.append($("<input/>").addClass("form-check-input").attr("type","radio").attr("id","selectRadio").attr("name","FieldType").prop('required',true).attr("value","select"));
     selectGroup.append($("<label/>").addClass("form-check-label").attr("for","selectRadio").html("Select field"));
 
+    var requiredGroup = $("<div/>").addClass("form-check form-check-inline");
+    requiredGroup.append($("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","requiredCheckbox").attr("name","FieldRequired").attr("value","true"));
+    requiredGroup.append($("<label/>").addClass("form-check-label").attr("for","requiredCheckbox").html("Required"));
+
     inlineRadio.append(inputGroup);
     inlineRadio.append(selectGroup);
-    typeGroup.append(inlineRadio);
+    inlineRadio.append(requiredGroup);
+
+    typeGroup.append(inlineRadio);   
 
     nameForm.append(nameGroup);
     nameForm.append(labelGroup);
     nameForm.append(typeGroup);
+
     
 
     var additionalForm = $("<div/>").addClass("row mb-2");
@@ -348,6 +357,9 @@ function showAddForm(container,form_id, table){
         })
         form.find("input[type=radio]:checked").each(function(){
             newFieldInfo[$(this).attr("name")]= $(this).val();
+        })
+        form.find("input[type=checkbox]").each(function(){
+            newFieldInfo[$(this).attr("name")]= this.checked;
         })
         // console.log(newFieldInfo);
         table.bootstrapTable("append",newFieldInfo);
@@ -395,6 +407,8 @@ function showEditForm(container, form_id, table){
         form.find("input[type=radio][value=select]").prop("checked", true).trigger("change");
     }
 
+    form.find("#requiredCheckbox").prop("checked",selection.FieldRequired);
+
     form.find("select[name]").each(function(){
         var name = $(this).attr("name");
         if(name in selection){
@@ -403,6 +417,7 @@ function showEditForm(container, form_id, table){
         $(this).trigger("change");
     });
     // re-fill input (step)
+    
     form.find("input[name][type!=radio]").each(function(){
         var name = $(this).attr("name");
         if(name in selection){
@@ -435,6 +450,10 @@ function showEditForm(container, form_id, table){
         })
         form.find("input[type=radio]:checked").each(function(){
             newFieldInfo[$(this).attr("name")]= $(this).val();
+        })
+
+        form.find("input[type=checkbox]").each(function(){
+            newFieldInfo[$(this).attr("name")]= this.checked;
         })
         // console.log(newFieldInfo);
 
@@ -533,6 +552,32 @@ function showTableJSON(container,table){
 
 }
 
+function previewTableForm(container,table){
+    container.empty();
+
+    var content = $("<div/>").addClass("container shadow pb-3 mb-3");
+
+    var header= $("<div/>").addClass("row p-2 bg-dark text-white mb-3").attr("id","formTitle");
+    
+    header.append($("<div/>").addClass("col-md-11 fs-4").html("Event form preview"));
+    header.append($("<div/>").addClass("col-md-1 float-end").append($("<i/>").addClass("btn-close btn-close-white fs-4 float-end")));
+
+    content.append(header);
+
+    var formPreview = $("<div/>").addClass("container shadow pb-3 mb-3");
+
+    showCustomArgs(formPreview,table.bootstrapTable("getData"));
+
+    content.append(formPreview);
+
+    content.find(".btn-close").on("click",function(){
+        container.empty();
+    })
+
+    container.append(content);
+
+}
+
 
 function showEventFieldDefinitionHelper(container){
     createFieldsTable(container,fieldDefTableID,500);
@@ -618,6 +663,10 @@ function showEventFieldDefinitionHelper(container){
 
     toolbar.find("#toolbar_createJSON").on("click",function(e){
         showTableJSON(content_container, table);
+    })
+
+    toolbar.find("#toolbar_previewForm").on("click",function(e){
+        previewTableForm(content_container, table);
     })
 
 }

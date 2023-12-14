@@ -51,34 +51,26 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/core/definition_handler.js" ></script>
 	<script defer src="js/core/status_handler.js"></script>
 
-
 	<script defer src="js/admin/core/admin_definition_form_handler.js"></script>
 	<script defer src="js/admin/core/admin_table_creation.js"></script>
 
-	<script defer src="js/admin/forms/user_table_form.js"></script>
-
-	<script defer src="js/admin/forms/table_formatters.js"></script>
-	
-	<script defer src="js/admin/forms/study_definition_form.js"></script>
-
-	<script defer src="js/admin/forms/unit_type_definitions_form.js"></script>
-	<script defer src="js/admin/forms/unit_definitions_form.js"></script>
-
-	<script defer src="js/admin/forms/location_definitions_form.js"></script>
-
-	<script defer src="js/admin/forms/bodypart_definitions.js"></script>
-
-	<script defer src="js/admin/forms/consumable_definitions_form.js"></script>
-	<script defer src="js/admin/forms/consumable_type_definitions_form.js"></script>
-
-	<script defer src="js/admin/forms/asset_definitions_form.js"></script>
-
-	<script defer src="js/admin/forms/event_type_definitions_form.js"></script>
-	<script defer src="js/admin/forms/event_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/table_formatters.js"></script>
+	<script defer src="js/admin/table_def_forms/study_definition_form.js"></script>
+	<script defer src="js/admin/table_def_forms/unit_type_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/unit_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/location_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/bodypart_definitions.js"></script>
+	<script defer src="js/admin/table_def_forms/consumable_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/consumable_type_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/asset_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/event_type_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
 
-	<script defer src="js/admin/forms/event_def_helper.js"></script>
+	<script defer src="js/admin/tools/event_def_helper.js"></script>
+	<script defer src="js/admin/tools/user_management.js"></script>
 
+	<script defer src="js/common/parse_event_args.js"></script>
 
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
@@ -122,7 +114,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						</ul>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_event_def_helper()">Event form definition helper</a>
+						<a class="nav-link active" href="#" onclick="show_event_def_helper()">EventDefTool</a>
 					</li>
 				</ul>
 				<div class="d-flex ">
@@ -184,7 +176,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 			
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event form definition helper"));
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event definition tool"));
 			main_container.append(_title);
 
 			showEventFieldDefinitionHelper(main_container);		

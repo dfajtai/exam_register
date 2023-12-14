@@ -3,6 +3,10 @@
     margin-bottom: 5px;
 }
 
+.event-custom-field{
+    margin-bottom: 5px;
+}
+
 .mt-6 {
     margin-top: 4rem; 
 }
@@ -15,3 +19,7 @@
 .copy-popover {
     --bs-popover-bg: lightgreen;
   }
+
+.w-40 {
+    width: 40%;
+}
