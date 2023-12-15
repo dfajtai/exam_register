@@ -1,26 +1,35 @@
-var fieldDefTableID = "fieldDefTable";
+var deftool_table_id = "fieldDefTable";
+var deftool_content = {};
+var deftool_content_name = null;
+
+var deftool_search = false;
+var deftool_sort = false;
+var deftool_edit = false;
+
 
 window.operateEvents = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+fieldDefTableID).bootstrapTable('getData');
+        var data = $('#'+deftool_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
-        $('#'+fieldDefTableID).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+fieldDefTableID).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+fieldDefTableID).bootstrapTable('getData');
+        var data = $('#'+deftool_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
-        $('#'+fieldDefTableID).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+fieldDefTableID).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-
+        showEditForm(deftool_content,"edit_form", $('#'+deftool_table_id),index);
+        deftool_content_name = "edit";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     },
 
     'click .remove': function (e, value, row, index) {
@@ -39,10 +48,11 @@ window.operateEvents = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+fieldDefTableID).bootstrapTable('remove', {
+                    $('#'+deftool_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
+                    statusToStorage("defHelperFileds",JSON.stringify($('#'+deftool_table_id).bootstrapTable('getData')));
                 }
             }
             });
@@ -59,11 +69,11 @@ function createFieldsTable(container, table_id, height){
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
-    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-plus").attr("aria-hidden","true")).append(" Add New"));
-    toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-success admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-solid fa-copy").attr("aria-hidden","true")).append(" Duplicate Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_removeAll").addClass("btn btn-danger admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-trash fa-solid").attr("aria-hidden","true")).append(" Remove All"));
-    toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-file-import fa-solid").attr("aria-hidden","true")).append(" Load JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn deftool-disable").html($("<i/>").addClass("fa fa-plus").attr("aria-hidden","true")).append(" Add New"));
+    // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select deftool-disable").html($("<i/>").addClass("fa fa-solid fa-copy").attr("aria-hidden","true")).append(" Duplicate Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select deftool-disable").html($("<i/>").addClass("fa fa-trash fa-solid").attr("aria-hidden","true")).append(" Remove Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn deftool-disable").html($("<i/>").addClass("fa fa-file-import fa-solid").attr("aria-hidden","true")).append(" Load JSON"));
     toolbar.append($("<button/>").attr("id","toolbar_createJSON").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-code fa-solid").attr("aria-hidden","true")).append(" Generate JSON"));
     toolbar.append($("<button/>").attr("id","toolbar_previewForm").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-eye fa-solid").attr("aria-hidden","true")).append(" Preview"));
 
@@ -75,10 +85,13 @@ function createFieldsTable(container, table_id, height){
 
     table.attr("data-pagination","false");
     table.attr("data-show-pagination-switch","false");
+    table.attr("data-page-list","[10, 25, 50, 100, all]");
 
     table.attr("data-show-footer","false");
 
     table.attr("data-search","true");
+    table.attr("data-visible-search","true");
+    table.attr("data-search-highlight","true");
 
     table.attr("data-maintain-meta-data","true");
 
@@ -86,25 +99,30 @@ function createFieldsTable(container, table_id, height){
 
     table.attr("data-locale","hu-HU");
 
+    table.attr("data-click-to-select","true");
+    table.attr("data-single-select","false");
+    table.attr("data-multiple-select-row","false");
+
+    table.attr("data-sort-reset","true");
+
 
     container.append(table);
     container.append(toolbar);
 
-    table.bootstrapTable("destroy").bootstrapTable({
+    table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: 'Name', field : 'FieldName', align:'center', sortable:true, searchable:true},
                 {title: 'Label', field : 'FieldLabel', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'FieldType', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'FieldUnit', align:'center', sortable:true, searchable:true},
+                {title: 'Source', field : 'FieldSource', align:'center', sortable:true, searchable:true},
                 {title: 'Required', field : 'FieldRequired', align:'center', sortable:true, searchable:true},
-                {title: 'Item Operate', field: 'operate', align: 'center', clickToSelect: false, 
+                {title: 'Item Operate', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.operateEvents, formatter: operateFormatter}
             ],
             pagination:true,
-            clickToSelect:true,
-            checkboxHeader:false,
-            multipleSelectRow:true,
+            checkboxHeader:true,
             smartDisplay:true,
             detailFormatter:simpleFlatFormatter
         });
@@ -112,54 +130,29 @@ function createFieldsTable(container, table_id, height){
 }
 
 function operateFormatter(value, row, index) {
+    var container = $("<div/>").addClass("deftool-disable");
+    var up_dpwn_gorup = $("<div/>").addClass("btn-group me-3 ");
+    var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up deftool-disable").append($("<i/>").addClass("fa fa-angle-up"));
+    var btn_down = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_down deftool-disable").append($("<i/>").addClass("fa fa-angle-down"));
+    up_dpwn_gorup.append(btn_up)
+    up_dpwn_gorup.append(btn_down)
+    container.append(up_dpwn_gorup);
+    container.append($("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 deftool-disable").append($("<i/>").addClass("fa fa-edit")))
+    container.append($("<button/>").addClass("btn btn-outline-danger btn-sm remove deftool-disable").append($("<i/>").addClass("fa fa-trash")))
+
+    
     if (index==0){
-        return [
-            '<a class="move_up" title="Move Up">',
-            '<i class="fa fa-solid fa-arrow-up me-1" style="color: grey"></i>',
-            '</a>  ',
-            '<a class="move_down" href="javascript:void(0)" title="Move down">',
-            '<i class="fa fa-solid fa-arrow-down me-1"></i>',
-            '</a>  ',
-            '<a class="edit" href="javascript:void(0)" title="Edit">',
-            '<i class="fa fa-edit ms-2"></i>',
-            '</a> ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="fa fa-trash ms-2" style="color:red"></i>',
-            '</a> ',
-
-
-          ].join('')
+        btn_up.addClass("disabled").removeClass("deftool-disable");
     }
-    else if(index==$('#'+fieldDefTableID).bootstrapTable('getData').length-1){
-        return [
-            '<a class="move_up" href="javascript:void(0)" title="Move Up">',
-            '<i class="fa fa-solid fa-arrow-up me-1"></i>',
-            '</a>  ',
-            '<a class="move_down" title="Move down">',
-            '<i class="fa fa-solid fa-arrow-down me-1" style="color: grey"></i>',
-            '</a>  ',
-            '<a class="edit" href="javascript:void(0)" title="Edit">',
-            '<i class="fa fa-edit ms-2"></i>',
-            '</a> ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="fa fa-trash ms-2" style="color:red"></i>',
-            '</a> '
-          ].join('')
+    else if(index==$('#'+deftool_table_id).bootstrapTable('getData').length-1){
+        btn_down.addClass("disabled").removeClass("deftool-disable");
     }
-    return [
-      '<a class="move_up" href="javascript:void(0)" title="Move Up">',
-      '<i class="fa fa-solid fa-arrow-up me-1"></i>',
-      '</a>  ',
-      '<a class="move_down" href="javascript:void(0)" title="Move down">',
-      '<i class="fa fa-solid fa-arrow-down me-1"></i>',
-      '</a>  ',
-      '<a class="edit" href="javascript:void(0)" title="Edit">',
-      '<i class="fa fa-edit ms-2"></i>',
-      '</a> ',
-      '<a class="remove" href="javascript:void(0)" title="Remove">',
-      '<i class="fa fa-trash ms-2" style="color:red"></i>',
-      '</a> ',
-    ].join('')
+
+    if(deftool_sort||deftool_search||deftool_edit){
+        container.find("button").addClass("disabled");
+    }
+
+    return container.prop("outerHTML");
   }
 
 
@@ -362,57 +355,70 @@ function showAddForm(container,form_id, table){
             newFieldInfo[$(this).attr("name")]= this.checked;
         })
         // console.log(newFieldInfo);
+
+        if(newFieldInfo.FieldType == "input"){
+            delete newFieldInfo.FieldSource;
+        }
+        else if(newFieldInfo.FieldType == "select"){
+            delete newFieldInfo.FieldUnit;
+            delete newFieldInfo.FieldDataType;
+            delete newFieldInfo.FieldDataStep;
+            delete newFieldInfo.FieldDataMin;
+            delete newFieldInfo.FieldDataMax;
+        }
+
+
         table.bootstrapTable("append",newFieldInfo);
         statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
 
-        container.empty();
+
+        deftool_content_name = "";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+
     });
 
     form.find(".btn-close").on("click",function(){
-        container.empty();
+        deftool_content_name = "";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     container.append(form);
 
 }
 
-function showEditForm(container, form_id, table){
+function showEditForm(container, form_id,  table, index){
     // container.empty();
     showAddForm(container, form_id, table);
 
     var form = container.find("#"+form_id);
 
-    var selection =  table.bootstrapTable('getSelections');
-    if(selection.length>0){
-        selection=selection[0];
+    if(index>table.bootstrapTable('getData').length){
+        return
     }
-    else{
-        return;
-    }
-
+    var entry = table.bootstrapTable('getData')[index];
 
     // TODO store inputs updated to prevent redundant update
 
     form.find("input[name][type!=radio]").each(function(){
         var name = $(this).attr("name");
-        if(name in selection){
-            $(this).val(selection[name]);
+        if(name in entry){
+            $(this).val(entry[name]);
         }
     });
 
-    if(selection.FieldType=="input"){
+    if(entry.FieldType=="input"){
         form.find("input[type=radio][value=input]").prop("checked", true).trigger("change");
     }
-    else if(selection.FieldType=="select"){
+    else if(entry.FieldType=="select"){
         form.find("input[type=radio][value=select]").prop("checked", true).trigger("change");
     }
 
-    form.find("#requiredCheckbox").prop("checked",selection.FieldRequired);
+    form.find("#requiredCheckbox").prop("checked",entry.FieldRequired);
 
     form.find("select[name]").each(function(){
         var name = $(this).attr("name");
-        if(name in selection){
-            $(this).val(selection[name]);
+        if(name in entry){
+            $(this).val(entry[name]);
         }
         $(this).trigger("change");
     });
@@ -420,14 +426,14 @@ function showEditForm(container, form_id, table){
     
     form.find("input[name][type!=radio]").each(function(){
         var name = $(this).attr("name");
-        if(name in selection){
-            $(this).val(selection[name]);
+        if(name in entry){
+            $(this).val(entry[name]);
         }
     });
     form.find("select[name]").each(function(){
         var name = $(this).attr("name");
-        if(name in selection){
-            $(this).val(selection[name]);
+        if(name in entry){
+            $(this).val(entry[name]);
         }
     });
 
@@ -457,15 +463,30 @@ function showEditForm(container, form_id, table){
         })
         // console.log(newFieldInfo);
 
-        $('input[name="btSelectItem"]:checked').each(function () {
-            let index = $(this).data('index');
-            table.bootstrapTable("updateRow",{
-                index: index,
-                row: newFieldInfo
-                })
-            statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
-            
-        })
+        if(newFieldInfo.FieldType == "input"){
+            console.log("input");
+            console.log(newFieldInfo);
+            newFieldInfo.FieldSource = undefined;
+            console.log(newFieldInfo);
+        }
+        else if(newFieldInfo.FieldType == "select"){
+            newFieldInfo.FieldUnit = undefined;
+            newFieldInfo.FieldDataType = undefined;
+            newFieldInfo.FieldDataStep = undefined;
+            newFieldInfo.FieldDataMin = undefined;
+            newFieldInfo.FieldDataMax = undefined;
+        }
+
+        table.bootstrapTable("remove",{
+            field: "$index",
+            values: [index]
+            });
+        table.bootstrapTable("insertRow",{
+            index: index,
+            row: newFieldInfo
+            })
+        statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+
         container.empty();
     });
 }
@@ -497,7 +518,8 @@ function loadJSON(container,table){
     })
 
     content.find(".btn-close").on("click",function(){
-        container.empty();
+        deftool_content_name = "";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     container.append(content);
@@ -545,7 +567,8 @@ function showTableJSON(container,table){
 
 
     content.find(".btn-close").on("click",function(){
-        container.empty();
+        deftool_content_name = "";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     container.append(content);
@@ -571,7 +594,8 @@ function previewTableForm(container,table){
     content.append(formPreview);
 
     content.find(".btn-close").on("click",function(){
-        container.empty();
+        deftool_content_name = "";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     container.append(content);
@@ -579,44 +603,68 @@ function previewTableForm(container,table){
 }
 
 
-function showEventFieldDefinitionHelper(container){
-    createFieldsTable(container,fieldDefTableID,500);
-    var table = $('#'+fieldDefTableID);
+function showEventFieldDefinitionTool(container){
+    createFieldsTable(container,deftool_table_id,500);
+    var table = $('#'+deftool_table_id);
     
     if(statusInStorage("defHelperFileds")){
         table.bootstrapTable('append',JSON.parse(statusFromStorage("defHelperFileds")));
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
+    
     toolbar.find(".needs-select").addClass("disabled");
     
-    var content_container = $("<div/>").addClass("pt-3");
-    container.append(content_container);
+    deftool_content = $("<div/>").addClass("pt-3");
+    container.append(deftool_content);
 
-    table.on('all.bs.table',
-        function (e) {
+
+
+    table.on('check.bs.table check-all.bs.table uncheck.bs.table uncheck-all.bs.table',function(){
+            if(deftool_content_name==""){
+                deftool_content_name == "";
+                $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+            }
+
             var selection =  table.bootstrapTable('getSelections');
             if(selection.length>0){
                 selection=selection[0];
-                toolbar.find(".needs-select").removeClass("disabled");
+                if(!(deftool_search||deftool_sort||deftool_content_name!="")) toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
-                toolbar.find(".needs-select").addClass("disabled");
+                if(!(deftool_search||deftool_sort||deftool_content_name!="")) toolbar.find(".needs-select").addClass("disabled");
             }
         }
     )
     
-    toolbar.find("#toolbar_removeAll").on("click",function(e){
-        // $('input[name="btSelectItem"]:checked').each(function () {
-        //     let index = $(this).data('index');
-        //     table.bootstrapTable("remove",{
-        //         field: '$index',
-        //         values: [index]
-        //         })
-        // })
 
+    table.on('search.bs.table',function(e,text){
+        if(text!=""){
+            deftool_search=true;
+            $(document).find(".deftool-disable").addClass("disabled");
+        }
+        else{
+            deftool_search=false;
+            
+            if(!deftool_sort) $(document).find(".deftool-disable").removeClass("disabled");
+        }
+    }
+    )
+
+    table.on('sort.bs.table',function(e,name,order){
+        if(order){
+            deftool_sort=true;
+            $(document).find(".deftool-disable").addClass("disabled");
+        }else{
+            deftool_sort=false;
+            if(!deftool_search) $(document).find(".deftool-disable").removeClass("disabled");
+        }
+    }
+    )
+
+    toolbar.find("#toolbar_removeSelected").on("click",function(e){
         bootbox.confirm({
-            message: 'You are going to remove all fileds. Do you want to proceed?',
+            message: 'You are going to remove the selected fileds. Do you want to proceed?',
             buttons: {
             confirm: {
             label: 'Yes',
@@ -629,7 +677,14 @@ function showEventFieldDefinitionHelper(container){
             },
             callback: function (result) {
                 if(result){
-                    table.bootstrapTable("removeAll");
+                    var indices = [];
+                    
+                    
+                    $('input[name="btSelectItem"]:checked').each(function(){
+                        indices.push($(this).data('index'));
+                    })
+                    // console.log(indices);
+                    table.bootstrapTable("remove",{field:"$index",values:indices});
                     statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
                 }
             }
@@ -639,34 +694,97 @@ function showEventFieldDefinitionHelper(container){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        showAddForm(content_container,"add_form", table);
+        showAddForm(deftool_content,"add_form", table);
+        deftool_content_name = "add";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
-        $('input[name="btSelectItem"]:checked').each(function () {
-            let index = $(this).data('index');
-            var data = table.bootstrapTable('getData');
-            var _data = {... data[index]};
-            _data["state"] = false;
-            table.bootstrapTable("append",_data);
+        var selected = $('input[name="btSelectItem"]:checked');
+        if(selected.length>1){
+            $('input[name="btSelectItem"]:checked').each(function () {
+                let index = $(this).data('index');
+                var data = table.bootstrapTable('getData');
+                var _data = {... data[index]};
+                _data["state"] = false;
+                table.bootstrapTable("append",_data);
+            })
             statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
-        })
+        }
+        else{
+            $('input[name="btSelectItem"]:checked').each(function () {
+                let index = $(this).data('index');
+                var data = table.bootstrapTable('getData');
+                var _data = {... data[index]};
+                _data["state"] = false;
+                table.bootstrapTable("insertRow",{index:index+1,row:_data});
+            })
+            statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+        }
+
     })
 
-    toolbar.find("#toolbar_edit").on("click",function(e){
-        showEditForm(content_container,"edit_form", table);
-    })
+    // toolbar.find("#toolbar_edit").on("click",function(e){
+    //     showEditForm(deftool_content,"edit_form", table);
+    //     deftool_content_name = "edit";
+    // })
 
     toolbar.find("#toolbar_loadJSON").on("click",function(e){
-        loadJSON(content_container, table);
+        loadJSON(deftool_content, table);
+        deftool_content_name = "jsonLoad";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     toolbar.find("#toolbar_createJSON").on("click",function(e){
-        showTableJSON(content_container, table);
+        showTableJSON(deftool_content, table);
+        deftool_content_name = "jsonShow";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
     })
 
     toolbar.find("#toolbar_previewForm").on("click",function(e){
-        previewTableForm(content_container, table);
+        previewTableForm(deftool_content, table);
+
+        deftool_content_name = "preview";
+        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+
+        var named_fileds = $(deftool_content).find("[name]");
+        var names = [];
+        $.each(named_fileds, function (){
+            names.push($(this).attr("name"))
+        });
+
+        if(hasDuplicates(names)){
+            var doubles = getDoubles(names);
+            bootbox.alert({
+                message: 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/>'+JSON.stringify(doubles),
+                buttons: {
+                    ok: {
+                        label: 'Accept',
+                        className: 'btn-outline-primary'
+                        },
+                    },
+                });
+        }
     })
+
+
+
+    $( document ).on( "deftool_integrity_protection", {meassage: "DefTool custom event for integrity."}, 
+        function( event, content_name ) {
+            console.log( event.data.meassage );
+            console.log( deftool_content ); 
+
+            if(content_name!=""){
+                $(document).find(".deftool-disable").addClass("disabled");
+                $(document).find(".search-input").prop( "disabled", true );
+            }
+            else if(content_name==""){
+                $(deftool_content).empty();
+                $(document).find(".deftool-disable").not(".needs-select").removeClass("disabled");
+                $(document).find(".search-input").prop( "disabled", false );
+            }
+        }
+    );
+    
 
 }

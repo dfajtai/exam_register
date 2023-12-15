@@ -14,6 +14,7 @@ function createAdminTable(container, table_id, height){
     table.attr("data-height",String(height));
 
     table.attr("data-search","true");
+    table.attr("data-visible-search","true");
 
     table.attr("data-show-refresh","true");
 
@@ -37,6 +38,10 @@ function createAdminTable(container, table_id, height){
     table.attr("data-show-footer","false");
 
     table.attr("data-locale","hu-HU");
+    
+    table.attr("data-click-to-select","true");
+    table.attr("data-single-select","true");
+    table.attr("data-multiple-select-row","false");
     
     table.attr("data-maintain-meta-data","true");
 

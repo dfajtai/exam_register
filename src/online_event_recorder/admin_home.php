@@ -48,13 +48,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
 
-	<script defer src="js/core/definition_handler.js" ></script>
-	<script defer src="js/core/status_handler.js"></script>
+	<script defer src="js/common/definition_handler.js" ></script>
+	<script defer src="js/common/status_handler.js"></script>
 
-	<script defer src="js/admin/core/admin_definition_form_handler.js"></script>
-	<script defer src="js/admin/core/admin_table_creation.js"></script>
-
-	<script defer src="js/admin/table_def_forms/table_formatters.js"></script>
+	<script defer src="js/admin/table_def_forms/admin_definition_form_handler.js"></script>
+	<script defer src="js/admin/table_def_forms/admin_definition_table_creation.js"></script>
+	<script defer src="js/admin/table_def_forms/admin_definition_table_formatters.js"></script>
+	
 	<script defer src="js/admin/table_def_forms/study_definition_form.js"></script>
 	<script defer src="js/admin/table_def_forms/unit_type_definitions_form.js"></script>
 	<script defer src="js/admin/table_def_forms/unit_definitions_form.js"></script>
@@ -67,7 +67,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
 
-	<script defer src="js/admin/tools/event_def_helper.js"></script>
+	<script defer src="js/admin/tools/event_def_tool.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 
 	<script defer src="js/common/parse_event_args.js"></script>
@@ -114,7 +114,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						</ul>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_event_def_helper()">EventDefTool</a>
+						<a class="nav-link active" href="#" onclick="show_event_def_tool()">EventDefTool</a>
 					</li>
 				</ul>
 				<div class="d-flex ">
@@ -167,19 +167,24 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			var fun = def_params.func;
 			fun(_table,table_id);
 
+			clearAllStatusFromUrl();
 			statusToUrl("def",def_name);
 
 			$('.navbar-collapse').collapse('hide');
 		}
 
-		function show_event_def_helper(){
+
+		function show_event_def_tool(){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 			
 			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event definition tool"));
 			main_container.append(_title);
 
-			showEventFieldDefinitionHelper(main_container);		
+			showEventFieldDefinitionTool(main_container);		
+			
+			clearAllStatusFromUrl();
+			statusToUrl("tool","EventDefTool");
 			
 			$('.navbar-collapse').collapse('hide');
 		}
@@ -225,6 +230,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 				if (statusInUrl("def")){
 					show_table(statusFromUrl("def"));
+				}
+				else if(statusInUrl("tool")){
+					var tool = statusFromUrl("tool");
+					if(tool=="EventDefTool") show_event_def_tool();
+					
 				}
 				else{
 					show_table("users");

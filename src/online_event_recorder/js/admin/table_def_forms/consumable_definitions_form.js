@@ -43,7 +43,7 @@ function consumable_definition_update_ajax(key_info,params,callback) {
 
 function initConsumableDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
-    table.bootstrapTable("destroy").bootstrapTable({
+    table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: 'ID', field : 'ConsumableID', align:'center', sortable:true, searchable:false},
@@ -57,9 +57,7 @@ function initConsumableDefinitionsTable(container,tableId){
             showExport:true,
             exportUnitTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],
             exportDataUnitType: 'all',
-            clickToSelect:true,
             checkboxHeader:false,
-            multipleSelectRow:true,
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,

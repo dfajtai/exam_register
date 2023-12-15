@@ -47,8 +47,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.2/crc32.min.js"></script>
 
 
-	<script defer src="js/core/definition_handler.js"></script>
-	<script defer src="js/core/status_handler.js"></script>
+	<script defer src="js/common/definition_handler.js"></script>
+	<script defer src="js/common/status_handler.js"></script>
 
 	<script defer src="js/common/flat_def_info_block.js"></script>
 

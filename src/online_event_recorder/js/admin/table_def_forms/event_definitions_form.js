@@ -42,7 +42,7 @@ function event_definition_update_ajax(key_info,params,callback) {
 
 function initEventDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
-    table.bootstrapTable("destroy").bootstrapTable({
+    table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: 'ID', field : 'EventID', align:'center', sortable:true, searchable:false},
@@ -55,9 +55,7 @@ function initEventDefinitionsTable(container,tableId){
             showExport:true,
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],
             exportDataType: 'all',
-            clickToSelect:true,
             checkboxHeader:false,
-            multipleSelectRow:true,
             smartDisplay:true,
             autoRefresh:true,
             autoRefreshStatus:false,
