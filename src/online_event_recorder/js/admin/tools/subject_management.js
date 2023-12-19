@@ -533,8 +533,6 @@ function initSubjectModalImport(container,table){
 
     form.on('submit',function(e){
         e.preventDefault();
-
-
         modal.modal('hide');
         form[0].reset();
     });
@@ -543,12 +541,13 @@ function initSubjectModalImport(container,table){
     file_input_group.find("#uploadBtn").on("click",function(){
         const fileInput = document.getElementById("inputFileSelect");
         const selectedFiles = fileInput.files;
-        
 
         if(selectedFiles.length==0){
             return;
         }
         console.log(selectedFiles[0]);
+
+        // TODO https://imagekit.io/blog/uploading-multiple-files-using-javascript/
     })
 }
 
