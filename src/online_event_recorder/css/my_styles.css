@@ -16,10 +16,6 @@
 } */
 
 
-.copy-popover {
-    --bs-popover-bg: lightgreen;
-  }
-
 .w-40 {
     width: 40%;
 }

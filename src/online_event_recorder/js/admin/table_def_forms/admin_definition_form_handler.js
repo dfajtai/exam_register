@@ -21,6 +21,7 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
                 values[field.name] = field.value;
             }
         });
+        
         insert_ajax(values,function(){table.bootstrapTable('refresh')});
         modal.modal('hide');
         form[0].reset();
@@ -76,6 +77,7 @@ function modalInsert(data_name, container, modal_id, table_id,
         modal_body.find('#add_new_form')[0].reset();
     })
 
+
     modal_footer.find("#copy_selected").click(function(){
         var selection =  table.bootstrapTable('getSelections');
         if(selection.length>0){
@@ -87,7 +89,7 @@ function modalInsert(data_name, container, modal_id, table_id,
         modal_body.find('#add_new_form').find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in selection){
-                $(this).val(selection[name]);
+                $(this).val(selection[name]).trigger("change");
             }
         });
         modal_body.find('#add_new_form').find("textarea[name]").each(function(){
@@ -128,6 +130,57 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
 
     form.append(submitForm);
 
+    var indices = [];
+
+
+    $(modal).on('show.bs.modal', function () {
+            indices = [];
+            var selection =  table.bootstrapTable('getSelections');
+
+            if(selection.length>0){
+                selection=selection[0];
+                submitButton.removeClass("disabled");
+            }
+            else{
+                return;
+            }
+                        
+            $('input[name="btSelectItem"]:checked').each(function(){
+                indices.push($(this).data('index'));
+            })
+
+            form.find("input[name]").each(function(){
+                var name = $(this).attr("name");
+                if(name in selection){
+                    $(this).val(selection[name]).trigger("change");
+                }
+            });
+            form.find("textarea[name]").each(function(){
+                var name = $(this).attr("name");
+                if(name in selection){
+                    if(name.includes("JSON")){
+                        let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
+                        // console.log(pretty_json);
+                        // $(this).val(selection[name]);
+
+                        // $(this).val(pretty_json);
+                        $(this).val(selection[name]);
+                    }
+                    else{
+                        $(this).val(selection[name]);
+                    }
+                }
+            });
+            
+            form.find("select[name]").each(function(){
+                var name = $(this).attr("name");
+                if(name in selection){
+                    $(this).val(selection[name]);
+                }
+            });
+      })
+
+
     table.on('check.bs.table check-all.bs.table',
     function () {
         var selection =  table.bootstrapTable('getSelections');
@@ -138,35 +191,6 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
         else{
             return;
         }
-        form.find("input[name]").each(function(){
-            var name = $(this).attr("name");
-            if(name in selection){
-                $(this).val(selection[name]);
-            }
-        });
-        form.find("textarea[name]").each(function(){
-            var name = $(this).attr("name");
-            if(name in selection){
-                if(name.includes("JSON")){
-                    let pretty_json = JSON.stringify(JSON.parse(selection[name]),null,2)
-                    // console.log(pretty_json);
-                    // $(this).val(selection[name]);
-
-                    // $(this).val(pretty_json);
-                    $(this).val(selection[name]);
-                }
-                else{
-                    $(this).val(selection[name]);
-                }
-            }
-        });
-        
-        form.find("select[name]").each(function(){
-            var name = $(this).attr("name");
-            if(name in selection){
-                $(this).val(selection[name]);
-            }
-        });
     });
 
     table.on('uncheck.bs.table uncheck-all.bs.table refresh.bs.table',
@@ -212,7 +236,7 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
         form.find("select[name]").each(function(){
             values[$(this).attr("name") ] = $(this).val();
         });
-        
+
         update_ajax(key_info,values,function(){table.bootstrapTable('refresh')});
         modal.modal('hide');
         form[0].reset();
@@ -247,7 +271,7 @@ function modalUpdate(data_name, container, modal_id, table_id,
     var modal_body = $("<div/>").addClass("modal-body");
 
     var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-arrow-rotate-right").attr("aria-hidden","true")).append(" Revert"));
+    modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-arrow-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
     modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);

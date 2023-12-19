@@ -25,6 +25,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<link rel="stylesheet" href="css/my_styles.css">
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.6/underscore-min.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 
@@ -51,6 +53,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/status_handler.js"></script>
 
 	<script defer src="js/common/flat_def_info_block.js"></script>
+	<script defer src="js/common/filtered_select_from_defs.js"></script>
+	<script defer src="js/common/def_search.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
 		

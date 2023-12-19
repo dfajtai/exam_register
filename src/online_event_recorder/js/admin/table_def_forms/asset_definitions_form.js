@@ -63,7 +63,7 @@ function initAssetDefinitionsTable(container,tableId){
             detailFormatter:simpleFlatFormatter
         });
     
-    table.bootstrapTable('refreshOptions', { ajax:asset_definition_retrieve_ajax });
+    table.bootstrapTable('refreshOptions', { ajax: asset_definition_retrieve_ajax });
 
     modalInsert("Asset", container,"asset_modal_add_new",tableId, assetDefinitionInputs, asset_definition_insert_ajax);
     modalUpdate("Asset", container,"asset_modal_edit_selected",tableId, assetDefinitionInputs, asset_definition_update_ajax,"AssetID");

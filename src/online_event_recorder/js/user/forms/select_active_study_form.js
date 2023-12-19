@@ -11,9 +11,7 @@ function showSelectActiveStudyForm(container){
     var study_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","selectedStudy").attr("name","activeStudy").prop('required',true);
     study_select_dropdow.append($("<option/>").html("Choose Active Study...").prop('selected',true).attr("value",-1).attr("disabled","disabled").attr("value",""));
 
-    $.each(defs.studies,function(key,entry){
-        study_select_dropdow.append($("<option/>").html(entry.StudyName).attr("value",entry.StudyID))
-    });
+    showAllDefs(study_select_dropdow,"studies","StudyID","StudyName");
 
     studySelect.append(study_select_dropdow);
     selectForm.append(studySelect)
@@ -52,17 +50,11 @@ function showSelectActiveStudyForm(container){
         let selectedID = JSON.parse($(this).find("#selectedStudy").val());
         currentStudyInfoBlock.html(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID));
 
-        if ('URLSearchParams' in window) {
-            let searchParams = new URLSearchParams(window.location.search)
-            $.each(formData, function( index, element ) {
-                // alert( index + "= " + element.name + ": " + element.value);
-                searchParams.set(element.name,element.value);
-                // localStorage.setItem(element.name,element.value);
-                statusToStorage(element.name,element.value);
-              });            
-            let newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
-            history.pushState(null, '', newRelativePathQuery);
-        }
+        $.each(formData, function( index, element ) {
+            statusToUrl(element.name,element.value)
+            statusToStorage(element.name,element.value);
+        }); 
+
         selectActiveStudyForm[0].reset();
         selectedStudyInfoBlock.empty();
     });

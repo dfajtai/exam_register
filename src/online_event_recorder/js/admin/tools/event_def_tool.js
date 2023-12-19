@@ -1,39 +1,35 @@
-var deftool_table_id = "fieldDefTable";
-var deftool_content = {};
-var deftool_content_name = null;
+var _table_id = "fieldDefTable";
+var _content = {};
+var _content_name = "";
+var _lock_list = []
 
-var deftool_search = false;
-var deftool_sort = false;
-var deftool_edit = false;
-
-
-window.operateEvents = {
+window.eventDefOperateEvents = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+deftool_table_id).bootstrapTable('getData');
+        var data = $('#'+_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
-        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        upper_data.state = upper_data.state===undefined ? false : upper_data.state;
+        $('#'+_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+deftool_table_id).bootstrapTable('getData');
+        var data = $('#'+_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
-        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+deftool_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        lower_data.state = lower_data.state === undefined ? false : lower_data.state;
+        $('#'+_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        showEditForm(deftool_content,"edit_form", $('#'+deftool_table_id),index);
-        deftool_content_name = "edit";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        showDeftoolEditForm(_content,"edit_form", $('#'+_table_id),index);
+        _content_name = "edit";
+        $( document ).trigger( "_lock", [ "edit"] );
     },
-
     'click .remove': function (e, value, row, index) {
-
         bootbox.confirm({
             message: 'You are going to the selected row: [name = "'+ row["FieldName"] +'"].<br>Do you want to proceed?',
             buttons: {
@@ -48,15 +44,14 @@ window.operateEvents = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+deftool_table_id).bootstrapTable('remove', {
+                    $('#'+_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("defHelperFileds",JSON.stringify($('#'+deftool_table_id).bootstrapTable('getData')));
+                    statusToStorage("defHelperFileds",JSON.stringify($('#'+_table_id).bootstrapTable('getData')));
                 }
             }
             });
-
     }
 }
 
@@ -69,13 +64,13 @@ function createFieldsTable(container, table_id, height){
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
-    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn deftool-disable").html($("<i/>").addClass("fa fa-plus").attr("aria-hidden","true")).append(" Add New"));
+    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
     // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select deftool-disable").html($("<i/>").addClass("fa fa-solid fa-copy").attr("aria-hidden","true")).append(" Duplicate Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select deftool-disable").html($("<i/>").addClass("fa fa-trash fa-solid").attr("aria-hidden","true")).append(" Remove Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn deftool-disable").html($("<i/>").addClass("fa fa-file-import fa-solid").attr("aria-hidden","true")).append(" Load JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_createJSON").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-code fa-solid").attr("aria-hidden","true")).append(" Generate JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_previewForm").addClass("btn btn-outline-success admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-eye fa-solid").attr("aria-hidden","true")).append(" Preview"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_createJSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_previewForm").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
 
     table.attr("data-height",String(height));
 
@@ -92,6 +87,7 @@ function createFieldsTable(container, table_id, height){
     table.attr("data-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
+    table.attr("data-show-search-clear-button","true");
 
     table.attr("data-maintain-meta-data","true");
 
@@ -112,14 +108,14 @@ function createFieldsTable(container, table_id, height){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
+                {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
+                events: window.eventDefOperateEvents, formatter: eventOperateFormatter},
                 {title: 'Name', field : 'FieldName', align:'center', sortable:true, searchable:true},
                 {title: 'Label', field : 'FieldLabel', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'FieldType', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'FieldUnit', align:'center', sortable:true, searchable:true},
                 {title: 'Source', field : 'FieldSource', align:'center', sortable:true, searchable:true},
                 {title: 'Required', field : 'FieldRequired', align:'center', sortable:true, searchable:true},
-                {title: 'Item Operate', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.operateEvents, formatter: operateFormatter}
             ],
             pagination:true,
             checkboxHeader:true,
@@ -129,26 +125,26 @@ function createFieldsTable(container, table_id, height){
     
 }
 
-function operateFormatter(value, row, index) {
-    var container = $("<div/>").addClass("deftool-disable");
+function eventOperateFormatter(value, row, index) {
+    var container = $("<div/>").addClass("lockable");
     var up_dpwn_gorup = $("<div/>").addClass("btn-group me-3 ");
-    var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up deftool-disable").append($("<i/>").addClass("fa fa-angle-up"));
-    var btn_down = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_down deftool-disable").append($("<i/>").addClass("fa fa-angle-down"));
+    var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
+    var btn_down = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_down lockable").append($("<i/>").addClass("fa fa-angle-down"));
     up_dpwn_gorup.append(btn_up)
     up_dpwn_gorup.append(btn_down)
     container.append(up_dpwn_gorup);
-    container.append($("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 deftool-disable").append($("<i/>").addClass("fa fa-edit")))
-    container.append($("<button/>").addClass("btn btn-outline-danger btn-sm remove deftool-disable").append($("<i/>").addClass("fa fa-trash")))
+    container.append($("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit")))
+    container.append($("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash")))
 
     
     if (index==0){
-        btn_up.addClass("disabled").removeClass("deftool-disable");
+        btn_up.addClass("disabled").removeClass("lockable");
     }
-    else if(index==$('#'+deftool_table_id).bootstrapTable('getData').length-1){
-        btn_down.addClass("disabled").removeClass("deftool-disable");
+    else if(index==$('#'+_table_id).bootstrapTable('getData').length-1){
+        btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(deftool_sort||deftool_search||deftool_edit){
+    if(_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
@@ -270,7 +266,7 @@ function inputFormFields(container){
 }
 
 
-function showAddForm(container,form_id, table){
+function showDeftoolAddForm(container,form_id, table){
     container.empty();
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation mb-3 pb-3 shadow container");
@@ -372,23 +368,25 @@ function showAddForm(container,form_id, table){
         statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
 
 
-        deftool_content_name = "";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "";
+        $( document ).trigger( "_release", [ "add"] );
+        container.empty();
 
     });
 
     form.find(".btn-close").on("click",function(){
-        deftool_content_name = "";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "";
+        $( document ).trigger( "_release", ["add"] );
+        container.empty();
     })
 
     container.append(form);
 
 }
 
-function showEditForm(container, form_id,  table, index){
+function showDeftoolEditForm(container, form_id,  table, index){
     // container.empty();
-    showAddForm(container, form_id, table);
+    showDeftoolAddForm(container, form_id, table);
 
     var form = container.find("#"+form_id);
 
@@ -487,8 +485,17 @@ function showEditForm(container, form_id,  table, index){
             })
         statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
 
+        _content_name = "";
+        $( document ).trigger( "_release", [ "edit"] );
         container.empty();
+
     });
+
+    form.find(".btn-close").unbind("click").on("click",function(){
+        _content_name = "";
+        $( document ).trigger( "_release", ["edit"] );
+        container.empty();
+    })
 }
 
 function loadJSON(container,table){
@@ -518,8 +525,9 @@ function loadJSON(container,table){
     })
 
     content.find(".btn-close").on("click",function(){
-        deftool_content_name = "";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "";
+        $( document ).trigger( "_release", ["jsonLoad"] );
+        container.empty();
     })
 
     container.append(content);
@@ -567,8 +575,9 @@ function showTableJSON(container,table){
 
 
     content.find(".btn-close").on("click",function(){
-        deftool_content_name = "";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "";
+        $( document ).trigger( "_release", ["jsonShow"] );
+        container.empty();
     })
 
     container.append(content);
@@ -594,8 +603,9 @@ function previewTableForm(container,table){
     content.append(formPreview);
 
     content.find(".btn-close").on("click",function(){
-        deftool_content_name = "";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "";
+        $( document ).trigger( "_release", ["preview"] );
+        container.empty();
     })
 
     container.append(content);
@@ -604,8 +614,8 @@ function previewTableForm(container,table){
 
 
 function showEventFieldDefinitionTool(container){
-    createFieldsTable(container,deftool_table_id,500);
-    var table = $('#'+deftool_table_id);
+    createFieldsTable(container,_table_id,500);
+    var table = $('#'+_table_id);
     
     if(statusInStorage("defHelperFileds")){
         table.bootstrapTable('append',JSON.parse(statusFromStorage("defHelperFileds")));
@@ -615,24 +625,20 @@ function showEventFieldDefinitionTool(container){
     
     toolbar.find(".needs-select").addClass("disabled");
     
-    deftool_content = $("<div/>").addClass("pt-3");
-    container.append(deftool_content);
+    _content = $("<div/>").addClass("pt-3");
+    container.append(_content);
 
 
 
-    table.on('check.bs.table check-all.bs.table uncheck.bs.table uncheck-all.bs.table',function(){
-            if(deftool_content_name==""){
-                deftool_content_name == "";
-                $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
-            }
+    table.on('all.bs.table',function(){
+            if(_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0){
-                selection=selection[0];
-                if(!(deftool_search||deftool_sort||deftool_content_name!="")) toolbar.find(".needs-select").removeClass("disabled");
+            if(selection.length>0 && _lock_list.length==0){
+                toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
-                if(!(deftool_search||deftool_sort||deftool_content_name!="")) toolbar.find(".needs-select").addClass("disabled");
+                toolbar.find(".needs-select").addClass("disabled");
             }
         }
     )
@@ -640,24 +646,19 @@ function showEventFieldDefinitionTool(container){
 
     table.on('search.bs.table',function(e,text){
         if(text!=""){
-            deftool_search=true;
-            $(document).find(".deftool-disable").addClass("disabled");
+            $( document ).trigger( "_lock", [ "search"] );
         }
         else{
-            deftool_search=false;
-            
-            if(!deftool_sort) $(document).find(".deftool-disable").removeClass("disabled");
+            $( document ).trigger( "_release", [ "search"] );
         }
     }
     )
 
     table.on('sort.bs.table',function(e,name,order){
         if(order){
-            deftool_sort=true;
-            $(document).find(".deftool-disable").addClass("disabled");
+            $( document ).trigger( "_lock", [ "sort"] );
         }else{
-            deftool_sort=false;
-            if(!deftool_search) $(document).find(".deftool-disable").removeClass("disabled");
+            $( document ).trigger( "_release", [ "sort"] );
         }
     }
     )
@@ -694,9 +695,9 @@ function showEventFieldDefinitionTool(container){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        showAddForm(deftool_content,"add_form", table);
-        deftool_content_name = "add";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        showDeftoolAddForm(_content,"add_form", table);
+        _content_name = "add";
+        $( document ).trigger( "_lock", [ "add"] );
     })
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
@@ -725,29 +726,29 @@ function showEventFieldDefinitionTool(container){
     })
 
     // toolbar.find("#toolbar_edit").on("click",function(e){
-    //     showEditForm(deftool_content,"edit_form", table);
-    //     deftool_content_name = "edit";
+    //     showDeftoolEditForm(_content,"edit_form", table);
+    //     _content_name = "edit";
     // })
 
     toolbar.find("#toolbar_loadJSON").on("click",function(e){
-        loadJSON(deftool_content, table);
-        deftool_content_name = "jsonLoad";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        loadJSON(_content, table);
+        _content_name = "jsonLoad";
+        $( document ).trigger( "_lock", [ "jsonLoad"] );
     })
 
     toolbar.find("#toolbar_createJSON").on("click",function(e){
-        showTableJSON(deftool_content, table);
-        deftool_content_name = "jsonShow";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        showTableJSON(_content, table);
+        _content_name = "jsonShow";
+        $( document ).trigger( "_lock", [ "jsonShow" ] );
     })
 
     toolbar.find("#toolbar_previewForm").on("click",function(e){
-        previewTableForm(deftool_content, table);
+        previewTableForm(_content, table);
 
-        deftool_content_name = "preview";
-        $( document ).trigger( "deftool_integrity_protection", [ deftool_content_name] );
+        _content_name = "preview";
+        $( document ).trigger( "_lock", [ "preview" ] )
 
-        var named_fileds = $(deftool_content).find("[name]");
+        var named_fileds = $(_content).find("[name]");
         var names = [];
         $.each(named_fileds, function (){
             names.push($(this).attr("name"))
@@ -769,22 +770,40 @@ function showEventFieldDefinitionTool(container){
 
 
 
-    $( document ).on( "deftool_integrity_protection", {meassage: "DefTool custom event for integrity."}, 
-        function( event, content_name ) {
-            console.log( event.data.meassage );
-            console.log( deftool_content ); 
+    $( document ).on( "operate_lock", {}, 
+        function( event ) {
 
-            if(content_name!=""){
-                $(document).find(".deftool-disable").addClass("disabled");
-                $(document).find(".search-input").prop( "disabled", true );
+            if(_lock_list.length!=0){
+                $(document).find(".lockable").addClass("disabled");
+                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                $(document).find(".sortable").prop( "disabled", true );
             }
-            else if(content_name==""){
-                $(deftool_content).empty();
-                $(document).find(".deftool-disable").not(".needs-select").removeClass("disabled");
-                $(document).find(".search-input").prop( "disabled", false );
+            else{
+                $(_content).empty();
+                $(document).find(".lockable").not(".needs-select").removeClass("disabled");
+                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                $(document).find(".sortable").prop( "disabled", false );
             }
         }
     );
+
+    $( document ).on( "_lock", {}, 
+    function( event, lock_name ) {
+        if(!(lock_name == "" || lock_name == null )){
+            _lock_list.push(lock_name);
+            // console.log("Lock ["+lock_name+"] acquired.");
+            $(this).trigger("operate_lock",[]);
+        }
+    });
+
+    $( document ).on( "_release", {}, 
+    function( event, lock_name ) {
+        if(!(lock_name == "" || lock_name == null )){
+            _lock_list = _.without(_lock_list,lock_name);
+            // console.log("Lock ["+lock_name+"] released.");
+            $(this).trigger("operate_lock",[]);
+        }
+    });
     
 
 }

@@ -24,6 +24,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<link rel="stylesheet" href="css/my_styles.css">
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.6/underscore-min.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 
@@ -53,7 +55,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/admin/table_def_forms/admin_definition_form_handler.js"></script>
 	<script defer src="js/admin/table_def_forms/admin_definition_table_creation.js"></script>
-	<script defer src="js/admin/table_def_forms/admin_definition_table_formatters.js"></script>
+	<script defer src="js/common/def_table_formatters.js"></script>
 	
 	<script defer src="js/admin/table_def_forms/study_definition_form.js"></script>
 	<script defer src="js/admin/table_def_forms/unit_type_definitions_form.js"></script>
@@ -68,9 +70,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 	<script defer src="js/admin/tools/event_def_tool.js"></script>
+	<script defer src="js/admin/tools/subject_management.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 
-	<script defer src="js/common/parse_event_args.js"></script>
+	<script defer src="js/common/dynamic_form.js"></script>
 
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
@@ -115,6 +118,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 					<li class="nav-item">
 						<a class="nav-link active" href="#" onclick="show_event_def_tool()">EventDefTool</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active" href="#" onclick="show_subject_manager()">Subject Manager</a>
 					</li>
 				</ul>
 				<div class="d-flex ">
@@ -189,6 +195,22 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			$('.navbar-collapse').collapse('hide');
 		}
 
+
+		function show_subject_manager(){
+			var main_container = $("#main_container");
+			$("#main_container").empty();
+			
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
+			main_container.append(_title);
+
+			showSubjectManager(main_container);
+			
+			clearAllStatusFromUrl();
+			statusToUrl("tool","SubjectManager");
+			
+			$('.navbar-collapse').collapse('hide');
+		}
+
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
 				clearAllStatusFromUrl();
@@ -234,7 +256,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
 					if(tool=="EventDefTool") show_event_def_tool();
-					
+					if(tool=="SubjectManager") show_subject_manager();
 				}
 				else{
 					show_table("users");

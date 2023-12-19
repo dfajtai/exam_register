@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2023. Dec 08. 16:14
+-- Létrehozás ideje: 2023. Dec 19. 15:22
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.12
 
@@ -24,85 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `subjects`
---
-
-CREATE TABLE `subjects` (
-  `SubjectIndex` int NOT NULL,
-  `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `StudyID` int NOT NULL,
-  `Name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Group` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Sex` int DEFAULT NULL,
-  `Container` int DEFAULT NULL,
-  `Weight` double DEFAULT NULL,
-  `Height` double DEFAULT NULL,
-  `Location` int DEFAULT NULL,
-  `LastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ModifiedBy` int NOT NULL,
-  `Status` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `subject_change_log`
---
-
-CREATE TABLE `subject_change_log` (
-  `SubjectLogIndex` int NOT NULL,
-  `SubjectIndex` int NOT NULL,
-  `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `StudyID` int NOT NULL,
-  `SubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `SubjectGroup` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `SubjectData` json DEFAULT NULL,
-  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ChangedBy` int NOT NULL COMMENT 'user id of the original subject state (since the last is stored in the subjects table)'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `subject_status_definitions`
---
-
-CREATE TABLE `subject_status_definitions` (
-  `StatusID` int NOT NULL,
-  `StatusName` varchar(16) NOT NULL,
-  `StatusDescription` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- A tábla adatainak kiíratása `subject_status_definitions`
---
-
-INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
-(1, 'pending', 'The subject has not been delivered yet.'),
-(2, 'alive', 'The subject is alive.'),
-(6, 'terminated', NULL),
-(7, 'dead', NULL),
-(8, 'deleted', NULL);
-
---
--- Eseményindítók `subject_status_definitions`
---
-DELIMITER $$
-CREATE TRIGGER `subject_status_definitions_insert` AFTER INSERT ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
-SET LastChange = NOW()
-WHERE TableName = "subject_status_definitions"
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `subject_status_definitions_update` AFTER UPDATE ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
-SET LastChange = NOW()
-WHERE TableName = "subject_status_definitions"
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
 -- Tábla szerkezet ehhez a táblához `asset_definitions`
 --
 
@@ -119,7 +40,9 @@ CREATE TABLE `asset_definitions` (
 --
 
 INSERT INTO `asset_definitions` (`AssetID`, `AssetName`, `AssetDesc`, `AssetLocation`, `AssetOwner`) VALUES
-(1, 'hatso CT', '', 5, 'SMKMOK');
+(1, 'hatso CT', '', 5, 'SMKMOK'),
+(2, 'asdasd', '', 1, 'Medicoups'),
+(3, 'asdasd23', '', 1, 'Medicoups');
 
 --
 -- Eseményindítók `asset_definitions`
@@ -186,7 +109,7 @@ CREATE TABLE `consumable_definitions` (
   `ConsumableType` int NOT NULL COMMENT 'consumable_type_definitions.consumable_typeID',
   `ConsumableName` varchar(128) NOT NULL,
   `ConsumableDesc` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `ConsumableUnitType` int NOT NULL
+  `ConsumableUnitType` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -270,19 +193,19 @@ CREATE TABLE `definition_tables` (
 --
 
 INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum`) VALUES
-(1, 'asset_definitions', '2023-12-04 13:54:01', '89af765f'),
+(1, 'asset_definitions', '2023-12-18 12:53:06', 'd929f6cb'),
 (2, 'event_status_definitions', '2023-11-23 11:37:03', 'e4c5b559'),
 (3, 'location_definitions', '2023-12-04 13:54:31', '68c2bc19'),
 (5, 'bodypart_definitions', '2023-12-07 10:25:34', '184dfa16'),
-(6, 'status_definitions', '2023-11-23 11:37:03', 'ac2f26dc'),
-(7, 'unit_definitions', '2023-12-04 16:15:43', 'd9954f7c'),
+(6, 'subject_status_definitions', '2023-11-23 11:37:03', '5ae4c226'),
+(7, 'unit_definitions', '2023-12-13 15:28:29', 'c461cf1d'),
 (8, 'unit_type_definitions', '2023-12-04 13:11:52', '47591c29'),
 (9, 'side_definitions', '2023-11-23 11:37:03', '1f2c2d75'),
 (10, 'sex_definitions', '2023-11-23 11:37:03', '18eba199'),
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2023-12-04 16:12:34', 'bce6ef8'),
-(14, 'event_type_definitions', '2023-12-08 15:47:43', '78a7f8fe'),
-(15, 'event_definitions', '2023-12-08 15:03:51', '2f16b198'),
+(14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
+(15, 'event_definitions', '2023-12-13 15:26:32', '52bcb8d0'),
 (16, 'studies', '2023-12-07 14:30:06', '919c8867');
 
 -- --------------------------------------------------------
@@ -294,6 +217,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 CREATE TABLE `event_change_log` (
   `EventChangeLogIndex` int NOT NULL,
   `EventIndex` int NOT NULL,
+  `EventName` varchar(127) NOT NULL,
   `EventStudy` int NOT NULL,
   `EventSubject` int NOT NULL,
   `EventInfoJSON` json DEFAULT NULL,
@@ -323,8 +247,7 @@ INSERT INTO `event_definitions` (`EventID`, `EventName`, `EventDesc`, `EventType
 (1, 'vérvétel', '', 1, '[{\"asd\": 12}, {\"asdasd\": 42}]'),
 (2, 'altatás kezdete', '', 2, NULL),
 (3, 'altatás vége', '', 2, NULL),
-(4, 'beszállítás', '', 3, NULL),
-(5, 'asd', 'qwe', 1, '[{\"test\": 423}, {\"test\": 1862}, {\"asdasd\": \"qwe\"}]');
+(4, 'beszállítás', '', 3, NULL);
 
 --
 -- Eseményindítók `event_definitions`
@@ -351,6 +274,7 @@ DELIMITER ;
 CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
   `EventID` varchar(32) NOT NULL COMMENT 'event_definitions.eventid',
+  `EventName` varchar(127) NOT NULL,
   `EventStatus` int NOT NULL COMMENT 'event_status.eventstatusid',
   `EventComment` varchar(255) NOT NULL,
   `EventDataJSON` json NOT NULL,
@@ -599,6 +523,86 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Tábla szerkezet ehhez a táblához `subjects`
+--
+
+CREATE TABLE `subjects` (
+  `SubjectIndex` int NOT NULL,
+  `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `StudyID` int NOT NULL,
+  `Name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Group` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Age` int DEFAULT NULL,
+  `Sex` int DEFAULT NULL,
+  `Container` int DEFAULT NULL,
+  `Weight` double DEFAULT NULL,
+  `Height` double DEFAULT NULL,
+  `Location` int DEFAULT NULL,
+  `LastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedBy` int NOT NULL,
+  `Status` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `subject_change_log`
+--
+
+CREATE TABLE `subject_change_log` (
+  `SubjectLogIndex` int NOT NULL,
+  `SubjectIndex` int NOT NULL,
+  `CurrentSubjectID` varchar(32) DEFAULT NULL,
+  `CurrentSubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `CurrentSubjectGroup` varchar(32) DEFAULT NULL,
+  `CurrentStudyID` int NOT NULL,
+  `OldData` json DEFAULT NULL,
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedBy` int NOT NULL COMMENT 'user id of the original subject state (since the last is stored in the subjects table)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `subject_status_definitions`
+--
+
+CREATE TABLE `subject_status_definitions` (
+  `StatusID` int NOT NULL,
+  `StatusName` varchar(16) NOT NULL,
+  `StatusDescription` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- A tábla adatainak kiíratása `subject_status_definitions`
+--
+
+INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
+(1, 'pending', 'The subject has not been delivered yet.'),
+(2, 'alive', 'The subject is alive.'),
+(6, 'terminated', NULL),
+(7, 'dead', NULL),
+(8, 'deleted', NULL);
+
+--
+-- Eseményindítók `subject_status_definitions`
+--
+DELIMITER $$
+CREATE TRIGGER `subject_status_definitions_insert` AFTER INSERT ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "subject_status_definitions"
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `subject_status_definitions_update` AFTER UPDATE ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
+SET LastChange = NOW()
+WHERE TableName = "subject_status_definitions"
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Tábla szerkezet ehhez a táblához `unit_definitions`
 --
 
@@ -626,7 +630,9 @@ INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `U
 (15, 6, 'second', 's', 1, ''),
 (16, 5, 'milimeter', 'mm', 1, ''),
 (17, 5, 'centimeter', 'cm', 1, ''),
-(18, 5, 'meter', 'm', 1, '');
+(18, 5, 'meter', 'm', 1, ''),
+(19, 49, 'celsius', '˚C', 1, ''),
+(20, 8, 'n.a.', '-', 1, '');
 
 --
 -- Eseményindítók `unit_definitions`
@@ -712,29 +718,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2023-12-08 16:12:36', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2023-12-19 15:09:51', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
 --
-
---
--- A tábla indexei `subjects`
---
-ALTER TABLE `subjects`
-  ADD PRIMARY KEY (`SubjectIndex`);
-
---
--- A tábla indexei `subject_change_log`
---
-ALTER TABLE `subject_change_log`
-  ADD PRIMARY KEY (`SubjectLogIndex`);
-
---
--- A tábla indexei `subject_status_definitions`
---
-ALTER TABLE `subject_status_definitions`
-  ADD PRIMARY KEY (`StatusID`);
 
 --
 -- A tábla indexei `asset_definitions`
@@ -746,19 +734,22 @@ ALTER TABLE `asset_definitions`
 -- A tábla indexei `bodypart_definitions`
 --
 ALTER TABLE `bodypart_definitions`
-  ADD PRIMARY KEY (`BodypartID`);
+  ADD PRIMARY KEY (`BodypartID`),
+  ADD UNIQUE KEY `BodypartName` (`BodypartName`);
 
 --
 -- A tábla indexei `consumable_definitions`
 --
 ALTER TABLE `consumable_definitions`
-  ADD PRIMARY KEY (`ConsumableID`);
+  ADD PRIMARY KEY (`ConsumableID`),
+  ADD UNIQUE KEY `ConsumableName` (`ConsumableName`);
 
 --
 -- A tábla indexei `consumable_type_definitions`
 --
 ALTER TABLE `consumable_type_definitions`
-  ADD PRIMARY KEY (`ConsumableTypeID`);
+  ADD PRIMARY KEY (`ConsumableTypeID`),
+  ADD UNIQUE KEY `ConsumableTypeName` (`ConsumableTypeName`);
 
 --
 -- A tábla indexei `definition_tables`
@@ -789,37 +780,60 @@ ALTER TABLE `event_log`
 -- A tábla indexei `event_status_definitions`
 --
 ALTER TABLE `event_status_definitions`
-  ADD PRIMARY KEY (`EventStatusID`);
+  ADD PRIMARY KEY (`EventStatusID`),
+  ADD UNIQUE KEY `EventStatusName` (`EventStatusName`);
 
 --
 -- A tábla indexei `event_type_definitions`
 --
 ALTER TABLE `event_type_definitions`
-  ADD PRIMARY KEY (`EventTypeID`);
+  ADD PRIMARY KEY (`EventTypeID`),
+  ADD UNIQUE KEY `EventTypeName` (`EventTypeName`);
 
 --
 -- A tábla indexei `location_definitions`
 --
 ALTER TABLE `location_definitions`
-  ADD PRIMARY KEY (`LocationID`);
+  ADD PRIMARY KEY (`LocationID`),
+  ADD UNIQUE KEY `LocationName` (`LocationName`);
 
 --
 -- A tábla indexei `sex_definitions`
 --
 ALTER TABLE `sex_definitions`
-  ADD PRIMARY KEY (`SexID`);
+  ADD PRIMARY KEY (`SexID`),
+  ADD UNIQUE KEY `SexName` (`SexName`);
 
 --
 -- A tábla indexei `side_definitions`
 --
 ALTER TABLE `side_definitions`
-  ADD PRIMARY KEY (`SideID`);
+  ADD PRIMARY KEY (`SideID`),
+  ADD UNIQUE KEY `SideShortName` (`SideShortName`);
 
 --
 -- A tábla indexei `studies`
 --
 ALTER TABLE `studies`
   ADD PRIMARY KEY (`StudyID`);
+
+--
+-- A tábla indexei `subjects`
+--
+ALTER TABLE `subjects`
+  ADD PRIMARY KEY (`SubjectIndex`);
+
+--
+-- A tábla indexei `subject_change_log`
+--
+ALTER TABLE `subject_change_log`
+  ADD PRIMARY KEY (`SubjectLogIndex`);
+
+--
+-- A tábla indexei `subject_status_definitions`
+--
+ALTER TABLE `subject_status_definitions`
+  ADD PRIMARY KEY (`StatusID`);
 
 --
 -- A tábla indexei `unit_definitions`
@@ -847,28 +861,10 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT a táblához `subjects`
---
-ALTER TABLE `subjects`
-  MODIFY `SubjectIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT a táblához `subject_change_log`
---
-ALTER TABLE `subject_change_log`
-  MODIFY `SubjectLogIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT a táblához `subject_status_definitions`
---
-ALTER TABLE `subject_status_definitions`
-  MODIFY `StatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
 -- AUTO_INCREMENT a táblához `asset_definitions`
 --
 ALTER TABLE `asset_definitions`
-  MODIFY `AssetID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `AssetID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT a táblához `bodypart_definitions`
@@ -949,10 +945,28 @@ ALTER TABLE `studies`
   MODIFY `StudyID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT a táblához `subjects`
+--
+ALTER TABLE `subjects`
+  MODIFY `SubjectIndex` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT a táblához `subject_change_log`
+--
+ALTER TABLE `subject_change_log`
+  MODIFY `SubjectLogIndex` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT a táblához `subject_status_definitions`
+--
+ALTER TABLE `subject_status_definitions`
+  MODIFY `StatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT a táblához `unit_definitions`
 --
 ALTER TABLE `unit_definitions`
-  MODIFY `UnitID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `UnitID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT a táblához `unit_type_definitions`

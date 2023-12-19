@@ -1,64 +1,9 @@
-function getDefEntryWhere(def_name, key, value){
-    if(!(def_name in defs)) return null;
-
-    var result_entry = null;
-    $.each(defs[def_name],function(index,entry){
-        if(String(entry[key])===String(value)) {
-            result_entry = {... entry};
-            return false
-        }
-    })
-    return result_entry;
-}
-
-function hasDuplicates(array) {
-    if(!Array.isArray(array)) return null;
-    return (new Set(array)).size !== array.length;
-}
-
-function getFrequency(array){
-    if(!Array.isArray(array)) return null;
-    var counts = {};
-    $.each(array, function(index,value){
-        counts[value] = counts[value] ? counts[value] + 1 : 1;
-    })
-
-    return counts;
-}
-
-function getDoubles(array){
-    var counts = getFrequency(array);
-    var doubles = [];
-    $.each(counts, function(key,value){
-        if(value>1) doubles.push(key);
-    })
-    return doubles;
-}
-
-function getDefCol(def_name, key){
-    if(!(def_name in defs)) return null;
-
-    var vals = [];
-    $.each(defs[def_name],function(index,entry){
-        if(entry.hasOwnProperty(key))  vals.push({... entry[key]});
-    })
-
-    return vals;
-}
-
-function defHasDuplicates(def_name, key){
-    if(!(def_name in defs)) return null;
-
-    var vals = getDefCol(def_name,key)
-
-    return hasDuplicates(vals);
-}
-
 function showAllDefs(select_object, def_name, _key, _label){
     $.each(defs[def_name],function(key,entry){
         var opt = $("<option/>").html(entry[_label]).attr("value",entry[_key]);
 
         $.each(entry,function(prop_key,prop_val){
+            if(!prop_key.toLowerCase().includes("desc"))
             opt.attr(prop_key,prop_val);
         })
 
