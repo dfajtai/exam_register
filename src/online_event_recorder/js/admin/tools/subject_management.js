@@ -100,6 +100,7 @@ function createSubjectTable(container,table_id, height){
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
 
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
     toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import"));
 
@@ -117,10 +118,11 @@ function createSubjectTable(container,table_id, height){
 
     table.attr("data-show-refresh","true");
 
-    // table.attr("data-auto-refresh","true");
-    // table.attr("data-show-auto-refresh","true");
-    // table.attr("data-auto-refresh-interval","10");
-    // table.attr("data-auto-refresh-silent","true");
+    table.attr("data-auto-refresh","true");
+    table.attr("data-auto-refresh-status","false");
+    table.attr("data-show-auto-refresh","true");
+    table.attr("data-auto-refresh-interval","10");
+    table.attr("data-auto-refresh-silent","true");
 
     table.attr("data-show-fullscreen","true");
 
@@ -440,13 +442,10 @@ function initSubjectBatchModalEdit(container, table){
     subjectBatchFormInputs(form);
     form.append(submitForm);
     modal_body.append(form);
-
-    
-
+   
     $(modal).on('hidden.bs.modal',function(){
         $( document ).trigger("_release",["batch_edit"]);
     })
-
 
     form.on('submit',function(e){
         e.preventDefault();
@@ -503,6 +502,54 @@ function initSubjectModalImport(container,table){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
+
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+
+    var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import Subjects");
+    submitForm.append(submitButton);
+
+    var file_input_group = $("<div/>").addClass("row mb-3");
+    var file_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Select .csv file");
+    var file_input = $("<input/>").addClass("form-control").attr("type","file").attr("id","inputFileSelect").attr("name","inputFile");
+    file_input.attr("accept",".csv")
+
+
+    var file_upload_btn = $("<span/>").addClass("btn btn-outline-success form-control").attr("id","uploadBtn");
+    // file_upload_btn.html($("<span/>").addClass("bi bi-cloud-upload").append(" Upload"))
+    file_upload_btn.html($("<span/>").addClass("fa fa-cloud-upload").append(" Upload"))
+    
+
+    file_input_group.append(file_label);
+    file_input_group.append($("<div/>").addClass("col-md-6").append(file_input));
+    file_input_group.append($("<div/>").addClass("col-md-3").append(file_upload_btn));
+
+    form.append(file_input_group);
+
+
+
+    form.append(submitForm);
+    modal_body.append(form);
+
+    form.on('submit',function(e){
+        e.preventDefault();
+
+
+        modal.modal('hide');
+        form[0].reset();
+    });
+    
+
+    file_input_group.find("#uploadBtn").on("click",function(){
+        const fileInput = document.getElementById("inputFileSelect");
+        const selectedFiles = fileInput.files;
+        
+
+        if(selectedFiles.length==0){
+            return;
+        }
+        console.log(selectedFiles[0]);
+    })
 }
 
 function showSubjectManager(container){
@@ -522,8 +569,17 @@ function showSubjectManager(container){
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
         var selected =table.bootstrapTable("getSelections");
-        
+        $.each(selected, function(index, entry){
+            var data = {... entry};
 
+            delete data["SubjectIndex"];
+            delete data["state"];
+
+            $.each(data,function(key){
+                if(data[key]==null) delete data[key];
+            })
+            subject_insert_ajax(data,function(){table.bootstrapTable("refresh")});
+        });
     })
 
     initSubjectBatchModalEdit(_content,table);
@@ -540,7 +596,8 @@ function showSubjectManager(container){
 
     toolbar.find(".needs-select").addClass("disabled");
 
-    table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
+    // 'check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table'
+    table.on('all.bs.table',
     function(){
         // if(_lock_list.length>0) return;
 

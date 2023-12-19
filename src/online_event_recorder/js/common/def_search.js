@@ -11,6 +11,31 @@ function getDefEntryWhere(def_name, key, value){
     return result_entry;
 }
 
+function getDefEntriesWhere(def_name, key, value){
+    if(!(def_name in defs)) return [];
+
+    var entries = [];
+    $.each(defs[def_name],function(index,entry){
+        if(String(entry[key])===String(value)) {
+            result_entry.push({... entry});
+        }
+    })
+    return entries;
+}
+
+function getDefEntriesWhichIn(def_name, key, values){
+    if(!(def_name in defs)) return [];
+
+    var entries = [];
+    $.each(defs[def_name],function(index,entry){
+        if( values.includes(String(entry[key]))) {
+            result_entry.push({... entry});
+        }
+    })
+    return entries;
+}
+
+
 function getDefEntryFieldWhere(def_name, key, value, field){
     var result_entry = getDefEntryWhere(def_name, key, value);
     if(field in result_entry){
@@ -43,12 +68,12 @@ function getDoubles(array){
     return doubles;
 }
 
-function getDefCol(def_name, key){
+function getDefCol(def_name, col){
     if(!(def_name in defs)) return null;
 
     var vals = [];
     $.each(defs[def_name],function(index,entry){
-        if(entry.hasOwnProperty(key))  vals.push({... entry[key]});
+        if(entry.hasOwnProperty(col))  vals.push({... entry[col]});
     })
 
     return vals;
