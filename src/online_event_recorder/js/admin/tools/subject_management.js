@@ -318,6 +318,7 @@ function initSubjectModalEdit(container, table, index){
         return
     }
     var entry = table.bootstrapTable('getData')[index];
+    
 
     container.find("#"+modal_id).remove();
 
@@ -349,14 +350,14 @@ function initSubjectModalEdit(container, table, index){
         // $( document ).trigger("_release",["edit"]);
     })
 
-    function init_fields(){
-        form.find("input[name]").each(function(){
+    function init_fields(form,entry){
+        $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                // $(this).val(entry[name]).trigger("change");
+                $(this).val(entry[name]).trigger("change");
             }
         });
-        form.find("textarea[name]").each(function(){
+        $(form).find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
                 if(name.includes("JSON")){
@@ -368,7 +369,7 @@ function initSubjectModalEdit(container, table, index){
             }
         });
         
-        form.find("select[name]").each(function(){
+        $(form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
                 $(this).val(entry[name]);
@@ -377,11 +378,12 @@ function initSubjectModalEdit(container, table, index){
     }
 
     $(modal).on('show.bs.modal', function () {                   
-        init_fields();
+        init_fields(form,entry);
+        console.log(entry);
     })
 
     modal_footer.find("#revert_form").click(function(){
-        init_fields();
+        init_fields(form,entry);
     })
 
     form.on('submit',function(e){

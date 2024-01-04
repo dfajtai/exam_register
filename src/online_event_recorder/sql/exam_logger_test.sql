@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2023. Dec 19. 15:22
+-- Létrehozás ideje: 2024. Jan 04. 15:32
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
--- PHP verzió: 8.2.12
+-- PHP verzió: 8.2.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -273,7 +273,7 @@ DELIMITER ;
 
 CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
-  `EventID` varchar(32) NOT NULL COMMENT 'event_definitions.eventid',
+  `EventID` int NOT NULL COMMENT 'event_definitions.eventid',
   `EventName` varchar(127) NOT NULL,
   `EventStatus` int NOT NULL COMMENT 'event_status.eventstatusid',
   `EventComment` varchar(255) NOT NULL,
@@ -718,7 +718,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2023-12-19 15:09:51', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-04 15:14:15', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -728,21 +728,25 @@ INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd
 -- A tábla indexei `asset_definitions`
 --
 ALTER TABLE `asset_definitions`
-  ADD PRIMARY KEY (`AssetID`);
+  ADD PRIMARY KEY (`AssetID`),
+  ADD KEY `AssetLocation` (`AssetLocation`);
 
 --
 -- A tábla indexei `bodypart_definitions`
 --
 ALTER TABLE `bodypart_definitions`
   ADD PRIMARY KEY (`BodypartID`),
-  ADD UNIQUE KEY `BodypartName` (`BodypartName`);
+  ADD UNIQUE KEY `BodypartName` (`BodypartName`),
+  ADD KEY `BodypartSide` (`BodypartSide`);
 
 --
 -- A tábla indexei `consumable_definitions`
 --
 ALTER TABLE `consumable_definitions`
   ADD PRIMARY KEY (`ConsumableID`),
-  ADD UNIQUE KEY `ConsumableName` (`ConsumableName`);
+  ADD UNIQUE KEY `ConsumableName` (`ConsumableName`),
+  ADD KEY `ConsumableUnitType` (`ConsumableUnitType`),
+  ADD KEY `ConsumableType` (`ConsumableType`);
 
 --
 -- A tábla indexei `consumable_type_definitions`
@@ -762,19 +766,25 @@ ALTER TABLE `definition_tables`
 -- A tábla indexei `event_change_log`
 --
 ALTER TABLE `event_change_log`
-  ADD PRIMARY KEY (`EventChangeLogIndex`);
+  ADD PRIMARY KEY (`EventChangeLogIndex`),
+  ADD KEY `EventIndex` (`EventIndex`);
 
 --
 -- A tábla indexei `event_definitions`
 --
 ALTER TABLE `event_definitions`
-  ADD PRIMARY KEY (`EventID`);
+  ADD PRIMARY KEY (`EventID`),
+  ADD KEY `EventType` (`EventType`);
 
 --
 -- A tábla indexei `event_log`
 --
 ALTER TABLE `event_log`
-  ADD PRIMARY KEY (`EventIndex`);
+  ADD PRIMARY KEY (`EventIndex`),
+  ADD KEY `event_log_ibfk_1` (`EventID`),
+  ADD KEY `EventLocation` (`EventLocation`),
+  ADD KEY `EventModifiedBy` (`EventModifiedBy`),
+  ADD KEY `EventStudy` (`EventStudy`);
 
 --
 -- A tábla indexei `event_status_definitions`
@@ -821,13 +831,21 @@ ALTER TABLE `studies`
 -- A tábla indexei `subjects`
 --
 ALTER TABLE `subjects`
-  ADD PRIMARY KEY (`SubjectIndex`);
+  ADD PRIMARY KEY (`SubjectIndex`),
+  ADD KEY `Status` (`Status`),
+  ADD KEY `Sex` (`Sex`),
+  ADD KEY `Location` (`Location`),
+  ADD KEY `StudyID` (`StudyID`),
+  ADD KEY `ModifiedBy` (`ModifiedBy`);
 
 --
 -- A tábla indexei `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
-  ADD PRIMARY KEY (`SubjectLogIndex`);
+  ADD PRIMARY KEY (`SubjectLogIndex`),
+  ADD KEY `CurrentStudyID` (`CurrentStudyID`),
+  ADD KEY `ModifiedBy` (`ModifiedBy`),
+  ADD KEY `SubjectIndex` (`SubjectIndex`);
 
 --
 -- A tábla indexei `subject_status_definitions`
@@ -839,7 +857,8 @@ ALTER TABLE `subject_status_definitions`
 -- A tábla indexei `unit_definitions`
 --
 ALTER TABLE `unit_definitions`
-  ADD PRIMARY KEY (`UnitID`);
+  ADD PRIMARY KEY (`UnitID`),
+  ADD KEY `unit_definitions_ibfk_1` (`UnitType`);
 
 --
 -- A tábla indexei `unit_type_definitions`
@@ -979,6 +998,74 @@ ALTER TABLE `unit_type_definitions`
 --
 ALTER TABLE `users`
   MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- Megkötések a kiírt táblákhoz
+--
+
+--
+-- Megkötések a táblához `asset_definitions`
+--
+ALTER TABLE `asset_definitions`
+  ADD CONSTRAINT `asset_definitions_ibfk_1` FOREIGN KEY (`AssetLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `bodypart_definitions`
+--
+ALTER TABLE `bodypart_definitions`
+  ADD CONSTRAINT `bodypart_definitions_ibfk_1` FOREIGN KEY (`BodypartSide`) REFERENCES `side_definitions` (`SideID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `consumable_definitions`
+--
+ALTER TABLE `consumable_definitions`
+  ADD CONSTRAINT `consumable_definitions_ibfk_1` FOREIGN KEY (`ConsumableUnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `consumable_definitions_ibfk_2` FOREIGN KEY (`ConsumableType`) REFERENCES `consumable_type_definitions` (`ConsumableTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `event_change_log`
+--
+ALTER TABLE `event_change_log`
+  ADD CONSTRAINT `event_change_log_ibfk_1` FOREIGN KEY (`EventIndex`) REFERENCES `event_log` (`EventIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `event_definitions`
+--
+ALTER TABLE `event_definitions`
+  ADD CONSTRAINT `event_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `event_log`
+--
+ALTER TABLE `event_log`
+  ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventID`) REFERENCES `event_definitions` (`EventID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_2` FOREIGN KEY (`EventLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_3` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `subjects` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `subjects`
+--
+ALTER TABLE `subjects`
+  ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`Status`) REFERENCES `subject_status_definitions` (`StatusID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subjects_ibfk_2` FOREIGN KEY (`Sex`) REFERENCES `sex_definitions` (`SexID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subjects_ibfk_3` FOREIGN KEY (`Location`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subjects_ibfk_4` FOREIGN KEY (`StudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subjects_ibfk_5` FOREIGN KEY (`ModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `subject_change_log`
+--
+ALTER TABLE `subject_change_log`
+  ADD CONSTRAINT `subject_change_log_ibfk_1` FOREIGN KEY (`CurrentStudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subject_change_log_ibfk_2` FOREIGN KEY (`ModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subject_change_log_ibfk_3` FOREIGN KEY (`SubjectIndex`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `unit_definitions`
+--
+ALTER TABLE `unit_definitions`
+  ADD CONSTRAINT `unit_definitions_ibfk_1` FOREIGN KEY (`UnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
