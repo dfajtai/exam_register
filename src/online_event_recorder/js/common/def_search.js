@@ -38,6 +38,9 @@ function getDefEntriesWhichIn(def_name, key, values){
 
 function getDefEntryFieldWhere(def_name, key, value, field){
     var result_entry = getDefEntryWhere(def_name, key, value);
+
+    if(!result_entry) return null;
+    
     if(field in result_entry){
         return result_entry[field];
     }

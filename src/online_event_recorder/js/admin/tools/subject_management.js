@@ -1,7 +1,7 @@
 var _table_id = "subjectTable";
 var _content = {};
-var _content_name = "";
-var _lock_list = []
+// var _content_name = "";
+// var _lock_list = []
 
 
 function subject_retrieve_all_ajax(params) {
@@ -77,8 +77,8 @@ window.subjectOperateEvents = {
         var modal_edit = $("#"+modal_id);
         if(modal_edit.length>0){
             $(modal_edit[0]).modal('show');
-            _content_name = "edit";
-            $( document ).trigger( "_lock", [ "edit"] );
+            // _content_name = "edit";
+            // $( document ).trigger( "_lock", [ "edit"] );
         }
     },
 }
@@ -153,21 +153,21 @@ function createSubjectTable(container,table_id, height){
 
     table.bootstrapTable({
             columns : [
-                {field : 'state', checkbox: true, align:'center'},
+                {field : 'state', checkbox: true, align:'center', forceHide:true},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.subjectOperateEvents, formatter: subjectOperateFormatter},
-                {title: '#', field : 'SubjectIndex', align:'center', sortable:true, searchable:false, visible:false},
-                {title: 'Study', field : 'StudyID', align:'center', sortable:true, searchable:true, formatter: "studyFormatter"},
-                {title: 'ID', field : 'SubjectID', align:'center', sortable:true, searchable:true},
-                {title: 'Name', field : 'Name', align:'center', sortable:true, searchable:true},
-                {title: 'Group', field : 'Group', align:'center', sortable:true, searchable:true},
-                {title: 'Container', field : 'Container', align:'center', sortable:true, searchable:true},
-                {title: 'Location', field : 'Location', align:'center', sortable:true, searchable:true, formatter: "locationFormatter"},
-                {title: 'Status', field : 'Status', align:'center', sortable:true, searchable:true, formatter: "subjectStatusFormatter"},
-                {title: 'Age', field : 'Age', align:'center', sortable:true, searchable:false},
-                {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter"},
-                {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false},
-                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false}
+                events: window.subjectOperateEvents, formatter: subjectOperateFormatter, forceHide:true},
+                {title: '#', field : 'SubjectIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
+                {title: 'Study', field : 'StudyID', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
+                {title: 'ID', field : 'SubjectID', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Name', field : 'Name', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Group', field : 'Group', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Container', field : 'Container', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Location', field : 'Location', align:'center', sortable:true, searchable:true, formatter: "locationFormatter",forceExport: true},
+                {title: 'Status', field : 'Status', align:'center', sortable:true, searchable:true, formatter: "subjectStatusFormatter",forceExport: true},
+                {title: 'Age', field : 'Age', align:'center', sortable:true, searchable:false,forceExport: true},
+                {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter",forceExport: true},
+                {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true},
+                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true}
             ],
             pagination:true,
             checkboxHeader:true,
@@ -185,19 +185,21 @@ function createSubjectTable(container,table_id, height){
         var selected = $(this).val();
 
         if(selected == "all"){
+            table.bootstrapTable('uncheckAll');
             table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
             table.bootstrapTable('resetSearch');
         }
         else{
+            table.bootstrapTable('uncheckAll');
             table.bootstrapTable('refreshOptions', { ajax: function(params){
                 params.study_id = selected;
                 subject_retrieve_ajax(params);
             } });
             table.bootstrapTable('resetSearch');
         }
+        subjects_table_events();
     })
     
-
     table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
 
     // modalInsert("Subject", container,"subject_modal_add_new",table_id, subjectFormInputs, subject_insert_ajax);
@@ -286,9 +288,8 @@ function initSubjectModalAdd(container, table){
     form.append(submitForm);
 
     
-
     $(modal).on('hidden.bs.modal',function(){
-        $( document ).trigger("_release",["add"]);
+        // $( document ).trigger("_release",["add"]);
     })
 
     form.on('submit',function(e){
@@ -345,14 +346,14 @@ function initSubjectModalEdit(container, table, index){
     var modal = container.find("#"+modal_id);
 
     $(modal).on('hidden.bs.modal',function(){
-        $( document ).trigger("_release",["edit"]);
+        // $( document ).trigger("_release",["edit"]);
     })
 
     function init_fields(){
         form.find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                $(this).val(entry[name]).trigger("change");
+                // $(this).val(entry[name]).trigger("change");
             }
         });
         form.find("textarea[name]").each(function(){
@@ -444,7 +445,7 @@ function initSubjectBatchModalEdit(container, table){
     modal_body.append(form);
    
     $(modal).on('hidden.bs.modal',function(){
-        $( document ).trigger("_release",["batch_edit"]);
+        // $( document ).trigger("_release",["batch_edit"]);
     })
 
     form.on('submit',function(e){
@@ -505,49 +506,183 @@ function initSubjectModalImport(container,table){
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import Subjects");
-    submitForm.append(submitButton);
-
     var file_input_group = $("<div/>").addClass("row mb-3");
     var file_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Select .csv file");
     var file_input = $("<input/>").addClass("form-control").attr("type","file").attr("id","inputFileSelect").attr("name","inputFile");
     file_input.attr("accept",".csv")
 
-
-    var file_upload_btn = $("<span/>").addClass("btn btn-outline-success form-control").attr("id","uploadBtn");
-    // file_upload_btn.html($("<span/>").addClass("bi bi-cloud-upload").append(" Upload"))
-    file_upload_btn.html($("<span/>").addClass("fa fa-cloud-upload").append(" Upload"))
-    
+    // var file_upload_btn = $("<span/>").addClass("btn btn-outline-success form-control").attr("id","uploadBtn");
+    // // file_upload_btn.html($("<span/>").addClass("bi bi-cloud-upload").append(" Upload"))
+    // file_upload_btn.html($("<span/>").addClass("fa fa-cloud-upload").append(" Upload"))
 
     file_input_group.append(file_label);
-    file_input_group.append($("<div/>").addClass("col-md-6").append(file_input));
-    file_input_group.append($("<div/>").addClass("col-md-3").append(file_upload_btn));
+    // file_input_group.append($("<div/>").addClass("col-md-6").append(file_input));
+    file_input_group.append($("<div/>").addClass("col-md-9").append(file_input));
+    // file_input_group.append($("<div/>").addClass("col-md-3").append(file_upload_btn));
 
     form.append(file_input_group);
 
+    var study_selector = $("<div/>").addClass("row mt-3 mb-3");
+    var study_dropdown = $("<select/>").addClass("form-control").attr("id","targetStudySelect").attr("type","text").prop("required",true);
+    study_dropdown.append($("<option/>").html("Choose study...").prop('selected',true).attr("value",""));
+    showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+
+    study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Select target Study: "));
+    study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
+
+    form.append(study_selector);
+
+    var instructions_group = $("<div/>").addClass("mb-3");
+    instructions_group.append($("<label/>").attr("for","instruction_textarea").addClass("form-label").html("Instructions"));
+    var instructions = $("<textarea/>").attr("rows",5).prop("disabled",true).attr("id","instruction_textarea").addClass("form-control");
+    $(instructions).val("Import a specific CSV table from your local drive. Subjects will be added to the selected study.\n\nAccepted columns: \n\tID, Name, Group, Container, Location, Status, Age, Sex, Weight, Height\n(Unknown column names or values will be ignored.)");
+    instructions_group.append(instructions);
+    form.append($("<div/>").addClass("row").append(instructions_group));
+
+    var table = $("<table/>").attr("id","modalImportTable");
+    table.attr("data-locale","hu-HU");
+
+    var table_container = $("<div/>").addClass("mb-3");
+    table_container.append(table);
+    form.append(table_container);
 
 
+    var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import Subjects");
+    submitForm.append(submitButton);
+
+    modal.find("#clear_form").remove();
+    
     form.append(submitForm);
     modal_body.append(form);
 
-    form.on('submit',function(e){
-        e.preventDefault();
-        modal.modal('hide');
-        form[0].reset();
-    });
-    
+    table.bootstrapTable();
 
-    file_input_group.find("#uploadBtn").on("click",function(){
+    // file_input_group.find("#uploadBtn").on("click",function(){
+    file_input.on("change",function(){
         const fileInput = document.getElementById("inputFileSelect");
         const selectedFiles = fileInput.files;
 
         if(selectedFiles.length==0){
             return;
         }
-        console.log(selectedFiles[0]);
+        
+        const reader = new FileReader();
 
-        // TODO https://imagekit.io/blog/uploading-multiple-files-using-javascript/
+        reader.onload = function(res) {
+            //parse csv data
+            var data = res.target.result;
+
+            var object_list = $.csv.toObjects(data);
+
+            var columns = [];
+
+            $.each(object_list[0], function( key, value ) {
+                    var _item = {};
+                    _item.field = key;
+                    _item.title = key;
+                    columns.push(_item);
+            });
+
+            $.each(object_list,function(index){
+                let obj = object_list[index];
+                $.each(obj,function(key,value){
+                    if(value=="'-"){
+                        object_list[index][key]="-";
+                    }
+                    else if(!isNaN(value)){
+                        object_list[index][key] = +object_list[index][key];
+                    }
+                })
+            });
+            // console.log(object_list);
+
+            table.bootstrapTable("destroy").bootstrapTable({
+                "columns": columns,
+                data: object_list
+            });
+            // console.log(table.bootstrapTable('getData'))
+        };
+        reader.readAsText(fileInput.files[0]);
+    });
+
+    form.on('submit',function(e){
+        e.preventDefault();
+
+        var data = table.bootstrapTable('getData');
+
+        var selected_study = $(study_dropdown).val();
+        var selected_study_name = getDefEntryFieldWhere("studies","StudyID",selected_study,"StudyName")
+
+        bootbox.confirm({
+            message: 'You are going to import '+ data.length +' subjects to study "'+ selected_study_name +'".<br>Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-success'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-dark'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    // validate data
+                    
+                    $.each(data,function(index){
+                        let element = data[index];
+                        
+                        var validated_element = {};
+                        validated_element["StudyID"] = selected_study;
+                        validated_element["SubjectID"] = element["ID"];
+                        
+                        var safe_args = ["Name","Group","Container","Age","Weight","Height"];
+                        $.each(safe_args,function(index,value){
+                            if(element.hasOwnProperty(value))
+                                validated_element[value] = element[value];
+                        });
+
+                        if(element.hasOwnProperty("Location"))
+                            validated_element["Location"] = getDefEntryFieldWhere("location_definitions","LocationName",element["Location"],"LocationID");
+                        
+                        if(element.hasOwnProperty("Sex"))
+                            validated_element["Sex"] = getDefEntryFieldWhere("sex_definitions","SexName",element["Sex"],"SexID");
+                        
+                        if(element.hasOwnProperty("Status"))
+                            validated_element["Status"] = getDefEntryFieldWhere("subject_status_definitions","StatusName",element["Status"],"StatusID");
+                        
+                        // console.log(validated_element);
+
+                        subject_insert_ajax(validated_element);
+                    });
+
+
+                    modal.modal('hide');
+                    modal.on('hidden.bs.modal',function(e){
+                                form[0].reset();
+                                $('#'+_table_id).bootstrapTable('refresh');
+                                });
+                    }
+            }
+            });
+
+
+    });
+}
+
+function subjects_table_events(){
+    var table = $('#'+_table_id);
+    table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table reset-view.bs.table',
+    function(){
+        var selection =  table.bootstrapTable('getSelections');
+
+        if(selection.length>0){
+            $(document).find(".needs-select").removeClass("disabled");
+        }
+        else{
+            $(document).find(".needs-select").addClass("disabled");
+        }
     })
 }
 
@@ -563,7 +698,7 @@ function showSubjectManager(container){
     initSubjectModalAdd(_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
         $('#subjectModalAdd').modal('show');
-        $(document).trigger("_lock",["add"]);
+        // $(document).trigger("_lock",["add"]);
     });
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
@@ -584,87 +719,19 @@ function showSubjectManager(container){
     initSubjectBatchModalEdit(_content,table);
     toolbar.find("#toolbar_batch_edit").on("click", function(){
         $('#subjectBatchModalEdit').modal('show');
-        $(document).trigger("_lock",["batch_edit"]);
+        // $(document).trigger("_lock",["batch_edit"]);
     });
 
     initSubjectModalImport(_content,table);
     toolbar.find("#toolbar_import").on("click", function(){
         $('#subjectModalImport').modal('show');
-        $(document).trigger("_lock",["import"]);
+        // $(document).trigger("_lock",["import"]);
     });
 
     toolbar.find(".needs-select").addClass("disabled");
 
-    // 'check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table'
-    table.on('all.bs.table',
-    function(){
-        // if(_lock_list.length>0) return;
-
-        var selection =  table.bootstrapTable('getSelections');
-        // if(selection.length>0 && _lock_list.length==0){
-        if(selection.length>0){
-            toolbar.find(".needs-select").removeClass("disabled");
-            // table.bootstrapTable("refreshOptions",{autoRefreshStatus:false});
-        }
-        else{
-            toolbar.find(".needs-select").addClass("disabled");
-            // table.bootstrapTable("refreshOptions",{autoRefreshStatus:true});
-        }
-    })
-
-    table.on('search.bs.table',function(e,text){
-        if(text!=""){
-            $( document ).trigger( "_lock", [ "search"] );
-        }
-        else{
-            $( document ).trigger( "_release", [ "search"] );
-        }
-    })
-
-    table.on('sort.bs.table',function(e,name,order){
-        if(order){
-            $( document ).trigger( "_lock", [ "sort"] );
-        }else{
-            $( document ).trigger( "_release", [ "sort"] );
-        }
-    })
-
-
-    $( document ).on( "operate_lock", {}, 
-        function( event ) {
-
-            if(_lock_list.length!=0){
-                $(document).find(".lockable").addClass("disabled");
-                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
-                $(document).find(".sortable").prop( "disabled", true );
-            }
-            else{
-                $(_content).empty();
-                $(document).find(".lockable").not(".needs-select").removeClass("disabled");
-                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
-                $(document).find(".sortable").prop( "disabled", false );
-            }
-        }
-    );
-
-    $( document ).on( "_lock", {}, 
-    function( event, lock_name ) {
-        if(!(lock_name == "" || lock_name == null )){
-            _lock_list.push(lock_name);
-            // console.log("Lock ["+lock_name+"] acquired.");
-
-            // $(this).trigger("operate_lock",[]);
-        }
-    });
-
-    $( document ).on( "_release", {}, 
-    function( event, lock_name ) {
-        if(!(lock_name == "" || lock_name == null )){
-            _lock_list = _.without(_lock_list,lock_name);
-            // console.log("Lock ["+lock_name+"] released.");
-
-            // $(this).trigger("operate_lock",[]);
-        }
-    });
+    subjects_table_events();
+    
 
 }
+

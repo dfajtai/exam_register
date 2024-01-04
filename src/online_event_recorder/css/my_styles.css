@@ -19,3 +19,8 @@
 .w-40 {
     width: 40%;
 }
+
+
+#instruction_textarea {
+    resize: none;
+}

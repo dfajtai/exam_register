@@ -47,6 +47,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.2/crc32.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
 
@@ -78,6 +80,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
+
+	<!-- <script defer src="js/common/file_upload.js"></script> -->
 
 
 
