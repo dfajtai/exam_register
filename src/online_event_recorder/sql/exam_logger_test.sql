@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 05. 09:59
+-- Létrehozás ideje: 2024. Jan 05. 11:54
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.13
 
@@ -275,12 +275,12 @@ CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
   `EventID` int NOT NULL COMMENT 'event_definitions.eventid',
   `EventName` varchar(127) NOT NULL,
-  `EventStatus` int NOT NULL COMMENT 'event_status.eventstatusid',
-  `EventComment` varchar(255) NOT NULL,
-  `EventDataJSON` json NOT NULL,
+  `EventStatus` int DEFAULT NULL COMMENT 'event_status.eventstatusid',
+  `EventComment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `EventDataJSON` json DEFAULT NULL,
   `EventStudy` int NOT NULL COMMENT 'studies.studyid',
-  `EventSubject` int NOT NULL COMMENT 'subjects.subjectID',
-  `EventLocation` int NOT NULL COMMENT 'locations.locationid',
+  `EventSubject` int NOT NULL COMMENT 'subjects.subjectIndex',
+  `EventLocation` int DEFAULT NULL COMMENT 'locations.locationid',
   `EventModifiedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `EventModifiedBy` int NOT NULL COMMENT 'users.userid'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -739,7 +739,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-05 09:54:23', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-05 11:27:21', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -788,7 +788,10 @@ ALTER TABLE `definition_tables`
 --
 ALTER TABLE `event_change_log`
   ADD PRIMARY KEY (`EventChangeLogIndex`),
-  ADD KEY `EventIndex` (`EventIndex`);
+  ADD KEY `EventIndex` (`EventIndex`),
+  ADD KEY `EventModifiedBy` (`EventModifiedBy`),
+  ADD KEY `EventStudy` (`EventStudy`),
+  ADD KEY `EventSubject` (`EventSubject`);
 
 --
 -- A tábla indexei `event_definitions`
@@ -805,7 +808,9 @@ ALTER TABLE `event_log`
   ADD KEY `event_log_ibfk_1` (`EventID`),
   ADD KEY `EventLocation` (`EventLocation`),
   ADD KEY `EventModifiedBy` (`EventModifiedBy`),
-  ADD KEY `EventStudy` (`EventStudy`);
+  ADD KEY `EventStudy` (`EventStudy`),
+  ADD KEY `EventStatus` (`EventStatus`),
+  ADD KEY `EventSubject` (`EventSubject`);
 
 --
 -- A tábla indexei `event_status_definitions`
@@ -1047,7 +1052,10 @@ ALTER TABLE `consumable_definitions`
 -- Megkötések a táblához `event_change_log`
 --
 ALTER TABLE `event_change_log`
-  ADD CONSTRAINT `event_change_log_ibfk_1` FOREIGN KEY (`EventIndex`) REFERENCES `event_log` (`EventIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `event_change_log_ibfk_1` FOREIGN KEY (`EventIndex`) REFERENCES `event_log` (`EventIndex`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_change_log_ibfk_2` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_change_log_ibfk_3` FOREIGN KEY (`EventStudy`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `event_definitions`
@@ -1062,7 +1070,9 @@ ALTER TABLE `event_log`
   ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventID`) REFERENCES `event_definitions` (`EventID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_2` FOREIGN KEY (`EventLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_3` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `subjects` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `subjects` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_5` FOREIGN KEY (`EventStatus`) REFERENCES `event_status_definitions` (`EventStatusID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_6` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `subjects`

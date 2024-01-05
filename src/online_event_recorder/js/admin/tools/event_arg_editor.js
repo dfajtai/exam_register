@@ -25,7 +25,7 @@ window.eventDefOperateEvents = {
         $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        showDeftoolEditForm(_content,"edit_form", $('#'+_table_id),index);
+        showArgEditorEditForm(_content,"edit_form", $('#'+_table_id),index);
         _content_name = "edit";
         $( document ).trigger( "_lock", [ "edit"] );
     },
@@ -48,13 +48,47 @@ window.eventDefOperateEvents = {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("defHelperFileds",JSON.stringify($('#'+_table_id).bootstrapTable('getData')));
+                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+_table_id).bootstrapTable('getData')));
                 }
             }
             });
     }
 }
 
+function eventOperateFormatter(value, row, index) {
+    var container = $("<div/>").addClass("lockable");
+    var up_down_gorup = $("<div/>").addClass("btn-group me-3 ");
+    var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
+    var btn_down = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_down lockable").append($("<i/>").addClass("fa fa-angle-down"));
+    btn_up.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Move up");
+    btn_down.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Move down");
+
+    up_down_gorup.append(btn_up)
+    up_down_gorup.append(btn_down)
+    container.append(up_down_gorup);
+
+    var btn_edit = $("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit"));
+    var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"))
+    btn_edit.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit");
+    btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove");
+    
+    container.append(btn_edit)
+    container.append(btn_remove)
+
+    
+    if (index==0){
+        btn_up.addClass("disabled").removeClass("lockable");
+    }
+    if(index==$('#'+_table_id).bootstrapTable('getData').length-1){
+        btn_down.addClass("disabled").removeClass("lockable");
+    }
+
+    if(_lock_list.length>0){
+        container.find("button").addClass("disabled");
+    }
+
+    return container.prop("outerHTML");
+}
 
 
 function createFieldsTable(container, table_id, height){
@@ -125,32 +159,6 @@ function createFieldsTable(container, table_id, height){
         });
     
 }
-
-function eventOperateFormatter(value, row, index) {
-    var container = $("<div/>").addClass("lockable");
-    var up_dpwn_gorup = $("<div/>").addClass("btn-group me-3 ");
-    var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
-    var btn_down = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_down lockable").append($("<i/>").addClass("fa fa-angle-down"));
-    up_dpwn_gorup.append(btn_up)
-    up_dpwn_gorup.append(btn_down)
-    container.append(up_dpwn_gorup);
-    container.append($("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit")))
-    container.append($("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash")))
-
-    
-    if (index==0){
-        btn_up.addClass("disabled").removeClass("lockable");
-    }
-    else if(index==$('#'+_table_id).bootstrapTable('getData').length-1){
-        btn_down.addClass("disabled").removeClass("lockable");
-    }
-
-    if(_lock_list.length>0){
-        container.find("button").addClass("disabled");
-    }
-
-    return container.prop("outerHTML");
-  }
 
 
 function selectFormFields(container){
@@ -229,7 +237,7 @@ function inputFormFields(container){
             dtypeNumericGroup.empty();
             var _step = $("<div/>").addClass("col-md-2");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
-            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
+            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
             var _min = $("<div/>").addClass("col-md-2");
@@ -267,7 +275,7 @@ function inputFormFields(container){
 }
 
 
-function showDeftoolAddForm(container,form_id, table){
+function showArgEditorAddForm(container,form_id, table){
     container.empty();
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation mb-3 pb-3 shadow container");
@@ -366,7 +374,7 @@ function showDeftoolAddForm(container,form_id, table){
 
 
         table.bootstrapTable("append",newFieldInfo);
-        statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
 
         _content_name = "";
@@ -385,9 +393,9 @@ function showDeftoolAddForm(container,form_id, table){
 
 }
 
-function showDeftoolEditForm(container, form_id,  table, index){
+function showArgEditorEditForm(container, form_id,  table, index){
     // container.empty();
-    showDeftoolAddForm(container, form_id, table);
+    showArgEditorAddForm(container, form_id, table);
 
     var form = container.find("#"+form_id);
 
@@ -484,7 +492,7 @@ function showDeftoolEditForm(container, form_id,  table, index){
             index: index,
             row: newFieldInfo
             })
-        statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
         _content_name = "";
         $( document ).trigger( "_release", [ "edit"] );
@@ -521,7 +529,7 @@ function loadJSON(container,table){
         console.log(json_text);
         var json = JSON.parse(json_text);
         table.bootstrapTable('append',json);
-        statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         
     })
 
@@ -614,12 +622,12 @@ function previewTableForm(container,table){
 }
 
 
-function showEventArgumentDefinitionTool(container){
+function showEventArgEditor(container){
     createFieldsTable(container,_table_id,500);
     var table = $('#'+_table_id);
     
-    if(statusInStorage("defHelperFileds")){
-        table.bootstrapTable('append',JSON.parse(statusFromStorage("defHelperFileds")));
+    if(statusInStorage("eventArgEditorHistory")){
+        table.bootstrapTable('append',JSON.parse(statusFromStorage("eventArgEditorHistory")));
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
@@ -686,7 +694,7 @@ function showEventArgumentDefinitionTool(container){
                     })
                     // console.log(indices);
                     table.bootstrapTable("remove",{field:"$index",values:indices});
-                    statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+                    statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
                 }
             }
             });
@@ -695,7 +703,7 @@ function showEventArgumentDefinitionTool(container){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        showDeftoolAddForm(_content,"add_form", table);
+        showArgEditorAddForm(_content,"add_form", table);
         _content_name = "add";
         $( document ).trigger( "_lock", [ "add"] );
     })
@@ -710,7 +718,7 @@ function showEventArgumentDefinitionTool(container){
                 _data["state"] = false;
                 table.bootstrapTable("append",_data);
             })
-            statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+            statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
         else{
             $('input[name="btSelectItem"]:checked').each(function () {
@@ -720,13 +728,13 @@ function showEventArgumentDefinitionTool(container){
                 _data["state"] = false;
                 table.bootstrapTable("insertRow",{index:index+1,row:_data});
             })
-            statusToStorage("defHelperFileds",JSON.stringify(table.bootstrapTable('getData')));
+            statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
 
     })
 
     // toolbar.find("#toolbar_edit").on("click",function(e){
-    //     showDeftoolEditForm(_content,"edit_form", table);
+    //     showArgEditorEditForm(_content,"edit_form", table);
     //     _content_name = "edit";
     // })
 

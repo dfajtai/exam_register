@@ -126,7 +126,7 @@ function connectSelectByAttr(parent_contaner, child_contaner, child_def_name, ch
 
     // parent container contains a select which has changed
     parent_contaner.find("select").on("change",function(e){
-        if($(this).val()!=-1){
+        if($(this).val()!=""){
             
             var selected_parent_DOM = $(this).find(":selected");
 
@@ -135,6 +135,13 @@ function connectSelectByAttr(parent_contaner, child_contaner, child_def_name, ch
                                                     child_def_filter_key,
                                                     selected_parent_DOM.attr(parent_key_attr),
                                                     child_value_attr);
+        }else{
+            var child_options = child_contaner.find("select").find("option");
+
+            $.each(child_options,function(index,option){
+                $(option).removeAttr("hidden");
+            })
         }
+
     });
 }

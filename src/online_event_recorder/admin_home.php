@@ -71,7 +71,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
 
-	<script defer src="js/admin/tools/event_arg_editor_tool.js"></script>
+	<script defer src="js/admin/tools/event_arg_editor.js"></script>
+	<script defer src="js/admin/tools/event_batch_editor.js"></script>
 	<script defer src="js/admin/tools/subject_management.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 
@@ -143,6 +144,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_arg_editor_tool()">Event Argument Editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_batch_editor_tool()">Event Batch Editor</a></li>
 						</ul>
 					</li>
 
@@ -203,34 +205,58 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 		function show_event_arg_editor_tool(){
-			var main_container = $("#main_container");
-			$("#main_container").empty();
-			
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event argument editor"));
-			main_container.append(_title);
+			updateLocalDefinitionDatabase(
+				function(){
+					var main_container = $("#main_container");
+					$("#main_container").empty();
+					
+					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event argument editor"));
+					main_container.append(_title);
 
-			showEventArgumentDefinitionTool(main_container);		
-			
-			clearAllStatusFromUrl();
-			statusToUrl("tool","EventDefTool");
-			
-			$('.navbar-collapse').collapse('hide');
+					showEventArgEditor(main_container);		
+					
+					clearAllStatusFromUrl();
+					statusToUrl("tool","EventArgEditor");
+					
+					$('.navbar-collapse').collapse('hide');
+				}
+			)			
 		}
 
+		function show_event_batch_editor_tool(){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+				
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event batch editor"));
+				main_container.append(_title);
+
+				showEventBatchEditor(main_container);		
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","EventBatchEditor");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+		}
 
 		function show_subject_manager(){
-			var main_container = $("#main_container");
-			$("#main_container").empty();
-			
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
-			main_container.append(_title);
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+				
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
+				main_container.append(_title);
 
-			showSubjectManager(main_container);
-			
-			clearAllStatusFromUrl();
-			statusToUrl("tool","SubjectManager");
-			
-			$('.navbar-collapse').collapse('hide');
+				showSubjectManager(main_container);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","SubjectManager");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
 		}
 
 		$(document).ready(function() {
@@ -269,7 +295,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							"event_types":{"title":"Event type definitons","func":initEventTypeDefinitionsTable},
 							"events":{"title":"Event definitons","func":initEventDefinitionsTable},
 							"studies":{"title":"Studies","func":initStudyDefinitionsTable},
-							}
+							};
 
 
 				if (statusInUrl("def")){
@@ -277,16 +303,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
-					if(tool=="EventDefTool") show_event_arg_editor_tool();
+					if(tool=="EventArgEditor") show_event_arg_editor_tool();
+					if(tool=="EventBatchEditor") show_event_batch_editor_tool();
 					if(tool=="SubjectManager") show_subject_manager();
 				}
 				else{
 					show_table("users");
 				}
 			});
-
-			
-
 		});
 
 

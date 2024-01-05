@@ -61,7 +61,7 @@ function subjectOperateFormatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
     container.append($("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit")))
-    // container.append($("<button/>").addClass("btn btn-outline-primary btn-sm status deftool-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
+    // container.append($("<button/>").addClass("btn btn-outline-primary btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
 
     // if(_lock_list.length>0){
     //     container.find("button").addClass("disabled");
@@ -87,12 +87,12 @@ function createSubjectTable(container,table_id, height){
     var table = $("<table/>").attr("id",table_id);
 
     var study_selector = $("<div/>").addClass("row mt-3 mb-3");
-    var study_dropdown = $("<select/>").addClass("col-md-3").attr("id","studySelect").attr("type","text");
+    var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
     study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
     showAllDefs(study_dropdown,"studies","StudyID","StudyName");
 
-    study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Show subejcts from study: "));
-    study_selector.append(study_dropdown);
+    study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Show subejcts from Study: "));
+    study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
 
     container.append(study_selector);
 
@@ -280,7 +280,6 @@ function initSubjectModalAdd(container, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add Subject");
     var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add Subject");
     submitForm.append(submitButton);
 
@@ -499,7 +498,7 @@ function initSubjectModalImport(container,table){
 
     container.find("#"+modal_id).remove();
     
-    subjectModal(container, modal_id, "Import Subjects form csv");
+    subjectModal(container, modal_id, "Import Subjects from CSV");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");

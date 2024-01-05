@@ -31,7 +31,7 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
                         'EventData' => $_old_data["EventData"],
                         'EventLocation' => $_old_data["EventLocation"]];
 
-        $database -> insert("subject_change_log", [
+        $database -> insert("event_change_log", [
             "EventIndex"=>$event_index, 
             "EventStudy"=>$_old_data["EventStudy"], 
             "EventSubject"=>$_old_data["EventSubject"],

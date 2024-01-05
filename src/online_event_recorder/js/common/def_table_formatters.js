@@ -1,103 +1,84 @@
 function unitTypeFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("unit_type_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.UnitTypeID ===  value;
-    });
-    
-    if (match.length){return match[0].UnitTypeName}
+    var name = getDefEntryFieldWhere("unit_type_definitions","UnitTypeID",value,"UnitTypeName");
+    if (name){return name}
     else {return "Unknown type '" + String(value) + "'"}
     
 }
 
 function studyFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("studies"));
-    var match = $.grep(defs, function(def) {
-        return def.StudyID ===  value;
-    });
-    
-    if (match.length){return match[0].StudyName}
+
+    var name = getDefEntryFieldWhere("studies","StudyID",value,"StudyName");
+    if (name){return name}
     else {return "Unknown study '" + String(value) + "'"}
     
 }
 
 function sideFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("side_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.SideID ===  value;
-    });
-    
-    if (match.length){return match[0].SideShortName}
+
+    var name = getDefEntryFieldWhere("side_definitions","SideID",value,"SideShortName");
+    if (name){return name}
     else {return "Unknown side '" + String(value) + "'"}
     
 }
 
 function consumableTypeFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("consumable_type_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.ConsumableTypeID ===  value;
-    });
-    
-    if (match.length){return match[0].ConsumableTypeName}
+
+    var name = getDefEntryFieldWhere("consumable_type_definitions","ConsumableTypeID",value,"ConsumableTypeName");
+    if (name){return name}
     else {return "Unknown type '" + String(value) + "'"}
 }
 
 
 function locationFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("location_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.LocationID ===  value;
-    });
-    
-    if (match.length){return match[0].LocationName}
+
+    var name = getDefEntryFieldWhere("location_definitions","LocationID",value,"LocationName");
+    if (name){return name}
     else {return "Unknown location '" + String(value) + "'"}
 }
 
 function sexFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("sex_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.SexID ===  value;
-    });
-    
-    if (match.length){return match[0].SexName}
+
+    var name = getDefEntryFieldWhere("sex_definitions","SexID",value,"SexName");
+    if (name){return name}
     else {return "Unknown sex '" + String(value) + "'"}
+}
+
+
+function eventFormatter(value,row){
+    if(value==null) return;
+
+    var event_name = getDefEntryFieldWhere("event_definitions","EventID",value,"EventName")
+    if (event_name){return event_name}
+    else {return "Unknown event '" + String(value) + "'"}
 }
 
 function eventTypeFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("event_type_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.EventTypeID ===  value;
-    });
-    
-    if (match.length){return match[0].EventTypeName}
+
+    var name = getDefEntryFieldWhere("event_type_definitions","EventTypeID",value,"EventTypeName");
+    if (name){return name}
     else {return "Unknown location '" + String(value) + "'"}
 }
 
 
 function eventStatusFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("event_status_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.EventStatusID ===  value;
-    });
-    
-    if (match.length){return match[0].EventStatusName}
-    else {return "Unknown location '" + String(value) + "'"}
+
+    var name = getDefEntryFieldWhere("event_status_definitions","EventStatusID",value,"EventStatusName");
+    if (name){return name}
+    else {return "Unknown status '" + String(value) + "'"}
 }
 
 function subjectStatusFormatter(value,row){
     if(value==null) return;
-    var defs = JSON.parse(localStorage.getItem("subject_status_definitions"));
-    var match = $.grep(defs, function(def) {
-        return def.StatusID ===  value;
-    });
-    
-    if (match.length){return match[0].StatusName}
+
+    var name = getDefEntryFieldWhere("subject_status_definitions","StatusID",value,"StatusName");
+    if (name){return name}
     else {return "Unknown location '" + String(value) + "'"}
 }

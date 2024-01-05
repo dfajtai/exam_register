@@ -254,6 +254,28 @@ function dynamicConsumableSelect(container, name, label){
 
 }
 
+function dynamicEventSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-4 col-form-label").html(label);
+    
+    var type_select_div  = $("<div/>").addClass("col-md-4");
+    var _select_1 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select");
+    _select_1.append($("<option/>").html("Choose event type...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_1,"event_type_definitions","EventTypeID","EventTypeName");
+    type_select_div.append(_select_1)
+
+    var event_select_div = $("<div/>").addClass("col-md-4");
+    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    _select_2.append($("<option/>").html("Choose event...").prop('selected',true).attr("value","").attr("required","true"));
+    showAllDefs(_select_2,"event_definitions","EventID","EventName");
+    event_select_div.append(_select_2);
+    
+    connectSelectByAttr(type_select_div,event_select_div, "event_definitions","EventType", "EventTypeID", "EventID");
+
+    container.append(_label);
+    container.append(type_select_div);
+    container.append(event_select_div);
+}
+
 function dynamicAssetSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-4 col-form-label").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
@@ -291,7 +313,7 @@ function dynamicEventStatusSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-4 col-form-label").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
     _select_dropdow.append($("<option/>").html("Choose event status...").prop('selected',true).attr("value",""));
-    showAllDefs(_select_dropdow,"asset_definitions","EventStatusID","EventStatusName");
+    showAllDefs(_select_dropdow,"event_status_definitions","EventStatusID","EventStatusName");
 
     container.append(_label);
     container.append($("<div/>").addClass("col-md-8").append(_select_dropdow));
@@ -310,20 +332,24 @@ function dynamicSubjectStatusSelect(container, name, label){
 }
 
 function addDynamicSelectField(container, name, label, required, data_source_name){
-    var legit_data_source_names = ["location","bodypart","consumable","asset","sex","subject_status","event_status","study"];
+    var legit_data_source_names = ["location","bodypart","consumable","asset","sex","subject_status","event","event_status","study"];
     if(!legit_data_source_names.includes(data_source_name))
         throw new Error('Custom "select" field "'+ name + '" has invalid data source "'+ data_source_name +'".');
 
     container.attr("id",name+"SelectGroup");
 
-    if(data_source_name=="location")  dynamicLocationSelect(container,name,label);
-    else if(data_source_name=="bodypart")  dynamicBodypartSelect(container,name,label);
-    else if(data_source_name=="consumable")  dynamicConsumableSelect(container,name,label);
-    else if(data_source_name=="asset")  dynamicAssetSelect(container,name,label);
-    else if(data_source_name=="sex")  dynamicSexSelect(container,name,label);
-    else if(data_source_name=="subject_status")  dynamicSubjectStatusSelect(container,name,label);
-    else if(data_source_name=="event_status")  dynamicEventStatusSelect(container,name,label);
-    else if(data_source_name=="study")  dynamicStudySelect(container,name,label);
+    switch (data_source_name){
+        case 'location': dynamicLocationSelect(container,name,label); break;
+        case 'bodypart':  dynamicBodypartSelect(container,name,label); break;
+        case 'consumable':  dynamicConsumableSelect(container,name,label); break;
+        case 'event':  dynamicEventSelect(container,name,label); break;
+    
+        case 'asset':  dynamicAssetSelect(container,name,label); break;
+        case 'sex': dynamicSexSelect(container,name,label); break;
+        case 'subject_status':  dynamicSubjectStatusSelect(container,name,label); break;
+        case 'event_status':  dynamicEventStatusSelect(container,name,label); break;
+        case 'study':  dynamicStudySelect(container,name,label); break;
+    }
     
     if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark");
 }
