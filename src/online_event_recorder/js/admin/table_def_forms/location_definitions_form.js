@@ -45,7 +45,7 @@ function initLocationDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'LocationID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'LocationID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'LocationName', align:'center', sortable:true, searchable:true},
                 {title: 'Desc', field : 'LocationDesc', align:'center', sortable:true, searchable:true},
             ],

@@ -101,9 +101,10 @@ function createFieldsTable(container, table_id, height){
 
     table.attr("data-sort-reset","true");
 
-
-    container.append(table);
-    container.append(toolbar);
+    var table_container = $("<div/>").addClass("row mt-2")
+    table_container.append(table);
+    table_container.append(toolbar);
+    container.append(table_container)
 
     table.bootstrapTable({
             columns : [
@@ -613,7 +614,7 @@ function previewTableForm(container,table){
 }
 
 
-function showEventFieldDefinitionTool(container){
+function showEventArgumentDefinitionTool(container){
     createFieldsTable(container,_table_id,500);
     var table = $('#'+_table_id);
     
@@ -627,7 +628,6 @@ function showEventFieldDefinitionTool(container){
     
     _content = $("<div/>").addClass("pt-3");
     container.append(_content);
-
 
 
     table.on('all.bs.table',function(){

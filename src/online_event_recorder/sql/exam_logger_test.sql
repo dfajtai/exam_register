@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 04. 15:32
+-- Létrehozás ideje: 2024. Jan 05. 09:59
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.13
 
@@ -198,15 +198,15 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (3, 'location_definitions', '2023-12-04 13:54:31', '68c2bc19'),
 (5, 'bodypart_definitions', '2023-12-07 10:25:34', '184dfa16'),
 (6, 'subject_status_definitions', '2023-11-23 11:37:03', '5ae4c226'),
-(7, 'unit_definitions', '2023-12-13 15:28:29', 'c461cf1d'),
-(8, 'unit_type_definitions', '2023-12-04 13:11:52', '47591c29'),
+(7, 'unit_definitions', '2023-12-13 15:28:29', 'a569235c'),
+(8, 'unit_type_definitions', '2024-01-04 15:43:01', 'd0614436'),
 (9, 'side_definitions', '2023-11-23 11:37:03', '1f2c2d75'),
 (10, 'sex_definitions', '2023-11-23 11:37:03', '18eba199'),
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2023-12-04 16:12:34', 'bce6ef8'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
 (15, 'event_definitions', '2023-12-13 15:26:32', '52bcb8d0'),
-(16, 'studies', '2023-12-07 14:30:06', '919c8867');
+(16, 'studies', '2024-01-05 09:58:07', '40cd0f95');
 
 -- --------------------------------------------------------
 
@@ -492,17 +492,18 @@ CREATE TABLE `studies` (
   `StudySpecies` varchar(64) NOT NULL,
   `StudyStart` date NOT NULL,
   `StudyEnd` date NOT NULL,
-  `StudyN` int NOT NULL
+  `StudyNMax` int NOT NULL,
+  `StudyNCurrent` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- A tábla adatainak kiíratása `studies`
 --
 
-INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyN`) VALUES
-(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42),
-(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 42),
-(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4);
+INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
+(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 0),
+(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 1),
+(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 0);
 
 --
 -- Eseményindítók `studies`
@@ -542,6 +543,23 @@ CREATE TABLE `subjects` (
   `ModifiedBy` int NOT NULL,
   `Status` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Eseményindítók `subjects`
+--
+DELIMITER $$
+CREATE TRIGGER `alter subject` AFTER UPDATE ON `subjects` FOR EACH ROW BEGIN
+UPDATE studies SET StudyNCurrent = StudyNCurrent +1 WHERE StudyID = NEW.StudyID;
+UPDATE studies SET StudyNCurrent = StudyNCurrent -1 WHERE StudyID = old.StudyID;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `new subject` AFTER INSERT ON `subjects` FOR EACH ROW BEGIN
+UPDATE studies SET StudyNCurrent = StudyNCurrent +1 WHERE StudyID = NEW.StudyID;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -631,8 +649,8 @@ INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `U
 (16, 5, 'milimeter', 'mm', 1, ''),
 (17, 5, 'centimeter', 'cm', 1, ''),
 (18, 5, 'meter', 'm', 1, ''),
-(19, 49, 'celsius', '˚C', 1, ''),
-(20, 8, 'n.a.', '-', 1, '');
+(19, 8, 'celsius', '˚C', 1, ''),
+(20, 0, 'n.a.', '-', 1, '');
 
 --
 -- Eseményindítók `unit_definitions`
@@ -667,15 +685,18 @@ CREATE TABLE `unit_type_definitions` (
 --
 
 INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc`) VALUES
+(0, 'other', 'Other kind of units'),
 (1, 'volume', 'Volume in ml, l, and so on.'),
-(2, 'mass', 'Mass in g, mg, kg and so on.'),
+(2, 'weight', 'Weight in g, mg, kg and so on.'),
 (3, 'count', 'Count as count.'),
 (4, 'unit', 'Unit as international unit or whatever.'),
 (5, 'length', 'Length in m, cm, mm, and so on.'),
 (6, 'duration', 'Duration in min, s, and so on.'),
 (7, 'flow', 'Fluid flow speed in ml/s ml/h and so on.'),
-(8, 'other', 'Other kind of units'),
-(49, 'temperature', 'Temperature in °C, °F or K.');
+(8, 'temperature', 'Temperature in °C, °F or K.'),
+(9, 'time', 'Time  (MM:HH:SS)'),
+(10, 'date', 'Date  (yyyy.mm.dd)'),
+(11, 'datetime', 'Full timestamp (yyyy.mm.dd MM:HH:SS)');
 
 --
 -- Eseményindítók `unit_type_definitions`
@@ -718,7 +739,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-04 15:14:15', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-05 09:54:23', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -991,7 +1012,7 @@ ALTER TABLE `unit_definitions`
 -- AUTO_INCREMENT a táblához `unit_type_definitions`
 --
 ALTER TABLE `unit_type_definitions`
-  MODIFY `UnitTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `UnitTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT a táblához `users`

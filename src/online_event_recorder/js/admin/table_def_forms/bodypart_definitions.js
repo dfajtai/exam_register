@@ -45,7 +45,7 @@ function initBodypartDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'BodypartID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'BodypartID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'BodypartName', align:'center', sortable:true, searchable:true},
                 {title: 'Desc', field : 'BodypartDesc', align:'center', sortable:true, searchable:true},
                 {title: 'Side', field : 'BodypartSide', align:'center', sortable:true, searchable:true, formatter: 'sideFormatter'},

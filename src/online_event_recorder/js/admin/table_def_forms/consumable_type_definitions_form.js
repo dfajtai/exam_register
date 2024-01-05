@@ -45,7 +45,7 @@ function initConsumableTypeDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'ConsumableTypeID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'ConsumableTypeID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'ConsumableTypeName', align:'center', sortable:true, searchable:true},
                 {title: 'Desc', field : 'ConsumableTypeDesc', align:'center', sortable:true, searchable:true},
             ],

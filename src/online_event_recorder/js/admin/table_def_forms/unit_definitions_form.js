@@ -44,7 +44,7 @@ function initUnitDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'UnitID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'UnitID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Type', field : 'UnitType', align:'center', sortable:true, searchable:true, formatter: 'unitTypeFormatter'},
                 {title: 'Name', field : 'UnitName', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'UnitUnit', align:'center', sortable:true, searchable:true},

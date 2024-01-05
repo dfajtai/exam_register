@@ -45,7 +45,7 @@ function initEventDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'EventID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'EventID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: 'eventTypeFormatter'},
                 {title: 'Desc', field : 'EventDesc', align:'center', sortable:true, searchable:true},

@@ -40,12 +40,24 @@ function study_definition_update_ajax(key_info,params,callback) {
 }
 
 function studyDescriptionFormatter(value,row){
-    if (String(value).length>30){
-        return String(value).slice(0,30) + "...";
+    if (String(value).length>25){
+        return String(value).slice(0,25) + "...";
     }
     return value
 
 }
+
+function nStyle(value, row, index) {
+    if (value>row["StudyNMax"]) {
+        return {
+            css: {
+            'color': 'red',
+            'font-weight':'bold'
+            }
+        }
+    }
+    return {}
+  }
 
 
 function initStudyDefinitionsTable(container,tableId){
@@ -53,13 +65,14 @@ function initStudyDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'StudyID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'StudyID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'StudyName', align:'center', sortable:true, searchable:true},
                 {title: 'Desc', field : 'StudyDesc', align:'center', sortable:true, searchable:true, formatter: studyDescriptionFormatter},
                 {title: 'Species', field : 'StudySpecies', align:'center', sortable:true, searchable:true},
-                {title: 'Start', field : 'StudyStart', align:'center', sortable:true, searchable:true},
-                {title: 'End', field : 'StudyEnd', align:'center', sortable:true, searchable:true},
-                {title: '#', field : 'StudyN', align:'center', sortable:true, searchable:true},
+                {title: 'Start', field : 'StudyStart', align:'center', sortable:true, searchable:false},
+                {title: 'End', field : 'StudyEnd', align:'center', sortable:true, searchable:false},
+                {title: 'N.max', field : 'StudyNMax', align:'center', sortable:true, searchable:false},
+                {title: 'N.current', field : 'StudyNCurrent', align:'center', sortable:true, searchable:false, cellStyle: "nStyle"},
             ],
             search:true,
             pagination:true,
@@ -113,9 +126,9 @@ function studyDefinitionInputs(container){
     endForm.append(endInput);
 
     var nForm = $("<div/>").addClass("row mb-3");
-    nForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("# of spec."));
+    nForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Max. number of subjects"));
     var nInput = $("<div/>").addClass("col-sm-9");
-    nInput.append($("<input/>").addClass("form-control").attr("type","number").attr("step","1").attr("id","n").attr("name","StudyN").prop('required',true));
+    nInput.append($("<input/>").addClass("form-control").attr("type","number").attr("step","1").attr("id","n").attr("name","StudyNMax").prop('required',true));
     nForm.append(nInput);
 
     container.append(nameForm);

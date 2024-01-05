@@ -44,7 +44,7 @@ function initAssetDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'AssetID', align:'center', sortable:true, searchable:false},
+                {title: 'ID', field : 'AssetID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'AssetName', align:'center', sortable:true, searchable:true},
                 {title: 'Location', field : 'AssetLocation', align:'center', sortable:true, searchable:true, formatter: 'locationFormatter'},
                 {title: 'Owner', field : 'AssetOwner', align:'center', sortable:true, searchable:false},

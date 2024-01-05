@@ -420,7 +420,6 @@ function initSubjectModalEdit(container, table, index){
         modal.modal('hide');
         form[0].reset();
     });
-
     return modal_id;
 }
 

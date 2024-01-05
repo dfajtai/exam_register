@@ -71,7 +71,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
 
-	<script defer src="js/admin/tools/event_def_tool.js"></script>
+	<script defer src="js/admin/tools/event_arg_editor_tool.js"></script>
 	<script defer src="js/admin/tools/subject_management.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 
@@ -100,16 +100,23 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			<div class="collapse navbar-collapse" id="navbarNavDropdown">
 				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_table('users')">Manage users</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_table('studies')">Define studies</a>
-					</li>
-					<li class="nav-item dropdown">
+					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
-						id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Edit definition tables</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						id="navbarAdminLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarAdminLink">
+							<li>
+								<a class="dropdown-item" href="#" onclick="show_table('users')">Manage users</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="#" onclick="show_table('studies')">Define studies</a>
+							</li>
+						</ul>
+					</li>
+					
+					<li class="nav-item dropdown me-3">
+						<a class="nav-link dropdown-toggle active" href="#" 
+						id="navbarDefsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Definitions</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDefsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('locations')">Location definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('bodyparts')">Bodypart definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('unit_types')">Unit Type definitions</a></li>
@@ -121,12 +128,26 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
 						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_event_def_tool()">EventDefTool</a>
+
+					<li class="nav-item dropdown me-3">
+						<a class="nav-link dropdown-toggle active" href="#" 
+						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
+							<li><a class="dropdown-item" href="#" onclick="show_subject_manager()">Manage Subjects</a>
+						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link active" href="#" onclick="show_subject_manager()">Subject Manager</a>
+
+					<li class="nav-item dropdown me-3">
+						<a class="nav-link dropdown-toggle active" href="#" 
+						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
+							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_arg_editor_tool()">Event Argument Editor</a></li>
+						</ul>
 					</li>
+
+
+
 				</ul>
 				<div class="d-flex ">
 					<a class="nav-item btn btn-outline-success ms-3 me-2" href="#" id="become_user_button" >User home</a>
@@ -139,11 +160,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	</nav>
 
-	<div class="container mt-3">
-		<div class="row">
-			<div id="main_container"></div>
-		</div>
-
+	<div class="container mt-3" id = "main_container">
 
 	</div>
 
@@ -164,7 +181,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			
 			var def_params =available_def_tables[def_name];
 			
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-2 fs-1").html(def_params.title));
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html(def_params.title));
 
 			container_id = def_name + "_definitions_container";
 			table_id = def_name + "_definitions_table";
@@ -174,7 +191,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			main_container.append(_title);
 			main_container.append(_table);
 
-			createAdminTable(_table, table_id, 500);
+			createAdminTable(_table, table_id, 600);
 			var fun = def_params.func;
 			fun(_table,table_id);
 
@@ -185,14 +202,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		}
 
 
-		function show_event_def_tool(){
+		function show_event_arg_editor_tool(){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 			
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event definition tool"));
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event argument editor"));
 			main_container.append(_title);
 
-			showEventFieldDefinitionTool(main_container);		
+			showEventArgumentDefinitionTool(main_container);		
 			
 			clearAllStatusFromUrl();
 			statusToUrl("tool","EventDefTool");
@@ -260,7 +277,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
-					if(tool=="EventDefTool") show_event_def_tool();
+					if(tool=="EventDefTool") show_event_arg_editor_tool();
 					if(tool=="SubjectManager") show_subject_manager();
 				}
 				else{
