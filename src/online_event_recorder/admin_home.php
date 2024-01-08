@@ -71,7 +71,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
 
-	<script defer src="js/admin/tools/event_arg_editor.js"></script>
+	<script defer src="js/admin/tools/event_args_editor.js"></script>
 	<script defer src="js/admin/tools/event_batch_editor.js"></script>
 	<script defer src="js/admin/tools/subject_management.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
@@ -143,7 +143,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_arg_editor_tool()">Event Argument Editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event Argument Editor</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_batch_editor_tool()">Event Batch Editor</a></li>
 						</ul>
 					</li>
@@ -204,7 +204,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		}
 
 
-		function show_event_arg_editor_tool(){
+		function show_event_args_editor_tool(){
 			updateLocalDefinitionDatabase(
 				function(){
 					var main_container = $("#main_container");
@@ -213,7 +213,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event argument editor"));
 					main_container.append(_title);
 
-					showEventArgEditor(main_container);		
+					show_event_args_editor(main_container);		
 					
 					clearAllStatusFromUrl();
 					statusToUrl("tool","EventArgEditor");
@@ -241,7 +241,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			})
 		}
 
-		function show_subject_manager(){
+		function show_subject_manager_tool(){
 			updateLocalDefinitionDatabase(
 				function(){
 				var main_container = $("#main_container");
@@ -250,7 +250,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
 				main_container.append(_title);
 
-				showSubjectManager(main_container);
+				show_subject_manager(main_container);
 				
 				clearAllStatusFromUrl();
 				statusToUrl("tool","SubjectManager");
@@ -303,9 +303,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
-					if(tool=="EventArgEditor") show_event_arg_editor_tool();
+					if(tool=="EventArgEditor") show_event_args_editor_tool();
 					if(tool=="EventBatchEditor") show_event_batch_editor_tool();
-					if(tool=="SubjectManager") show_subject_manager();
+					if(tool=="SubjectManager") show_subject_manager_tool();
 				}
 				else{
 					show_table("users");

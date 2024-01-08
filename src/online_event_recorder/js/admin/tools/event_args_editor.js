@@ -1,32 +1,35 @@
-var eventarg_table_id = "fieldDefTable";
-var eventarg_content = {};
-var eventarg_content_name = "";
-var eventarg_lock_list = []
+var event_args_table_id = "fieldDefTable";
+var event_args_content = {};
+var event_args_content_name = "";
+var event_args_lock_list = [];
+var event_args_names = [];
+var event_args_doubles = [];
 
-window.eventDefOperateEvents = {
+
+window.event_args_operate_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+eventarg_table_id).bootstrapTable('getData');
+        var data = $('#'+event_args_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+event_args_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+event_args_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+eventarg_table_id).bootstrapTable('getData');
+        var data = $('#'+event_args_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+event_args_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+event_args_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        showArgEditorEditForm(eventarg_content,"edit_form", $('#'+eventarg_table_id),index);
-        eventarg_content_name = "edit";
+        show_event_args_edit_form(event_args_content,"edit_form", $('#'+event_args_table_id),index);
+        event_args_content_name = "edit";
         $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
@@ -44,11 +47,11 @@ window.eventDefOperateEvents = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+eventarg_table_id).bootstrapTable('remove', {
+                    $('#'+event_args_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+eventarg_table_id).bootstrapTable('getData')));
+                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_args_table_id).bootstrapTable('getData')));
                 }
             }
             });
@@ -71,19 +74,19 @@ function eventOperateFormatter(value, row, index) {
     var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"))
     btn_edit.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit");
     btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove");
-    
+
     container.append(btn_edit)
     container.append(btn_remove)
 
-    
+
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+eventarg_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+event_args_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(eventarg_lock_list.length>0){
+    if(event_args_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
@@ -91,10 +94,10 @@ function eventOperateFormatter(value, row, index) {
 }
 
 
-function createFieldsTable(container, table_id, height){
+function create_event_args_table(container, table_id, height){
     // var table_with_controls = $("<div/>");
 
-   
+
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
@@ -102,15 +105,15 @@ function createFieldsTable(container, table_id, height){
     // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_loadJSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_createJSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_previewForm").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
+    toolbar.append($("<button/>").attr("id","toolbar_show_event_args_json_input").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_preview_event_form").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
 
     table.attr("data-height",String(height));
 
     table.attr("data-toolbar","#"+table_id+"_toolbar");
     table.attr("data-toolbar-align","left");
-    
+
 
     table.attr("data-pagination","false");
     table.attr("data-show-pagination-switch","false");
@@ -144,8 +147,8 @@ function createFieldsTable(container, table_id, height){
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.eventDefOperateEvents, formatter: eventOperateFormatter},
-                {title: 'Name', field : 'FieldName', align:'center', sortable:true, searchable:true},
+                events: window.event_args_operate_events, formatter: eventOperateFormatter},
+                {title: 'Name', field : 'FieldName', align:'center', sortable:true, searchable:true, cellStyle: 'argname_validate_formatter'},
                 {title: 'Label', field : 'FieldLabel', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'FieldType', align:'center', sortable:true, searchable:true},
                 {title: 'Unit', field : 'FieldUnit', align:'center', sortable:true, searchable:true},
@@ -157,11 +160,24 @@ function createFieldsTable(container, table_id, height){
             smartDisplay:true,
             detailFormatter:simpleFlatFormatter
         });
-    
+
 }
 
 
-function selectFormFields(container){
+function argname_validate_formatter(value, row, index){
+    if(event_args_doubles.includes(value)){
+        return {
+            css: {
+            'color': 'red',
+            'font-weight':'bold'
+            }
+        }
+    }
+    return {}
+
+}
+
+function event_args_select_form(container){
     container.empty();
 
     var defSelectGroup = $("<div/>").addClass("col-md-12");
@@ -174,14 +190,14 @@ function selectFormFields(container){
     def_select_dropdow.append($("<option/>").html("Consumable").attr("value","consumable"));
     def_select_dropdow.append($("<option/>").html("Asset").attr("value","asset"));
     defSelectGroup.append(def_select_dropdow)
-    
+
     container.append(defSelectGroup);
 }
 
 
-function inputFormFields(container){
+function event_args_input_form(container){
     container.empty();
-    
+
     var dtypeSelectGroup = $("<div/>").addClass("col-md-3");
     dtypeSelectGroup.append($("<label/>").addClass("form-label").attr("for","dtypeSelect").html("Field Data Type"));
 
@@ -202,7 +218,7 @@ function inputFormFields(container){
 
     var dtypeNumericGroup = $("<div/>").addClass("row col-md-9").attr("id","numericParamGroup");
     container.append(dtypeNumericGroup);
-    
+
 
     dtypeSelectGroup.find("select").change(function(){
 
@@ -271,17 +287,17 @@ function inputFormFields(container){
         else{
             dtypeNumericGroup.empty();
         }
-    })    
+    })
 }
 
 
-function showArgEditorAddForm(container,form_id, table){
+function show_event_args_add_form(container,form_id, table){
     container.empty();
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation mb-3 pb-3 shadow container");
 
     var form_header= $("<div/>").addClass("row p-2 bg-dark text-white mb-3").attr("id","formTitle");
-    
+
     form_header.append($("<div/>").addClass("col-md-11 fs-4").html("Field Configuration"));
     form_header.append($("<div/>").addClass("col-md-1 float-end").append($("<i/>").addClass("btn-close btn-close-white fs-4 float-end")));
 
@@ -312,23 +328,23 @@ function showArgEditorAddForm(container,form_id, table){
     inlineRadio.append(selectGroup);
     inlineRadio.append(requiredGroup);
 
-    typeGroup.append(inlineRadio);   
+    typeGroup.append(inlineRadio);
 
     nameForm.append(nameGroup);
     nameForm.append(labelGroup);
     nameForm.append(typeGroup);
 
-    
+
 
     var additionalForm = $("<div/>").addClass("row mb-2");
 
     inlineRadio.find("input[type=radio]").change(function(){
         // console.log(this.value + " : " + this.checked);
         if(this.value=="select"){
-            selectFormFields(additionalForm);
+            event_args_select_form(additionalForm);
         }
         else{
-            inputFormFields(additionalForm);
+            event_args_input_form(additionalForm);
         }
     })
 
@@ -336,7 +352,7 @@ function showArgEditorAddForm(container,form_id, table){
     form.append(form_header);
     form.append(nameForm);
     form.append(additionalForm);
-    
+
     var submitButton = $("<button/>").addClass("btn btn-outline-primary col-md-12").attr("id","submitBtn").attr("type","submit").html("Add as new field");
 
     form.append(submitButton);
@@ -373,18 +389,26 @@ function showArgEditorAddForm(container,form_id, table){
         }
 
 
+        if(event_args_content_name.includes(newFieldInfo.FieldName)){
+            event_args_doubles.push(newFieldInfo.FieldName);
+        }
+
         table.bootstrapTable("append",newFieldInfo);
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
 
-        eventarg_content_name = "";
+        event_args_content_name = "";
         $( document ).trigger( "_release", [ "add"] );
+
+        event_args_update_unique();
+        event_args_uniqueness_warning();
+        table.bootstrapTable("resetSearch"); // to call the formatter...
         container.empty();
 
     });
 
     form.find(".btn-close").on("click",function(){
-        eventarg_content_name = "";
+        event_args_content_name = "";
         $( document ).trigger( "_release", ["add"] );
         container.empty();
     })
@@ -393,9 +417,9 @@ function showArgEditorAddForm(container,form_id, table){
 
 }
 
-function showArgEditorEditForm(container, form_id,  table, index){
+function show_event_args_edit_form(container, form_id,  table, index){
     // container.empty();
-    showArgEditorAddForm(container, form_id, table);
+    show_event_args_add_form(container, form_id, table);
 
     var form = container.find("#"+form_id);
 
@@ -430,7 +454,7 @@ function showArgEditorEditForm(container, form_id,  table, index){
         $(this).trigger("change");
     });
     // re-fill input (step)
-    
+
     form.find("input[name][type!=radio]").each(function(){
         var name = $(this).attr("name");
         if(name in entry){
@@ -471,10 +495,7 @@ function showArgEditorEditForm(container, form_id,  table, index){
         // console.log(newFieldInfo);
 
         if(newFieldInfo.FieldType == "input"){
-            console.log("input");
-            console.log(newFieldInfo);
             newFieldInfo.FieldSource = undefined;
-            console.log(newFieldInfo);
         }
         else if(newFieldInfo.FieldType == "select"){
             newFieldInfo.FieldUnit = undefined;
@@ -492,28 +513,35 @@ function showArgEditorEditForm(container, form_id,  table, index){
             index: index,
             row: newFieldInfo
             })
+
+
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-        eventarg_content_name = "";
+        event_args_content_name = "";
         $( document ).trigger( "_release", [ "edit"] );
+
+        event_args_update_unique();
+        event_args_uniqueness_warning();
+        table.bootstrapTable("resetSearch"); // to call the formatter...
+
         container.empty();
 
     });
 
     form.find(".btn-close").unbind("click").on("click",function(){
-        eventarg_content_name = "";
+        event_args_content_name = "";
         $( document ).trigger( "_release", ["edit"] );
         container.empty();
     })
 }
 
-function loadJSON(container,table){
+function show_event_args_json_input(container,table){
     container.empty();
 
     var content = $("<div/>").addClass("container shadow pb-3 mb-3");
 
     var header= $("<div/>").addClass("row p-2 bg-dark text-white mb-3").attr("id","formTitle");
-    
+
     header.append($("<div/>").addClass("col-md-11 fs-4").html("Field definition JSON import"));
     header.append($("<div/>").addClass("col-md-1 float-end").append($("<i/>").addClass("btn-close btn-close-white fs-4 float-end")));
 
@@ -530,12 +558,12 @@ function loadJSON(container,table){
         var json = JSON.parse(json_text);
         table.bootstrapTable('append',json);
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
-        
+
     })
 
     content.find(".btn-close").on("click",function(){
-        eventarg_content_name = "";
-        $( document ).trigger( "_release", ["jsonLoad"] );
+        event_args_content_name = "";
+        $( document ).trigger( "_release", ["json_input"] );
         container.empty();
     })
 
@@ -544,13 +572,13 @@ function loadJSON(container,table){
 }
 
 
-function showTableJSON(container,table){
+function show_event_args_as_json(container,table){
     container.empty();
 
     var content = $("<div/>").addClass("container shadow pb-3 mb-3");
 
     var header= $("<div/>").addClass("row p-2 bg-dark text-white mb-3").attr("id","formTitle");
-    
+
     header.append($("<div/>").addClass("col-md-11 fs-4").html("Field definition JSON export"));
     header.append($("<div/>").addClass("col-md-1 float-end").append($("<i/>").addClass("btn-close btn-close-white fs-4 float-end")));
 
@@ -584,8 +612,8 @@ function showTableJSON(container,table){
 
 
     content.find(".btn-close").on("click",function(){
-        eventarg_content_name = "";
-        $( document ).trigger( "_release", ["jsonShow"] );
+        event_args_content_name = "";
+        $( document ).trigger( "_release", ["json_export"] );
         container.empty();
     })
 
@@ -593,56 +621,107 @@ function showTableJSON(container,table){
 
 }
 
-function previewTableForm(container,table){
+
+function event_args_modal(container, modal_id, title){
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
+    var modal_content = $("<div/>").addClass("modal-content");
+
+    var modal_header= $("<div/>").addClass("modal-header");
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html(title));
+    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
+
+    var modal_body = $("<div/>").addClass("modal-body");
+
+    var modal_footer= $("<div/>").addClass("modal-footer");
+    // modal_footer.append($("<button/>").addClass("btn btn-success").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
+    // modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
+
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+    modal_content.append(modal_footer);
+
+    modal_dialog.html(modal_content);
+    modal_root.html(modal_dialog);
+
+    container.append(modal_root);
+}
+
+
+function show_event_args_preview(container,table){
     container.empty();
 
-    var content = $("<div/>").addClass("container shadow pb-3 mb-3");
+    var modal_id = "event_args_preview_modal";
+    event_args_modal(container, modal_id, "Event form preview");
 
-    var header= $("<div/>").addClass("row p-2 bg-dark text-white mb-3").attr("id","formTitle");
-    
-    header.append($("<div/>").addClass("col-md-11 fs-4").html("Event form preview"));
-    header.append($("<div/>").addClass("col-md-1 float-end").append($("<i/>").addClass("btn-close btn-close-white fs-4 float-end")));
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
 
-    content.append(header);
+    showCustomArgs(modal_body,table.bootstrapTable("getData"));
 
-    var formPreview = $("<div/>").addClass("container shadow pb-3 mb-3");
+    modal.modal('show')
 
-    showCustomArgs(formPreview,table.bootstrapTable("getData"));
-
-    content.append(formPreview);
-
-    content.find(".btn-close").on("click",function(){
-        eventarg_content_name = "";
-        $( document ).trigger( "_release", ["preview"] );
+    modal.on("hide.bs.modal",function(){
+        event_args_content_name = "";
+        $( document ).trigger( "_release", [ "preview_event_form" ] )
         container.empty();
-    })
-
-    container.append(content);
+    });
 
 }
 
+function event_args_uniqueness_warning(){
+    if(event_args_doubles.length>0){
+        bootbox.alert({
+            message: 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/>'+JSON.stringify(event_args_doubles),
+            buttons: {
+                ok: {
+                    label: 'Accept',
+                    className: 'btn-outline-primary'
+                    },
+                },
+            });
+    }
+}
 
-function showEventArgEditor(container){
-    createFieldsTable(container,eventarg_table_id,500);
-    var table = $('#'+eventarg_table_id);
-    
+function event_args_update_unique(){
+    var table = $('#'+event_args_table_id);
+    var data = table.bootstrapTable("getData");
+    event_args_names = [];
+    $.each(data,function(index){ event_args_names.push(data[index]["FieldName"])});
+    event_args_doubles = getDoubles(event_args_names);
+}
+
+
+function show_event_args_editor(container){
+    create_event_args_table(container,event_args_table_id,500);
+    var table = $('#'+event_args_table_id);
+
     if(statusInStorage("eventArgEditorHistory")){
-        table.bootstrapTable('append',JSON.parse(statusFromStorage("eventArgEditorHistory")));
+        var data = JSON.parse(statusFromStorage("eventArgEditorHistory"));
+
+        event_args_names = [];
+        $.each(data,function(index){ event_args_names.push(data[index]["FieldName"])});
+        event_args_doubles = getDoubles(event_args_names);
+
+        table.bootstrapTable('append',data);
+        event_args_uniqueness_warning();
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
-    
+
     toolbar.find(".needs-select").addClass("disabled");
-    
-    eventarg_content = $("<div/>").addClass("pt-3");
-    container.append(eventarg_content);
 
+    event_args_content = $("<div/>").addClass("pt-3");
+    container.append(event_args_content);
 
-    table.on('all.bs.table',function(){
-            if(eventarg_lock_list.length>0) return;
+    // table.on('all.bs.table',
+    table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
+        function(){
+            if(event_args_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0 && eventarg_lock_list.length==0){
+            if(selection.length>0 && event_args_lock_list.length==0){
                 toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
@@ -650,7 +729,6 @@ function showEventArgEditor(container){
             }
         }
     )
-    
 
     table.on('search.bs.table',function(e,text){
         if(text!=""){
@@ -687,8 +765,8 @@ function showEventArgEditor(container){
             callback: function (result) {
                 if(result){
                     var indices = [];
-                    
-                    
+
+
                     $('input[name="btSelectItem"]:checked').each(function(){
                         indices.push($(this).data('index'));
                     })
@@ -698,13 +776,13 @@ function showEventArgEditor(container){
                 }
             }
             });
-    
+
 
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        showArgEditorAddForm(eventarg_content,"add_form", table);
-        eventarg_content_name = "add";
+        show_event_args_add_form(event_args_content,"add_form", table);
+        event_args_content_name = "add";
         $( document ).trigger( "_lock", [ "add"] );
     })
 
@@ -734,84 +812,67 @@ function showEventArgEditor(container){
     })
 
     // toolbar.find("#toolbar_edit").on("click",function(e){
-    //     showArgEditorEditForm(eventarg_content,"edit_form", table);
-    //     eventarg_content_name = "edit";
+    //     show_event_args_edit_form(event_args_content,"edit_form", table);
+    //     event_args_content_name = "edit";
     // })
 
-    toolbar.find("#toolbar_loadJSON").on("click",function(e){
-        loadJSON(eventarg_content, table);
-        eventarg_content_name = "jsonLoad";
-        $( document ).trigger( "_lock", [ "jsonLoad"] );
+    toolbar.find("#toolbar_show_event_args_json_input").on("click",function(e){
+        show_event_args_json_input(event_args_content, table);
+        event_args_content_name = "json_input";
+        $( document ).trigger( "_lock", [ "json_input"] );
+
     })
 
-    toolbar.find("#toolbar_createJSON").on("click",function(e){
-        showTableJSON(eventarg_content, table);
-        eventarg_content_name = "jsonShow";
-        $( document ).trigger( "_lock", [ "jsonShow" ] );
+    toolbar.find("#toolbar_generate_JSON").on("click",function(e){
+        show_event_args_as_json(event_args_content, table);
+        event_args_content_name = "json_export";
+        $( document ).trigger( "_lock", [ "json_export" ] );
+
+        event_args_uniqueness_warning();
     })
 
-    toolbar.find("#toolbar_previewForm").on("click",function(e){
-        previewTableForm(eventarg_content, table);
+    toolbar.find("#toolbar_preview_event_form").on("click",function(e){
+        show_event_args_preview(event_args_content, table);
 
-        eventarg_content_name = "preview";
-        $( document ).trigger( "_lock", [ "preview" ] )
-
-        var named_fileds = $(eventarg_content).find("[name]");
-        var names = [];
-        $.each(named_fileds, function (){
-            names.push($(this).attr("name"))
-        });
-
-        if(hasDuplicates(names)){
-            var doubles = getDoubles(names);
-            bootbox.alert({
-                message: 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/>'+JSON.stringify(doubles),
-                buttons: {
-                    ok: {
-                        label: 'Accept',
-                        className: 'btn-outline-primary'
-                        },
-                    },
-                });
-        }
+        event_args_content_name = "preview_event_form";
+        $( document ).trigger( "_lock", [ "preview_event_form" ] );
     })
 
 
-
-    $( document ).on( "operate_lock", {}, 
+    $( document ).on( "operate_lock", {},
         function( event ) {
 
-            if(eventarg_lock_list.length!=0){
+            if(event_args_lock_list.length!=0){
                 $(document).find(".lockable").addClass("disabled");
-                if(!eventarg_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                if(!event_args_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
                 $(document).find(".sortable").prop( "disabled", true );
             }
             else{
-                $(eventarg_content).empty();
+                $(event_args_content).empty();
                 $(document).find(".lockable").not(".needs-select").removeClass("disabled");
-                if(!eventarg_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                if(!event_args_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
                 $(document).find(".sortable").prop( "disabled", false );
             }
         }
     );
 
-    $( document ).on( "_lock", {}, 
+    $( document ).on( "_lock", {},
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            eventarg_lock_list.push(lock_name);
+            event_args_lock_list.push(lock_name);
             // console.log("Lock ["+lock_name+"] acquired.");
             $(this).trigger("operate_lock",[]);
         }
     });
 
-    $( document ).on( "_release", {}, 
+    $( document ).on( "_release", {},
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            eventarg_lock_list = _.without(eventarg_lock_list,lock_name);
+            event_args_lock_list = _.without(event_args_lock_list,lock_name);
             // console.log("Lock ["+lock_name+"] released.");
             $(this).trigger("operate_lock",[]);
         }
     });
-    
+
 
 }

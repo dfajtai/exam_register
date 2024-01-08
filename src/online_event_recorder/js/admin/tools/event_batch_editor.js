@@ -1,8 +1,8 @@
-var eventbatch_table_id = "eventBatchTable";
-var eventbatch_content = {};
+var event_batch_table_id = "eventBatchTable";
+var event_batch_content = {};
 
 
-window.eventBatchOperateEvents = {
+window.event_batch_operate_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
@@ -10,18 +10,18 @@ window.eventBatchOperateEvents = {
         var data = table.bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+eventbatch_table_id).bootstrapTable('getData');
+        var data = $('#'+event_batch_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
         // showArgEditorEditForm(_content,"edit_form", $('#'+_table_id),index);
@@ -78,7 +78,7 @@ function eventBatchOperateFormatter(value, row, index) {
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+eventbatch_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+event_batch_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
@@ -137,7 +137,7 @@ function createBatchTable(container, table_id, height){
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.eventBatchOperateEvents, formatter: eventBatchOperateFormatter},
+                events: window.event_batch_operate_events, formatter: eventBatchOperateFormatter},
                 {title: 'Name', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
                 {title: 'Comment', field : 'EventComment', align:'center', sortable:true, searchable:true},
@@ -238,8 +238,8 @@ function initEventBatchModalAdd(container, table){
 
 
 function showEventBatchEditor(container){
-    createBatchTable(container,eventbatch_table_id,750);
-    var table = $('#'+eventbatch_table_id);
+    createBatchTable(container,event_batch_table_id,750);
+    var table = $('#'+event_batch_table_id);
     
     if(statusInStorage("eventBatchEditorHistory")){
         table.bootstrapTable('append',JSON.parse(statusFromStorage("eventBatchEditorHistory")));
@@ -249,11 +249,11 @@ function showEventBatchEditor(container){
     
     toolbar.find(".needs-select").addClass("disabled");
     
-    eventbatch_content = $("<div/>").addClass("pt-3");
-    container.append(eventbatch_content);
+    event_batch_content = $("<div/>").addClass("pt-3");
+    container.append(event_batch_content);
 
 
-    initEventBatchModalAdd(eventbatch_content, table);
+    initEventBatchModalAdd(event_batch_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
         $('#eventBatchModalAdd').modal('show');
         // $(document).trigger("_lock",["add"]);

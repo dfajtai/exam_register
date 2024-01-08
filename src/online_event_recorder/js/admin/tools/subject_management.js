@@ -71,7 +71,7 @@ function subjectOperateFormatter(value, row, index) {
   }
 
 
-window.subjectOperateEvents = {
+window.subject_operate_events = {
     'click .edit': function (e, value, row, index) {
         var modal_id = initSubjectModalEdit(subject_content,$("#"+subject_table_id),index);
         var modal_edit = $("#"+modal_id);
@@ -155,7 +155,7 @@ function createSubjectTable(container,table_id, height){
             columns : [
                 {field : 'state', checkbox: true, align:'center', forceHide:true},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.subjectOperateEvents, formatter: subjectOperateFormatter, forceHide:true},
+                events: window.subject_operate_events, formatter: subjectOperateFormatter, forceHide:true},
                 {title: '#', field : 'SubjectIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
                 {title: 'Study', field : 'StudyID', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
                 {title: 'ID', field : 'SubjectID', align:'center', sortable:true, searchable:true,forceExport: true},
@@ -240,7 +240,7 @@ function subjectBatchFormInputs(container){
     showCustomArgs(container,params);    
 }
 
-function subjectModal(container, modal_id, title){
+function subject_modal(container, modal_id, title){
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
     var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
     var modal_content = $("<div/>").addClass("modal-content");
@@ -267,12 +267,12 @@ function subjectModal(container, modal_id, title){
 }
 
 function initSubjectModalAdd(container, table){
-    var modal_id = "subjectModalAdd";
+    var modal_id = "subject_modalAdd";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
 
-    subjectModal(container, modal_id, "Add Subject from scratch");
+    subject_modal(container, modal_id, "Add Subject from scratch");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -310,7 +310,7 @@ function initSubjectModalAdd(container, table){
 }
 
 function initSubjectModalEdit(container, table, index){
-    var modal_id = "subjectModalEdit";
+    var modal_id = "subject_modalEdit";
     var form_id = modal_id+"Form";
 
     if(index>table.bootstrapTable('getData').length){
@@ -321,7 +321,7 @@ function initSubjectModalEdit(container, table, index){
 
     container.find("#"+modal_id).remove();
 
-    subjectModal(container, modal_id, "Edit Subject");
+    subject_modal(container, modal_id, "Edit Subject");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -428,7 +428,7 @@ function initSubjectBatchModalEdit(container, table){
 
     container.find("#"+modal_id).remove();
     
-    subjectModal(container, modal_id, "Batch edit Subjects");
+    subject_modal(container, modal_id, "Batch edit Subjects");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -493,12 +493,12 @@ function initSubjectBatchModalEdit(container, table){
 }
 
 function initSubjectModalImport(container,table){
-    var modal_id = "subjectModalImport";
+    var modal_id = "subject_modalImport";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
     
-    subjectModal(container, modal_id, "Import Subjects from CSV");
+    subject_modal(container, modal_id, "Import Subjects from CSV");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -686,7 +686,7 @@ function subjects_table_events(){
     })
 }
 
-function showSubjectManager(container){
+function show_subject_manager(container){
     createSubjectTable(container,subject_table_id,500);
     var table = $('#'+subject_table_id);
 
@@ -697,7 +697,7 @@ function showSubjectManager(container){
 
     initSubjectModalAdd(subject_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
-        $('#subjectModalAdd').modal('show');
+        $('#subject_modalAdd').modal('show');
         // $(document).trigger("_lock",["add"]);
     });
 
@@ -724,7 +724,7 @@ function showSubjectManager(container){
 
     initSubjectModalImport(subject_content,table);
     toolbar.find("#toolbar_import").on("click", function(){
-        $('#subjectModalImport').modal('show');
+        $('#subject_modalImport').modal('show');
         // $(document).trigger("_lock",["import"]);
     });
 
