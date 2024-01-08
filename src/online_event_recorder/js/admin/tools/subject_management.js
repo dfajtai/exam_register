@@ -1,5 +1,5 @@
-var _table_id = "subjectTable";
-var _content = {};
+var subject_table_id = "subjectTable";
+var subject_content = {};
 // var _content_name = "";
 // var _lock_list = []
 
@@ -73,7 +73,7 @@ function subjectOperateFormatter(value, row, index) {
 
 window.subjectOperateEvents = {
     'click .edit': function (e, value, row, index) {
-        var modal_id = initSubjectModalEdit(_content,$("#"+_table_id),index);
+        var modal_id = initSubjectModalEdit(subject_content,$("#"+subject_table_id),index);
         var modal_edit = $("#"+modal_id);
         if(modal_edit.length>0){
             $(modal_edit[0]).modal('show');
@@ -661,7 +661,7 @@ function initSubjectModalImport(container,table){
                     modal.modal('hide');
                     modal.on('hidden.bs.modal',function(e){
                                 form[0].reset();
-                                $('#'+_table_id).bootstrapTable('refresh');
+                                $('#'+subject_table_id).bootstrapTable('refresh');
                                 });
                     }
             }
@@ -672,7 +672,7 @@ function initSubjectModalImport(container,table){
 }
 
 function subjects_table_events(){
-    var table = $('#'+_table_id);
+    var table = $('#'+subject_table_id);
     table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table reset-view.bs.table',
     function(){
         var selection =  table.bootstrapTable('getSelections');
@@ -687,15 +687,15 @@ function subjects_table_events(){
 }
 
 function showSubjectManager(container){
-    createSubjectTable(container,_table_id,500);
-    var table = $('#'+_table_id);
+    createSubjectTable(container,subject_table_id,500);
+    var table = $('#'+subject_table_id);
 
     var toolbar = container.find(".fixed-table-toolbar");
 
-    _content = $("<div/>").attr("id","subjectManagerModalContainer");
-    container.append(_content);
+    subject_content = $("<div/>").attr("id","subjectManagerModalContainer");
+    container.append(subject_content);
 
-    initSubjectModalAdd(_content, table);
+    initSubjectModalAdd(subject_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
         $('#subjectModalAdd').modal('show');
         // $(document).trigger("_lock",["add"]);
@@ -716,13 +716,13 @@ function showSubjectManager(container){
         });
     })
 
-    initSubjectBatchModalEdit(_content,table);
+    initSubjectBatchModalEdit(subject_content,table);
     toolbar.find("#toolbar_batch_edit").on("click", function(){
         $('#subjectBatchModalEdit').modal('show');
         // $(document).trigger("_lock",["batch_edit"]);
     });
 
-    initSubjectModalImport(_content,table);
+    initSubjectModalImport(subject_content,table);
     toolbar.find("#toolbar_import").on("click", function(){
         $('#subjectModalImport').modal('show');
         // $(document).trigger("_lock",["import"]);

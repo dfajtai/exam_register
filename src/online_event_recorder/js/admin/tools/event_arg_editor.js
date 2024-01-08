@@ -1,32 +1,32 @@
-var _table_id = "fieldDefTable";
-var _content = {};
-var _content_name = "";
-var _lock_list = []
+var eventarg_table_id = "fieldDefTable";
+var eventarg_content = {};
+var eventarg_content_name = "";
+var eventarg_lock_list = []
 
 window.eventDefOperateEvents = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+_table_id).bootstrapTable('getData');
+        var data = $('#'+eventarg_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+_table_id).bootstrapTable('getData');
+        var data = $('#'+eventarg_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+eventarg_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        showArgEditorEditForm(_content,"edit_form", $('#'+_table_id),index);
-        _content_name = "edit";
+        showArgEditorEditForm(eventarg_content,"edit_form", $('#'+eventarg_table_id),index);
+        eventarg_content_name = "edit";
         $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
@@ -44,11 +44,11 @@ window.eventDefOperateEvents = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+_table_id).bootstrapTable('remove', {
+                    $('#'+eventarg_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+_table_id).bootstrapTable('getData')));
+                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+eventarg_table_id).bootstrapTable('getData')));
                 }
             }
             });
@@ -79,11 +79,11 @@ function eventOperateFormatter(value, row, index) {
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+eventarg_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(_lock_list.length>0){
+    if(eventarg_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
@@ -377,14 +377,14 @@ function showArgEditorAddForm(container,form_id, table){
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
 
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", [ "add"] );
         container.empty();
 
     });
 
     form.find(".btn-close").on("click",function(){
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", ["add"] );
         container.empty();
     })
@@ -494,14 +494,14 @@ function showArgEditorEditForm(container, form_id,  table, index){
             })
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", [ "edit"] );
         container.empty();
 
     });
 
     form.find(".btn-close").unbind("click").on("click",function(){
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", ["edit"] );
         container.empty();
     })
@@ -534,7 +534,7 @@ function loadJSON(container,table){
     })
 
     content.find(".btn-close").on("click",function(){
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", ["jsonLoad"] );
         container.empty();
     })
@@ -584,7 +584,7 @@ function showTableJSON(container,table){
 
 
     content.find(".btn-close").on("click",function(){
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", ["jsonShow"] );
         container.empty();
     })
@@ -612,7 +612,7 @@ function previewTableForm(container,table){
     content.append(formPreview);
 
     content.find(".btn-close").on("click",function(){
-        _content_name = "";
+        eventarg_content_name = "";
         $( document ).trigger( "_release", ["preview"] );
         container.empty();
     })
@@ -623,8 +623,8 @@ function previewTableForm(container,table){
 
 
 function showEventArgEditor(container){
-    createFieldsTable(container,_table_id,500);
-    var table = $('#'+_table_id);
+    createFieldsTable(container,eventarg_table_id,500);
+    var table = $('#'+eventarg_table_id);
     
     if(statusInStorage("eventArgEditorHistory")){
         table.bootstrapTable('append',JSON.parse(statusFromStorage("eventArgEditorHistory")));
@@ -634,15 +634,15 @@ function showEventArgEditor(container){
     
     toolbar.find(".needs-select").addClass("disabled");
     
-    _content = $("<div/>").addClass("pt-3");
-    container.append(_content);
+    eventarg_content = $("<div/>").addClass("pt-3");
+    container.append(eventarg_content);
 
 
     table.on('all.bs.table',function(){
-            if(_lock_list.length>0) return;
+            if(eventarg_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0 && _lock_list.length==0){
+            if(selection.length>0 && eventarg_lock_list.length==0){
                 toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
@@ -703,8 +703,8 @@ function showEventArgEditor(container){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        showArgEditorAddForm(_content,"add_form", table);
-        _content_name = "add";
+        showArgEditorAddForm(eventarg_content,"add_form", table);
+        eventarg_content_name = "add";
         $( document ).trigger( "_lock", [ "add"] );
     })
 
@@ -734,29 +734,29 @@ function showEventArgEditor(container){
     })
 
     // toolbar.find("#toolbar_edit").on("click",function(e){
-    //     showArgEditorEditForm(_content,"edit_form", table);
-    //     _content_name = "edit";
+    //     showArgEditorEditForm(eventarg_content,"edit_form", table);
+    //     eventarg_content_name = "edit";
     // })
 
     toolbar.find("#toolbar_loadJSON").on("click",function(e){
-        loadJSON(_content, table);
-        _content_name = "jsonLoad";
+        loadJSON(eventarg_content, table);
+        eventarg_content_name = "jsonLoad";
         $( document ).trigger( "_lock", [ "jsonLoad"] );
     })
 
     toolbar.find("#toolbar_createJSON").on("click",function(e){
-        showTableJSON(_content, table);
-        _content_name = "jsonShow";
+        showTableJSON(eventarg_content, table);
+        eventarg_content_name = "jsonShow";
         $( document ).trigger( "_lock", [ "jsonShow" ] );
     })
 
     toolbar.find("#toolbar_previewForm").on("click",function(e){
-        previewTableForm(_content, table);
+        previewTableForm(eventarg_content, table);
 
-        _content_name = "preview";
+        eventarg_content_name = "preview";
         $( document ).trigger( "_lock", [ "preview" ] )
 
-        var named_fileds = $(_content).find("[name]");
+        var named_fileds = $(eventarg_content).find("[name]");
         var names = [];
         $.each(named_fileds, function (){
             names.push($(this).attr("name"))
@@ -781,15 +781,15 @@ function showEventArgEditor(container){
     $( document ).on( "operate_lock", {}, 
         function( event ) {
 
-            if(_lock_list.length!=0){
+            if(eventarg_lock_list.length!=0){
                 $(document).find(".lockable").addClass("disabled");
-                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                if(!eventarg_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
                 $(document).find(".sortable").prop( "disabled", true );
             }
             else{
-                $(_content).empty();
+                $(eventarg_content).empty();
                 $(document).find(".lockable").not(".needs-select").removeClass("disabled");
-                if(!_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                if(!eventarg_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
                 $(document).find(".sortable").prop( "disabled", false );
             }
         }
@@ -798,7 +798,7 @@ function showEventArgEditor(container){
     $( document ).on( "_lock", {}, 
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            _lock_list.push(lock_name);
+            eventarg_lock_list.push(lock_name);
             // console.log("Lock ["+lock_name+"] acquired.");
             $(this).trigger("operate_lock",[]);
         }
@@ -807,7 +807,7 @@ function showEventArgEditor(container){
     $( document ).on( "_release", {}, 
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            _lock_list = _.without(_lock_list,lock_name);
+            eventarg_lock_list = _.without(eventarg_lock_list,lock_name);
             // console.log("Lock ["+lock_name+"] released.");
             $(this).trigger("operate_lock",[]);
         }

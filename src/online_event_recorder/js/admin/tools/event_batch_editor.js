@@ -1,5 +1,5 @@
-var _table_id = "eventBatchTable";
-var _content = {};
+var eventbatch_table_id = "eventBatchTable";
+var eventbatch_content = {};
 
 
 window.eventBatchOperateEvents = {
@@ -7,21 +7,21 @@ window.eventBatchOperateEvents = {
         if(index==0){
             return
         }
-        var data = $('#'+_table_id).bootstrapTable('getData');
+        var data = table.bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+_table_id).bootstrapTable('getData');
+        var data = $('#'+eventbatch_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+eventbatch_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
         // showArgEditorEditForm(_content,"edit_form", $('#'+_table_id),index);
@@ -78,7 +78,7 @@ function eventBatchOperateFormatter(value, row, index) {
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+eventbatch_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
@@ -238,8 +238,8 @@ function initEventBatchModalAdd(container, table){
 
 
 function showEventBatchEditor(container){
-    createBatchTable(container,_table_id,750);
-    var table = $('#'+_table_id);
+    createBatchTable(container,eventbatch_table_id,750);
+    var table = $('#'+eventbatch_table_id);
     
     if(statusInStorage("eventBatchEditorHistory")){
         table.bootstrapTable('append',JSON.parse(statusFromStorage("eventBatchEditorHistory")));
@@ -249,11 +249,11 @@ function showEventBatchEditor(container){
     
     toolbar.find(".needs-select").addClass("disabled");
     
-    _content = $("<div/>").addClass("pt-3");
-    container.append(_content);
+    eventbatch_content = $("<div/>").addClass("pt-3");
+    container.append(eventbatch_content);
 
 
-    initEventBatchModalAdd(_content, table);
+    initEventBatchModalAdd(eventbatch_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
         $('#eventBatchModalAdd').modal('show');
         // $(document).trigger("_lock",["add"]);
