@@ -52,6 +52,10 @@ window.event_args_operate_events = {
                         values: [index]
                         });
                     statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_args_table_id).bootstrapTable('getData')));
+
+                    event_args_update_unique();
+                    $('#'+event_args_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_args_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -554,7 +558,6 @@ function show_event_args_json_input(container,table){
 
     content.find("button").on("click",function(){
         var json_text = $(textarea).val();
-        console.log(json_text);
         var json = JSON.parse(json_text);
         table.bootstrapTable('append',json);
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
@@ -660,7 +663,7 @@ function show_event_args_preview(container,table){
 
     showCustomArgs(modal_body,table.bootstrapTable("getData"));
 
-    modal.modal('show')
+    modal.modal('show');
 
     modal.on("hide.bs.modal",function(){
         event_args_content_name = "";
@@ -773,6 +776,10 @@ function show_event_args_editor(container){
                     // console.log(indices);
                     table.bootstrapTable("remove",{field:"$index",values:indices});
                     statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+
+                    event_args_update_unique();
+                    $('#'+event_args_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_args_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -796,6 +803,7 @@ function show_event_args_editor(container){
                 _data["state"] = false;
                 table.bootstrapTable("append",_data);
             })
+            
             statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
         else{
@@ -809,6 +817,8 @@ function show_event_args_editor(container){
             statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
 
+        event_args_update_unique();
+        table.bootstrapTable("resetSearch"); // to call the formatter...
     })
 
     // toolbar.find("#toolbar_edit").on("click",function(e){

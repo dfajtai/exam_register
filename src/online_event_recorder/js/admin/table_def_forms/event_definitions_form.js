@@ -67,6 +67,46 @@ function initEventDefinitionsTable(container,tableId){
 
     modalInsert("Event", container,"event_modal_add_new",tableId, eventDefinitionInputs, event_definition_insert_ajax);
     modalUpdate("Event", container,"event_modal_edit_selected",tableId, eventDefinitionInputs, event_definition_update_ajax,"EventID");
+    
+
+    // add preview button
+    var toolbar_id = tableId + "_toolbar";
+    var toolbar = $("#"+toolbar_id)
+
+    var preview_btn = $("<button/>").attr("id","toolbar_preview").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview Selected");
+    toolbar.append(preview_btn);
+
+    
+    table.on('all.bs.table',
+    function(){
+        var selection =  table.bootstrapTable('getSelections');
+
+        if(selection.length>0){
+            $(document).find(".needs-select").removeClass("disabled");
+        }
+        else{
+            $(document).find(".needs-select").addClass("disabled");
+        }
+    });
+
+    preview_btn.on('click',function(){
+        var modal_id = "event_args_preview_modal";
+        event_args_modal(container, modal_id, "Event form preview");
+
+        var modal = container.find("#"+modal_id);
+        var modal_body = modal.find(".modal-body");
+
+        var data = JSON.parse(table.bootstrapTable("getSelections")[0]["EventFormJSON"]);
+        modal_body.empty();
+        showCustomArgs(modal_body,data);
+
+        modal.modal('show');
+
+        modal.on("hide.bs.modal",function(){
+
+        });
+
+    });
 
 }
 

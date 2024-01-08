@@ -43,7 +43,7 @@ function modalInsert(data_name, container, modal_id, table_id,
     var toolbar_id = table_id + "_toolbar";
     var toolbar = $("#"+toolbar_id)
     
-    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id);
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex",-1);
     var modal_dialog = $("<div/>").addClass("modal-dialog");
     var modal_content = $("<div/>").addClass("modal-content");
 
@@ -259,7 +259,7 @@ function modalUpdate(data_name, container, modal_id, table_id,
     var toolbar_id = table_id + "_toolbar";
     var toolbar = $("#"+toolbar_id)
     
-    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id);
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex",-1);
     var modal_dialog = $("<div/>").addClass("modal-dialog");
     var modal_content = $("<div/>").addClass("modal-content");
 
