@@ -78,6 +78,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/common/dynamic_form.js"></script>
 
+	<script defer src="js/common/inactivity_protection.js"></script>
+
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
@@ -168,7 +170,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 	<script>
-
 		var available_def_tables = Object();
 
 		function show_table(def_name){
@@ -280,12 +281,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
   			});
 			
-			var idleTime = 0;
-			var idleInterval = null;
+
 			$(document).ready(function () {
 				// Increment the idle time counter every minute.
 				clearInterval();
-				idleInterval = setInterval(timerIncrement, 1000); // 1 minute
+				idleInterval = setInterval(inactivityLogout, 60000); // 1 minute
 
 				// Zero the idle timer on mouse movement.
 				$(this).mousemove(function (e) {
@@ -296,39 +296,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				});
 			});
 
-			function timerIncrement() {
-				idleTime = idleTime + 1;
-				if (idleTime > 9) { // 5 minutess
-					clearInterval(idleInterval);
-
-					$.ajax({
-						type: "POST",
-						url: 'php/inactive_logout.php',
-						dataType: "json",
-						success: function (result) {
-							console.log(result);
-
-							bootbox.alert({
-							message: 'You were logged out due to inactivity.',
-							buttons: {
-								ok: {
-									label: 'Ok',
-									className: 'btn-outline-dark'
-									},
-								},
-							callback: function () {								
-								var searchParams = new URLSearchParams(window.location.search);
-								var newRelativePathQuery = 'login.php' +'?' + searchParams.toString();
-								window.location= newRelativePathQuery;
-								$(this).find('[name=uname]').val(result);
-							}
-							});							
-						}
-					});
-					
-				}
-			}
-
+		
 
 			updateRemoteDefinitionChecksum();
 			updateLocalDefinitionDatabase(function(){
