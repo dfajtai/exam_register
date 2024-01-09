@@ -27,13 +27,13 @@ window.event_batch_operate_events = {
         $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        // showArgEditorEditForm(_content,"edit_form", $('#'+_table_id),index);
-        // _content_name = "edit";
-        // $( document ).trigger( "_lock", [ "edit"] );
+        show_event_batch_modal_edit(event_batch_content,$("#"+event_batch_table_id),index);
+        event_batch_content_name = "edit";
+        $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
         bootbox.confirm({
-            message: 'You are going to the selected row: [name = "'+ row["FieldName"] +'"].<br>Do you want to proceed?',
+            message: 'You are going to the selected event: "'+ row["EventName"] +'".<br>Do you want to proceed?',
             buttons: {
             confirm: {
             label: 'Yes',
@@ -46,11 +46,11 @@ window.event_batch_operate_events = {
             },
             callback: function (result) {
                 if(result){
-                    // $('#'+_table_id).bootstrapTable('remove', {
-                    //     field: '$index',
-                    //     values: [index]
-                    //     });
-                    // statusToStorage("eventBatchEditorHistory",JSON.stringify($('#'+_table_id).bootstrapTable('getData')));
+                    $('#'+event_batch_table_id).bootstrapTable('remove', {
+                        field: '$index',
+                        values: [index]
+                        });
+                    statusToStorage("eventBatchEditorHistory",JSON.stringify($('#'+event_batch_table_id).bootstrapTable('getData')));
                 }
             }
             });
@@ -95,15 +95,12 @@ function eventBatchOperateFormatter(value, row, index) {
 
 
  function eventbatch_detail_view_formatter(index, row) {
-    var html = []
-    var hidden_keys = ["state"]
-    $.each(row, function (key, value) {
-      if(!(hidden_keys.includes(key))){
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
-      }
+    var detail_view_content = $('<div/>');
 
-    })
-    return html.join('')
+    var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
+    showCustomArgs(detail_view_content,JSON.parse(event_params));
+
+    return detail_view_content.prop("outerHTML");
 }
 
 
@@ -117,9 +114,9 @@ function createBatchTable(container, table_id, height){
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
     toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_show_eventbatch_json_input").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_generate_eventbatch_JSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_generate_events").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Generate events"));
+    toolbar.append($("<button/>").attr("id","toolbar_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
+    toolbar.append($("<button/>").attr("id","toolbar_json_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
+    toolbar.append($("<button/>").attr("id","toolbar_generate_events").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Make events"));
 
 
     table.attr("data-height",String(height));
@@ -161,7 +158,7 @@ function createBatchTable(container, table_id, height){
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.event_batch_operate_events, formatter: eventBatchOperateFormatter},
-                {title: 'Name', field : 'EventName ', align:'center', sortable:true, searchable:true},
+                {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
                 {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
                 {title: 'Comment', field : 'EventComment', align:'center', sortable:true, searchable:true},
@@ -172,6 +169,7 @@ function createBatchTable(container, table_id, height){
             checkboxHeader:true,
             smartDisplay:true,
             detailFormatter: eventbatch_detail_view_formatter
+            // detailFormatter: simpleFlatFormatter
         });    
 }
 
@@ -213,7 +211,7 @@ function eventBatchModal(container, modal_id, title){
 }
 
 
-function initEventBatchModalAdd(container, table){
+function show_event_batch_modal_add(container, table){
     var modal_id = "eventBatchModalAdd";
     var form_id = modal_id+"Form";
 
@@ -232,12 +230,15 @@ function initEventBatchModalAdd(container, table){
 
     eventBatchInput(form);
     form.append(submitForm);
-
     
     $(modal).on('hide.bs.modal',function(){
         $( document ).trigger("_release",["add"]);
         event_batch_content_name = "";
-    })
+    });
+
+    $(modal).on('hidden.bs.modal',function(){
+        $( document ).trigger("_release",["add"]);
+    });
 
     form.on('submit',function(e){
         e.preventDefault();
@@ -257,11 +258,210 @@ function initEventBatchModalAdd(container, table){
     container.find("#clear_form").click(function(){
         $(modal_body).find('form')[0].reset();
     })
+    
     modal_body.append(form);
+
+    modal.modal('show');
+}
+
+
+function show_event_batch_modal_edit(container, table, index){
+    var modal_id = "eventBatchModalEdit";
+    var form_id = modal_id+"Form";
+
+    if(index>table.bootstrapTable('getData').length){
+        return
+    }
+    var entry = table.bootstrapTable('getData')[index];
+
+    container.find("#"+modal_id).remove();
+
+    eventBatchModal(container, modal_id, "Edit event");
+
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
+
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
+
+
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+
+    var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Alter event");
+    submitForm.append(submitButton);
+
+    eventBatchInput(form);
+    form.append(submitForm);
+
+    
+    $(modal).on('hide.bs.modal',function(){
+        $( document ).trigger("_release",["edit"]);
+        event_batch_content_name = "";
+    })
+
+    function init_fields(form,entry){
+        $(form).find("input[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                $(this).val(entry[name]).trigger("change");
+            }
+        });
+        $(form).find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                if(name.includes("JSON")){
+                    $(this).val(entry[name]);
+                }
+                else{
+                    $(this).val(entry[name]);
+                }
+            }
+        });
+        
+        $(form).find("select[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                $(this).val(entry[name]);
+            }
+        });
+    }
+
+    $(modal).on('show.bs.modal', function () {                   
+        init_fields(form,entry);
+        // console.log(entry);
+    })
+
+    modal_footer.find("#revert_form").click(function(){
+        init_fields(form,entry);
+    })
+
+
+    modal_footer.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
+    })  
+
+
+    form.off('submit').on('submit',function(e){
+        e.preventDefault();
+
+        var values = {};
+        $.each($(this).serializeArray(), function(i, field) {
+            if(!(field.value==""||field.value==null)) values[field.name]= field.value;
+        });
+        values["EventType"] = getDefEntryFieldWhere("event_definitions","EventID",values["EventID"],"EventType")
+
+        console.log(values);
+        
+        table.bootstrapTable("updateRow",{
+            index: index,
+            row: values
+            });
+
+
+        statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+
+        modal.modal('hide');
+        form[0].reset();
+    });
+
+    container.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
+    })
+    modal_body.append(form);
+
+    modal.modal('show');
+} 
+
+function show_event_batch_modal_json_import(container, table){
+    var modal_id = "eventBatchModalJSONImport";
+    var form_id = modal_id+"Form";
+
+    container.find("#"+modal_id).remove();
+
+    eventBatchModal(container, modal_id, "Import JSON");
+
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
+    
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+
+    var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
+    submitForm.append(submitButton);
+
+    form.append(submitForm);
+    
+    
+    $(modal).on('hide.bs.modal',function(){
+        $( document ).trigger("_release",["json_import"]);
+        event_batch_content_name = "";
+    })
+
+    form.on('submit',function(e){
+        e.preventDefault();
+
+
+        modal.modal('hide');
+        form[0].reset();
+    });
+
+    container.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
+    })
+    modal_body.append(form);
+
+    modal.modal('show');
+}
+
+function show_event_batch_modal_json_export(container, table){
+    var modal_id = "eventBatchModalJSONExport";
+    var form_id = modal_id+"Form";
+
+    container.find("#"+modal_id).remove();
+
+    eventBatchModal(container, modal_id, "Export JSON");
+
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
+    
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.empty();
+
+
+    // var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    // var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
+    // submitForm.append(submitButton);
+
+    // form.append(submitForm);
+    
+    
+    $(modal).on('hide.bs.modal',function(){
+        $( document ).trigger("_release",["json_export"]);
+        event_batch_content_name = "";
+    })
+
+    form.on('submit',function(e){
+        e.preventDefault();
+
+
+        modal.modal('hide');
+        form[0].reset();
+    });
+
+    container.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
+    })
+    modal_body.append(form);
+
+    modal.modal('show');
 } 
 
 
-function initEventBatchGenerateEvents(container, table){
+
+function show_event_batch_modal_generate(container, table){
     var modal_id = "eventBatchModalGenerateEvents";
     var form_id = modal_id+"Form";
 
@@ -298,6 +498,8 @@ function initEventBatchGenerateEvents(container, table){
         $(modal_body).find('form')[0].reset();
     })
     modal_body.append(form);
+
+    modal.modal('show');
 } 
 
 function showEventBatchEditor(container){
@@ -318,10 +520,10 @@ function showEventBatchEditor(container){
     table.on('all.bs.table',
     // table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
         function(){
-            if(event_args_lock_list.length>0) return;
+            if(event_batch_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0 && event_args_lock_list.length==0){
+            if(selection.length>0 && event_batch_lock_list.length==0){
                 toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
@@ -350,19 +552,37 @@ function showEventBatchEditor(container){
     )
 
 
-    initEventBatchModalAdd(event_batch_content, table);
+
     toolbar.find("#toolbar_add").on("click", function(){
-        $('#eventBatchModalAdd').modal('show');
+        show_event_batch_modal_add(container,table);
+
         $(document).trigger("_lock",["add"]);
         event_batch_content_name = "add";
     });
 
-    initEventBatchGenerateEvents(event_batch_content, table);
+
     toolbar.find("#toolbar_generate_events").on("click", function(){
-        $('#eventBatchModalGenerateEvents').modal('show');
+        show_event_batch_modal_generate(container,table);
+
         $(document).trigger("_lock",["generate_events"]);
         event_batch_content_name = "generate_events";
     });
+
+
+    toolbar.find("#toolbar_json_import").on("click", function(){
+        show_event_batch_modal_json_import(container,table);
+
+        $(document).trigger("_lock",["json_import"]);
+        event_batch_content_name = "json_import";
+    });
+
+    toolbar.find("#toolbar_json_export").on("click", function(){
+        show_event_batch_modal_json_export(container,table);
+
+        $(document).trigger("_lock",["json_export"]);
+        event_batch_content_name = "json_export";
+    });
+
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
         var selected = $('input[name="btSelectItem"]:checked');
@@ -391,6 +611,40 @@ function showEventBatchEditor(container){
         table.bootstrapTable("resetSearch"); // to call the formatter...
     });
 
+    toolbar.find("#toolbar_removeSelected").on("click",function(e){
+        bootbox.confirm({
+            message: 'You are going to remove the selected events from the batch. Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    var indices = [];
+
+
+                    $('input[name="btSelectItem"]:checked').each(function(){
+                        indices.push($(this).data('index'));
+                    })
+                    // console.log(indices);
+                    table.bootstrapTable("remove",{field:"$index",values:indices});
+                    statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+
+                    $('#'+event_batch_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_batch_table_id).bootstrapTable("uncheckAll");
+                }
+            }
+            });
+
+
+    })
+
     $( document ).on( "operate_lock", {},
         function( event ) {
             if(event_batch_lock_list.length!=0){
@@ -399,7 +653,7 @@ function showEventBatchEditor(container){
                 $(document).find(".sortable").prop( "disabled", true );
             }
             else{
-                $(event_args_content).empty();
+                $(event_batch_content).empty();
                 $(document).find(".lockable").not(".needs-select").removeClass("disabled");
                 if(!event_batch_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
                 $(document).find(".sortable").prop( "disabled", false );

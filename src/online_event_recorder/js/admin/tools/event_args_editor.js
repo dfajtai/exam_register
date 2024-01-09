@@ -109,8 +109,8 @@ function create_event_args_table(container, table_id, height){
     // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_show_event_args_json_input").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
-    toolbar.append($("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_show_event_args_json_input").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
+    toolbar.append($("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
     toolbar.append($("<button/>").attr("id","toolbar_preview_event_form").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
 
     table.attr("data-height",String(height));
@@ -509,11 +509,16 @@ function show_event_args_edit_form(container, form_id,  table, index){
             newFieldInfo.FieldDataMax = undefined;
         }
 
-        table.bootstrapTable("remove",{
-            field: "$index",
-            values: [index]
-            });
-        table.bootstrapTable("insertRow",{
+        // table.bootstrapTable("remove",{
+        //     field: "$index",
+        //     values: [index]
+        //     });
+        // table.bootstrapTable("insertRow",{
+        //     index: index,
+        //     row: newFieldInfo
+        //     })
+
+        table.bootstrapTable("updateRow",{
             index: index,
             row: newFieldInfo
             })
