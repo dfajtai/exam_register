@@ -102,7 +102,7 @@ function createSubjectTable(container,table_id, height){
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
     toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import"));
+    toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import from CSV"));
 
     table.attr("data-height",String(height));
 
@@ -246,7 +246,7 @@ function subject_modal(container, modal_id, title){
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html(title));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html(title));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
     var modal_body = $("<div/>").addClass("modal-body");
@@ -683,11 +683,12 @@ function subjects_table_events(){
         else{
             $(document).find(".needs-select").addClass("disabled");
         }
-    })
+    });
 }
 
 function show_subject_manager(container){
-    createSubjectTable(container,subject_table_id,500);
+    createSubjectTable(container,subject_table_id,730);  
+
     var table = $('#'+subject_table_id);
 
     var toolbar = container.find(".fixed-table-toolbar");

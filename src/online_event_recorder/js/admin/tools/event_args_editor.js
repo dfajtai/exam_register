@@ -631,7 +631,7 @@ function event_args_modal(container, modal_id, title){
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html(title));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html(title));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
     var modal_body = $("<div/>").addClass("modal-body");
@@ -718,8 +718,8 @@ function show_event_args_editor(container){
     event_args_content = $("<div/>").addClass("pt-3");
     container.append(event_args_content);
 
-    // table.on('all.bs.table',
-    table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
+    table.on('all.bs.table',
+    // table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
         function(){
             if(event_args_lock_list.length>0) return;
 
@@ -851,7 +851,6 @@ function show_event_args_editor(container){
 
     $( document ).on( "operate_lock", {},
         function( event ) {
-
             if(event_args_lock_list.length!=0){
                 $(document).find(".lockable").addClass("disabled");
                 if(!event_args_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );

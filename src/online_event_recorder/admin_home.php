@@ -125,8 +125,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							<li><a class="dropdown-item" href="#" onclick="show_table('consumable_types')">Consumable Type definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('consmables')">Consumable definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('assets')">Asset definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('event_types')">Event Type definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_table('event_types')">Event type definitons</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
 						</ul>
 					</li>
 
@@ -134,7 +134,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_subject_manager()">Manage Subjects</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_manager_tool()">Manage Subjects</a>
 						</ul>
 					</li>
 
@@ -142,7 +142,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event definitons</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event Argument Editor</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_batch_editor_tool()">Event Batch Editor</a></li>
 						</ul>
@@ -246,7 +246,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				function(){
 				var main_container = $("#main_container");
 				$("#main_container").empty();
-				
+
 				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
 				main_container.append(_title);
 
@@ -279,7 +279,56 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					$('.navbar-collapse').collapse('hide');
 				}
   			});
-		
+			
+			var idleTime = 0;
+			var idleInterval = null;
+			$(document).ready(function () {
+				// Increment the idle time counter every minute.
+				clearInterval();
+				idleInterval = setInterval(timerIncrement, 1000); // 1 minute
+
+				// Zero the idle timer on mouse movement.
+				$(this).mousemove(function (e) {
+					idleTime = 0;
+				});
+				$(this).keypress(function (e) {
+					idleTime = 0;
+				});
+			});
+
+			function timerIncrement() {
+				idleTime = idleTime + 1;
+				if (idleTime > 9) { // 5 minutess
+					clearInterval(idleInterval);
+
+					$.ajax({
+						type: "POST",
+						url: 'php/inactive_logout.php',
+						dataType: "json",
+						success: function (result) {
+							console.log(result);
+
+							bootbox.alert({
+							message: 'You were logged out due to inactivity.',
+							buttons: {
+								ok: {
+									label: 'Ok',
+									className: 'btn-outline-dark'
+									},
+								},
+							callback: function () {								
+								var searchParams = new URLSearchParams(window.location.search);
+								var newRelativePathQuery = 'login.php' +'?' + searchParams.toString();
+								window.location= newRelativePathQuery;
+								$(this).find('[name=uname]').val(result);
+							}
+							});							
+						}
+					});
+					
+				}
+			}
+
 
 			updateRemoteDefinitionChecksum();
 			updateLocalDefinitionDatabase(function(){
@@ -293,7 +342,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							"consmables":{"title":"Consumable definitons","func":initConsumableDefinitionsTable},
 							"assets":{"title":"Asset definitons","func":initAssetDefinitionsTable},
 							"event_types":{"title":"Event type definitons","func":initEventTypeDefinitionsTable},
-							"events":{"title":"Event definitons","func":initEventDefinitionsTable},
+							"events":{"title":"Event template definitons","func":initEventDefinitionsTable},
 							"studies":{"title":"Studies","func":initStudyDefinitionsTable},
 							};
 

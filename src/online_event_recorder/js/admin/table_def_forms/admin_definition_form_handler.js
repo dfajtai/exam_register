@@ -48,7 +48,7 @@ function modalInsert(data_name, container, modal_id, table_id,
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html("Add new "+data_name));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Add new "+data_name));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
 
@@ -264,7 +264,7 @@ function modalUpdate(data_name, container, modal_id, table_id,
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html("Edit selected "+data_name));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Edit selected "+data_name));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
 

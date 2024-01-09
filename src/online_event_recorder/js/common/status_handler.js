@@ -29,7 +29,12 @@ function statusInUrl(name){
 
 function statusFromUrl(name){
     var status = new URL(location.href).searchParams.get(name);
-    return status
+    return status;
+}
+
+function getAllStatusFromURL(){
+    var status = new URL(location.href).searchParams;
+    return status;
 }
 
 function clearStatusFromUrl(name){

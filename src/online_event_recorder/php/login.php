@@ -2,6 +2,7 @@
 session_start();
 use Medoo\Medoo;
 
+include 'php_functions.php';
 
 if(isset($_POST['uname']) && 
    isset($_POST['pass'])){
@@ -44,13 +45,14 @@ if(isset($_POST['uname']) &&
          if($username === $uname){
             if(password_verify($pass, $password)){
                $_SESSION['id'] = $id;
+               $_SESSION['uname'] = $uname;
                $_SESSION['fname'] = $fname;
                $_SESSION['isAdmin'] = $user['IsAdmin'];
                
                $database -> update("users",["LastLogin"=>Medoo::raw('NOW()')],
 										[ "UserName" => $uname]);
-
-               header("Location: ../home.php");
+               
+               header("Location: ../home.php?" . $_SERVER["QUERY_STRING"]);
                exit;
             }else {
             $em = "Incorect User name or password";

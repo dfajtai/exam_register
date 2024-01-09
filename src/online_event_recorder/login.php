@@ -1,3 +1,12 @@
+<?php include_once 'php/php_functions.php';
+
+session_start();
+
+if(isset($_COOKIE['uname'])){
+	$_GET['uname'] = $_COOKIE['uname'];
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +24,7 @@
 
 		<form
 			class="shadow p-5 needs-validation col-sm-6 offset-sm-3" 
-    	    action="php/login.php" 
+    	    action=<?php echo "'php/login.php?" . myUrlEncode($_SERVER["QUERY_STRING"]) . "'"?>			
     	    method="post">
 			<h4 class="display-4 fs-1">LOGIN</h4><br>
 
@@ -30,6 +39,7 @@
 			  <?php echo $_GET['success']; ?>
 			</div>
 		    <?php } ?>
+			
 
 			<div class="form-group mb-2">
 				<label for="usernameInput">User name</label>

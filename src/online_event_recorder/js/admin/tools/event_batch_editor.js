@@ -1,6 +1,9 @@
 var event_batch_table_id = "eventBatchTable";
 var event_batch_content = {};
 
+var event_batch_content_name = "";
+var event_batch_lock_list = [];
+
 
 window.event_batch_operate_events = {
     'click .move_up': function (e, value, row, index) {
@@ -82,12 +85,27 @@ function eventBatchOperateFormatter(value, row, index) {
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(_lock_list.length>0){
+    if(event_batch_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
     return container.prop("outerHTML");
 }
+
+
+
+ function eventbatch_detail_view_formatter(index, row) {
+    var html = []
+    var hidden_keys = ["state"]
+    $.each(row, function (key, value) {
+      if(!(hidden_keys.includes(key))){
+        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+      }
+
+    })
+    return html.join('')
+}
+
 
 function createBatchTable(container, table_id, height){
     // var table_with_controls = $("<div/>");
@@ -97,7 +115,12 @@ function createBatchTable(container, table_id, height){
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_show_eventbatch_json_input").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Load JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_generate_eventbatch_JSON").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Generate JSON"));
+    toolbar.append($("<button/>").attr("id","toolbar_generate_events").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Generate events"));
+
 
     table.attr("data-height",String(height));
 
@@ -138,7 +161,8 @@ function createBatchTable(container, table_id, height){
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.event_batch_operate_events, formatter: eventBatchOperateFormatter},
-                {title: 'Name', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
+                {title: 'Name', field : 'EventName ', align:'center', sortable:true, searchable:true},
+                {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
                 {title: 'Comment', field : 'EventComment', align:'center', sortable:true, searchable:true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true, formatter: eventStatusFormatter},
@@ -147,13 +171,14 @@ function createBatchTable(container, table_id, height){
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter:simpleFlatFormatter
+            detailFormatter: eventbatch_detail_view_formatter
         });    
 }
 
 function eventBatchInput(container){
     var params =  [
-        {"FieldName":"EventID","FieldLabel":"Event","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
+        {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
@@ -167,7 +192,7 @@ function eventBatchModal(container, modal_id, title){
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-1").html(title));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html(title));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
     var modal_body = $("<div/>").addClass("modal-body");
@@ -209,8 +234,9 @@ function initEventBatchModalAdd(container, table){
     form.append(submitForm);
 
     
-    $(modal).on('hidden.bs.modal',function(){
-        // $( document ).trigger("_release",["add"]);
+    $(modal).on('hide.bs.modal',function(){
+        $( document ).trigger("_release",["add"]);
+        event_batch_content_name = "";
     })
 
     form.on('submit',function(e){
@@ -232,10 +258,47 @@ function initEventBatchModalAdd(container, table){
         $(modal_body).find('form')[0].reset();
     })
     modal_body.append(form);
-}
+} 
 
 
+function initEventBatchGenerateEvents(container, table){
+    var modal_id = "eventBatchModalGenerateEvents";
+    var form_id = modal_id+"Form";
 
+    container.find("#"+modal_id).remove();
+
+    eventBatchModal(container, modal_id, "Create events for subjects");
+
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
+    
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+
+    var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add event");
+    submitForm.append(submitButton);
+
+    form.append(submitForm);
+    
+    
+    $(modal).on('hide.bs.modal',function(){
+        $( document ).trigger("_release",["generate_events"]);
+        event_batch_content_name = "";
+    })
+
+    form.on('submit',function(e){
+        e.preventDefault();
+
+
+        modal.modal('hide');
+        form[0].reset();
+    });
+
+    container.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
+    })
+    modal_body.append(form);
+} 
 
 function showEventBatchEditor(container){
     createBatchTable(container,event_batch_table_id,750);
@@ -252,13 +315,114 @@ function showEventBatchEditor(container){
     event_batch_content = $("<div/>").addClass("pt-3");
     container.append(event_batch_content);
 
+    table.on('all.bs.table',
+    // table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
+        function(){
+            if(event_args_lock_list.length>0) return;
+
+            var selection =  table.bootstrapTable('getSelections');
+            if(selection.length>0 && event_args_lock_list.length==0){
+                toolbar.find(".needs-select").removeClass("disabled");
+            }
+            else{
+                toolbar.find(".needs-select").addClass("disabled");
+            }
+        }
+    )
+
+    table.on('search.bs.table',function(e,text){
+        if(text!=""){
+            $( document ).trigger( "_lock", [ "search"] );
+        }
+        else{
+            $( document ).trigger( "_release", [ "search"] );
+        }
+    }
+    )
+
+    table.on('sort.bs.table',function(e,name,order){
+        if(order){
+            $( document ).trigger( "_lock", [ "sort"] );
+        }else{
+            $( document ).trigger( "_release", [ "sort"] );
+        }
+    }
+    )
+
 
     initEventBatchModalAdd(event_batch_content, table);
     toolbar.find("#toolbar_add").on("click", function(){
         $('#eventBatchModalAdd').modal('show');
-        // $(document).trigger("_lock",["add"]);
+        $(document).trigger("_lock",["add"]);
+        event_batch_content_name = "add";
     });
 
-    
+    initEventBatchGenerateEvents(event_batch_content, table);
+    toolbar.find("#toolbar_generate_events").on("click", function(){
+        $('#eventBatchModalGenerateEvents').modal('show');
+        $(document).trigger("_lock",["generate_events"]);
+        event_batch_content_name = "generate_events";
+    });
+
+    toolbar.find("#toolbar_duplicate").on("click",function(e){
+        var selected = $('input[name="btSelectItem"]:checked');
+        if(selected.length>1){
+            $('input[name="btSelectItem"]:checked').each(function () {
+                let index = $(this).data('index');
+                var data = table.bootstrapTable('getData');
+                var _data = {... data[index]};
+                _data["state"] = false;
+                table.bootstrapTable("append",_data);
+            })
+            
+            statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+        }
+        else{
+            $('input[name="btSelectItem"]:checked').each(function () {
+                let index = $(this).data('index');
+                var data = table.bootstrapTable('getData');
+                var _data = {... data[index]};
+                _data["state"] = false;
+                table.bootstrapTable("insertRow",{index:index+1,row:_data});
+            })
+            statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+        }
+
+        table.bootstrapTable("resetSearch"); // to call the formatter...
+    });
+
+    $( document ).on( "operate_lock", {},
+        function( event ) {
+            if(event_batch_lock_list.length!=0){
+                $(document).find(".lockable").addClass("disabled");
+                if(!event_batch_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                $(document).find(".sortable").prop( "disabled", true );
+            }
+            else{
+                $(event_args_content).empty();
+                $(document).find(".lockable").not(".needs-select").removeClass("disabled");
+                if(!event_batch_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                $(document).find(".sortable").prop( "disabled", false );
+            }
+        });
+
+    $( document ).on( "_lock", {},
+        function( event, lock_name ) {
+            if(!(lock_name == "" || lock_name == null )){
+                event_batch_lock_list.push(lock_name);
+                // console.log("Lock ["+lock_name+"] acquired.");
+                $(this).trigger("operate_lock",[]);
+            }
+        });
+
+    $( document ).on( "_release", {},
+    function( event, lock_name ) {
+        if(!(lock_name == "" || lock_name == null )){
+            event_batch_lock_list = _.without(event_batch_lock_list,lock_name);
+            // console.log("Lock ["+lock_name+"] released.");
+            $(this).trigger("operate_lock",[]);
+        }
+    });
+            
 
 }

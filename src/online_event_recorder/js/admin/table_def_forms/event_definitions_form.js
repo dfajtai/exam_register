@@ -65,8 +65,8 @@ function initEventDefinitionsTable(container,tableId){
     
     table.bootstrapTable('refreshOptions', { ajax:event_definition_retrieve_ajax });
 
-    modalInsert("Event", container,"event_modal_add_new",tableId, eventDefinitionInputs, event_definition_insert_ajax);
-    modalUpdate("Event", container,"event_modal_edit_selected",tableId, eventDefinitionInputs, event_definition_update_ajax,"EventID");
+    modalInsert("Event template", container,"event_modal_add_new",tableId, eventDefinitionInputs, event_definition_insert_ajax);
+    modalUpdate("Event template", container,"event_modal_edit_selected",tableId, eventDefinitionInputs, event_definition_update_ajax,"EventID");
     
 
     // add preview button

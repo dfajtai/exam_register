@@ -1,9 +1,9 @@
 <?php 
 session_start();
-
+session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	if($_SESSION['isAdmin']===1){
-		header("Location: admin_home.php");
+		header("Location: admin_home.php?". $_SERVER["QUERY_STRING"]);
 		exit;
 	}
  ?>
@@ -48,6 +48,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crc-32/1.2.2/crc32.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
 	<script defer src="js/common/definition_handler.js"></script>
 	<script defer src="js/common/status_handler.js"></script>
@@ -55,6 +58,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/flat_def_info_block.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
+
+	<script defer src="js/common/def_table_formatters.js"></script>
+
+	<script defer src="js/common/dynamic_form.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
 		
@@ -116,6 +123,57 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
   			});
 
+
+
+			var idleTime = 0;
+			var idleInterval = null;
+			$(document).ready(function () {
+				// Increment the idle time counter every minute.
+				clearInterval();
+				idleInterval = setInterval(timerIncrement, 1000); // 1 minute
+
+				// Zero the idle timer on mouse movement.
+				$(this).mousemove(function (e) {
+					idleTime = 0;
+				});
+				$(this).keypress(function (e) {
+					idleTime = 0;
+				});
+			});
+
+			function timerIncrement() {
+				idleTime = idleTime + 1;
+				if (idleTime > 9) { // 5 minutess
+					clearInterval(idleInterval);
+
+					$.ajax({
+						type: "POST",
+						url: 'php/inactive_logout.php',
+						dataType: "json",
+						success: function (result) {
+							console.log(result);
+
+							bootbox.alert({
+							message: 'You were logged out due to inactivity.',
+							buttons: {
+								ok: {
+									label: 'Ok',
+									className: 'btn-outline-dark'
+									},
+								},
+							callback: function () {								
+								var searchParams = new URLSearchParams(window.location.search);
+								var newRelativePathQuery = 'login.php' +'?' + searchParams.toString();
+								window.location= newRelativePathQuery;
+								$(this).find('[name=uname]').val(result);
+							}
+							});							
+						}
+					});
+					
+				}
+			}
+			
 
 			updateRemoteDefinitionChecksum();
 			updateLocalDefinitionDatabase(function(){
