@@ -20,8 +20,9 @@ if(isset($_POST['event_info']) && isset($_SESSION['id']) && isset($_SESSION['fna
         $event_data["EventModifiedAt"] = Medoo::raw('NOW()');
     }
     $event_data["EventModifiedBy"] = $_SESSION['id'];
-    $event_data["EventData"] = json_encode($event_data["EventData"]);
-
+    if(array_key_exists('EventData',$event_data)){
+        $event_data["EventData"] = json_encode($event_data["EventData"]);
+    }
     $res = $database -> insert("event_log", $event_data);
 
     unset($_POST['event_index']);

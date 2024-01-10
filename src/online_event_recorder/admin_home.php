@@ -137,6 +137,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_subject_manager_tool()">Manage Subjects</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
 					</li>
 
@@ -147,6 +148,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event Argument Editor</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_batch_editor_tool()">Event Batch Editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event Log</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event Change Log</a></li>
 						</ul>
 					</li>
 

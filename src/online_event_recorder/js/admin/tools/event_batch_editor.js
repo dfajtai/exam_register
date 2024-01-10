@@ -5,6 +5,21 @@ var event_batch_content_name = "";
 var event_batch_lock_list = [];
 
 
+function event_insert_ajax(params,callback = null) {
+    if(callback === null){
+        callback = function(){};
+    }
+    $.ajax({
+        type: "POST",
+        url: 'php/insert_event.php',
+        dataType: "json",
+        data: ({event_info:params}),
+        success: function(result){
+            callback();
+        }
+    });
+}
+
 window.event_batch_operate_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
@@ -577,7 +592,16 @@ function show_event_batch_modal_make(container, table){
                         console.log(subject_info);
                         $.each(current_event_batch,function(_event_index,event_info){
                             console.log(event_info);
-    
+
+                            var event_data = {"EventName":event_info["EventName"],
+                                              "EventStatus":event_info["EventStatus"],
+                                              "EventID":event_info["EventID"],
+                                              "EventLocation":event_info["EventLocation"],
+                                              "EventComment":event_info["EventComment"]?event_info["EventComment"]:'',
+                                              "EventStudy":subject_info["StudyID"],
+                                              "EventSubject":subject_info["SubjectIndex"]
+                                            }
+                            event_insert_ajax(event_data);
                         });
                     });
                 }
