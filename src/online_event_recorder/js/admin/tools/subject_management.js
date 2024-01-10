@@ -83,28 +83,37 @@ window.subject_operate_events = {
     },
 }
 
-function createSubjectTable(container,table_id, height){
+function createSubjectTable(container,table_id, height, simplify = false){
     var table = $("<table/>").attr("id",table_id);
-
-    var study_selector = $("<div/>").addClass("row mt-3 mb-3");
-    var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
-    study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
-    showAllDefs(study_dropdown,"studies","StudyID","StudyName");
-
-    study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Show subejcts from Study: "));
-    study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
-
-    container.append(study_selector);
-
-
+  
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
 
-    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import from CSV"));
+    if(simplify){
+        var toolbar_content = $("<div/>").addClass("input-group");
+        var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
+        study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
+        showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+        toolbar_content.append($("<span/>").attr("for","studySelect").html("Show subejcts from Study: ").addClass("input-group-text"))
+        toolbar_content.append(study_dropdown);
+        toolbar.append(toolbar_content);
+        }
+    else{
+        toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
+        toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+        toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
+        toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import from CSV"));
+        
+        var study_selector = $("<div/>").addClass("row mt-3 mb-3");
+        var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
+        study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
+        showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+    
+        study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Show subejcts from Study: "));
+        study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
+        container.append(study_selector);
+    }
 
-    table.attr("data-height",String(height));
+    // table.attr("data-height",String(height));
 
     table.attr("data-toolbar","#"+table_id+"_toolbar");
     table.attr("data-toolbar-align","left");
@@ -116,28 +125,30 @@ function createSubjectTable(container,table_id, height){
 
     table.attr("data-show-footer","false");
 
-    table.attr("data-show-refresh","true");
+    if(!simplify){
+        table.attr("data-show-refresh","true");
 
-    table.attr("data-auto-refresh","true");
-    table.attr("data-auto-refresh-status","false");
-    table.attr("data-show-auto-refresh","true");
-    table.attr("data-auto-refresh-interval","10");
-    table.attr("data-auto-refresh-silent","true");
+        table.attr("data-auto-refresh","true");
+        table.attr("data-auto-refresh-status","false");
+        table.attr("data-show-auto-refresh","true");
+        table.attr("data-auto-refresh-interval","10");
+        table.attr("data-auto-refresh-silent","true");
 
-    table.attr("data-show-fullscreen","true");
+        table.attr("data-show-fullscreen","true");
 
-    table.attr("data-minimum-count-columns","2");
-    table.attr("data-show-columns","true");
-    table.attr("data-show-columns-toggle-all","true");
+        table.attr("data-minimum-count-columns","2");
+        table.attr("data-show-columns","true");
+        table.attr("data-show-columns-toggle-all","true");
 
+        table.attr("data-detail-view","true");
+    }
+    
     table.attr("data-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
     table.attr("data-show-search-clear-button","true");
 
     table.attr("data-maintain-meta-data","true");
-
-    table.attr("data-detail-view","true");
 
     table.attr("data-locale","hu-HU");
 
@@ -176,7 +187,7 @@ function createSubjectTable(container,table_id, height){
 
             idField:"SubjectIndex",
 
-            showExport:true,
+            showExport:!simplify,
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],
             exportDataType: 'all'
         });
@@ -199,12 +210,10 @@ function createSubjectTable(container,table_id, height){
         }
         subjects_table_events();
     })
+
     
     table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
-
-    // modalInsert("Subject", container,"subject_modal_add_new",table_id, subjectFormInputs, subject_insert_ajax);
-    // modalUpdate("Subject", container,"subject_modal_edit_selected",table_id, subjectFormInputs, subject_update_ajax,"SubjectIndex");
-
+   
 }
 
 function subjectFormInputs(container){
@@ -276,6 +285,7 @@ function initSubjectModalAdd(container, table){
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
+    var modal_footer = modal.find(".modal-footer");
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
@@ -303,7 +313,7 @@ function initSubjectModalAdd(container, table){
         form[0].reset();
     });
 
-    container.find("#clear_form").click(function(){
+    modal_footer.find("#clear_form").click(function(){
         $(modal_body).find('form')[0].reset();
     })
     modal_body.append(form);
@@ -378,7 +388,7 @@ function initSubjectModalEdit(container, table, index){
 
     $(modal).on('show.bs.modal', function () {                   
         init_fields(form,entry);
-        console.log(entry);
+        // console.log(entry);
     })
 
     modal_footer.find("#revert_form").click(function(){
@@ -414,7 +424,7 @@ function initSubjectModalEdit(container, table, index){
                 values[$(this).attr("name")]  = _val;
             };
         });
-
+        console.log(values);
         subject_update_ajax(entry["SubjectIndex"],values,function(){table.bootstrapTable('refresh')});
         modal.modal('hide');
         form[0].reset();
@@ -446,6 +456,10 @@ function initSubjectBatchModalEdit(container, table){
    
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["batch_edit"]);
+    })
+
+    modal_footer.find("#clear_form").click(function(){
+        $(modal_body).find('form')[0].reset();
     })
 
     form.on('submit',function(e){
@@ -551,7 +565,9 @@ function initSubjectModalImport(container,table){
     var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import Subjects");
     submitForm.append(submitButton);
 
-    modal.find("#clear_form").remove();
+    modal_footer.find("#clear_form").click(function(){
+        table.bootstrapTable("destroy");
+    })
     
     form.append(submitForm);
     modal_body.append(form);
@@ -686,9 +702,14 @@ function subjects_table_events(){
     });
 }
 
-function show_subject_manager(container){
-    createSubjectTable(container,subject_table_id,730);  
-
+function show_subject_manager(container,height){
+    if(height){
+        createSubjectTable(container,subject_table_id,height);  
+    }
+    else{
+        createSubjectTable(container,subject_table_id,730);  
+    }
+    
     var table = $('#'+subject_table_id);
 
     var toolbar = container.find(".fixed-table-toolbar");

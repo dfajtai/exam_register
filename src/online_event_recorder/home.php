@@ -168,6 +168,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 </html>
 
 <?php }else {
-	header("Location: login.php");
+	header("Location: login.php?" . $_SERVER["QUERY_STRING"]);
 	exit;
 } ?>

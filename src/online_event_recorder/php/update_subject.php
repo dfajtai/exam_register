@@ -39,10 +39,10 @@ if(isset($_POST['subject_index']) && isset($_POST['subject_info']) && isset($_SE
         
         $database -> insert("subject_change_log", [
             "SubjectIndex"=>$subject_index, 
-            "CurrentSubjectID"=> property_exists('SubjectID', 'updated_values') ? $updated_values["SubjectID"] : $_old_data['SubjectID'], 
-            "CurrentStudyID"=>property_exists('StudyID', 'updated_values') ? $updated_values["StudyID"] : $_old_data['StudyID'],
-            "CurrentSubjectName" => property_exists('Name', 'updated_values') ? $updated_values["Name"] : $_old_data['Name'],
-            "CurrentSubjectGroup" => property_exists('Group', 'updated_values') ? $updated_values["Group"] : $_old_data['Group'],
+            "CurrentSubjectID"=> array_key_exists('SubjectID', $updated_values) ? $updated_values["SubjectID"] : $_old_data['SubjectID'], 
+            "CurrentStudyID"=>array_key_exists('StudyID', $updated_values) ? $updated_values["StudyID"] : $_old_data['StudyID'],
+            "CurrentSubjectName" => array_key_exists('Name', $updated_values) ? $updated_values["Name"] : $_old_data['Name'],
+            "CurrentSubjectGroup" => array_key_exists('Group', $updated_values) ? $updated_values["Group"] : $_old_data['Group'],
             "ModifiedBy" => $_old_data["ModifiedBy"],
             "Timestamp" => $_old_data["LastChange"],
             "OldData" => json_encode($subject_info)

@@ -116,7 +116,7 @@ function createBatchTable(container, table_id, height){
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
     toolbar.append($("<button/>").attr("id","toolbar_json_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
-    toolbar.append($("<button/>").attr("id","toolbar_generate_events").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Make events"));
+    toolbar.append($("<button/>").attr("id","toolbar_make_events").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Make events"));
 
 
     table.attr("data-height",String(height));
@@ -385,6 +385,11 @@ function show_event_batch_modal_json_import(container, table){
     var modal_body = modal.find(".modal-body");
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+    var input_div = $("<div/>").addClass("mb-3");
+    input_div.append($("<label/>").addClass("form-label").attr("for","json_input_textarea").html("Insert your JSON text"));
+    var textarea  = $("<textarea/>").addClass("form-control").attr("id","json_input_textarea").attr("name","json_text").attr("rows",15);
+    input_div.append(textarea);
+    form.append(input_div);
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center");
     var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
@@ -401,6 +406,10 @@ function show_event_batch_modal_json_import(container, table){
     form.on('submit',function(e){
         e.preventDefault();
 
+        var json_text = $(textarea).val();
+        var json = JSON.parse(json_text);
+        table.bootstrapTable('append',json);
+        statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
         modal.modal('hide');
         form[0].reset();
@@ -431,6 +440,13 @@ function show_event_batch_modal_json_export(container, table){
     modal_footer.empty();
 
 
+    var input_div = $("<div/>").addClass("mb-3");
+    input_div.append($("<label/>").addClass("form-label").attr("for","json_export_textarea").html("The JSON equivalent of the current event batch"));
+    var textarea = $("<textarea/>").addClass("form-control").attr("id","json_export_textarea").attr("name","json_text").attr("rows",15);
+    input_div.append(textarea);
+    form.append(input_div);
+
+
     // var submitForm = $("<div/>").addClass("row mb-3 text-center");
     // var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
     // submitForm.append(submitButton);
@@ -443,13 +459,19 @@ function show_event_batch_modal_json_export(container, table){
         event_batch_content_name = "";
     })
 
-    form.on('submit',function(e){
-        e.preventDefault();
+    $(modal).on('show.bs.modal',function(){
+        var data = table.bootstrapTable('getData');
 
+        var filtered_data = [];
+        $.each(data,function(index,row){
+            var _data = {... row};
+            delete _data.state;
+            filtered_data.push(_data);
+        })
+    
+        $(textarea).text(JSON.stringify(filtered_data));
+    })
 
-        modal.modal('hide');
-        form[0].reset();
-    });
 
     container.find("#clear_form").click(function(){
         $(modal_body).find('form')[0].reset();
@@ -461,7 +483,12 @@ function show_event_batch_modal_json_export(container, table){
 
 
 
-function show_event_batch_modal_generate(container, table){
+function show_event_batch_modal_make(container, table){
+    if(table.bootstrapTable("getData").length==0){
+        alert("Please add at least one event to the batch.");
+        return;
+    }
+
     var modal_id = "eventBatchModalGenerateEvents";
     var form_id = modal_id+"Form";
 
@@ -470,24 +497,92 @@ function show_event_batch_modal_generate(container, table){
     eventBatchModal(container, modal_id, "Create events for subjects");
 
     var modal = container.find("#"+modal_id);
+
+    var dialog = modal.find(".modal-dialog");
+    if(dialog){
+        dialog.removeClass("modal-lg").addClass("modal-xl");
+    }
+
     var modal_body = modal.find(".modal-body");
+
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.empty();
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add event");
+    var subject_container = $("<div/>").attr("id","subject_selector").addClass("mb-3 container");
+    var subject_selector_table_id = "subjectSelectorTable";
+
+    var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
+    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Make events for selected subjects");
     submitForm.append(submitButton);
 
+
+    form.append(subject_container);
     form.append(submitForm);
     
     
     $(modal).on('hide.bs.modal',function(){
-        $( document ).trigger("_release",["generate_events"]);
-        event_batch_content_name = "";
+        // $( document ).trigger("_release",["make_events"]);
+        // event_batch_content_name = "";
     })
+
+    $(modal).on('show.bs.modal',function(){
+        createSubjectTable(subject_container,subject_selector_table_id,200,true);
+        
+        var subject_table = subject_container.find("#"+subject_selector_table_id);
+        subject_table.bootstrapTable("resetView");
+        subject_table.bootstrapTable('hideColumn', 'operate');
+        
+    });
+
 
     form.on('submit',function(e){
         e.preventDefault();
+
+        var subject_table = subject_container.find("#"+subject_selector_table_id);
+        var selected_subjects = $(subject_table).bootstrapTable("getSelections");
+
+        if(selected_subjects.length==0){
+            alert("Please select at least one subject.");
+            return;
+        }
+
+        var current_event_batch = $(table).bootstrapTable("getData");      
+
+        var message = 'You are going to make '+current_event_batch.length+' events (as a batch) for the following subject(s) [N = '+ selected_subjects.length+']:<br>';
+        var subjects = [];
+        $.each(selected_subjects,function(index,subject_info){
+            subjects.push("Name: " + subject_info["Name"] + " | ID: "+subject_info["SubjectID"]+" | Study: "+ 
+            getDefEntryFieldWhere("studies","StudyID",subject_info["StudyID"],"StudyName") +"<br>");
+        });
+        message = message+subjects.join("");
+        message = message+'<br><br>Do you want to proceed?';
+
+        bootbox.confirm({
+            message: message,
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    $.each(selected_subjects,function(selected_subject_index,subject_info){
+                        console.log(subject_info);
+                        $.each(current_event_batch,function(_event_index,event_info){
+                            console.log(event_info);
+    
+                        });
+                    });
+                }
+            }
+            });
 
 
         modal.modal('hide');
@@ -561,11 +656,11 @@ function showEventBatchEditor(container){
     });
 
 
-    toolbar.find("#toolbar_generate_events").on("click", function(){
-        show_event_batch_modal_generate(container,table);
+    toolbar.find("#toolbar_make_events").on("click", function(){
+        show_event_batch_modal_make(container,table);
 
-        $(document).trigger("_lock",["generate_events"]);
-        event_batch_content_name = "generate_events";
+        // $(document).trigger("_lock",["make_events"]);
+        // event_batch_content_name = "make_events";
     });
 
 

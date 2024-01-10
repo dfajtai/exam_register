@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 05. 11:54
+-- Létrehozás ideje: 2024. Jan 10. 14:56
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.13
 
@@ -198,15 +198,15 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (3, 'location_definitions', '2023-12-04 13:54:31', '68c2bc19'),
 (5, 'bodypart_definitions', '2023-12-07 10:25:34', '184dfa16'),
 (6, 'subject_status_definitions', '2023-11-23 11:37:03', '5ae4c226'),
-(7, 'unit_definitions', '2023-12-13 15:28:29', 'a569235c'),
-(8, 'unit_type_definitions', '2024-01-04 15:43:01', 'd0614436'),
+(7, 'unit_definitions', '2024-01-05 14:53:53', 'f4099e9f'),
+(8, 'unit_type_definitions', '2024-01-04 15:43:01', 'c2835b14'),
 (9, 'side_definitions', '2023-11-23 11:37:03', '1f2c2d75'),
 (10, 'sex_definitions', '2023-11-23 11:37:03', '18eba199'),
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2023-12-04 16:12:34', 'bce6ef8'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
-(15, 'event_definitions', '2023-12-13 15:26:32', '52bcb8d0'),
-(16, 'studies', '2024-01-05 09:58:07', '40cd0f95');
+(15, 'event_definitions', '2024-01-08 13:25:44', '6d2f6944'),
+(16, 'studies', '2024-01-10 14:55:28', '8964ad8b');
 
 -- --------------------------------------------------------
 
@@ -244,10 +244,10 @@ CREATE TABLE `event_definitions` (
 --
 
 INSERT INTO `event_definitions` (`EventID`, `EventName`, `EventDesc`, `EventType`, `EventFormJSON`) VALUES
-(1, 'vérvétel', '', 1, '[{\"asd\": 12}, {\"asdasd\": 42}]'),
-(2, 'altatás kezdete', '', 2, NULL),
+(1, 'vérvétel', '', 1, '[{\"FieldName\": \"bodypart\", \"FieldType\": \"select\", \"FieldLabel\": \"vervetel_helye\", \"FieldSource\": \"bodypart\", \"FieldRequired\": true}, {\"FieldName\": \"volume\", \"FieldType\": \"input\", \"FieldUnit\": \"ml\", \"FieldLabel\": \"terfogat\", \"FieldDataMax\": \"20\", \"FieldDataMin\": \"0\", \"FieldDataStep\": \"0.1\", \"FieldDataType\": \"range\", \"FieldRequired\": true}]'),
+(2, 'altatás kezdete', '', 2, '[{\"FieldName\": \"anest_start\", \"FieldType\": \"input\", \"FieldLabel\": \"anest_start\", \"FieldSource\": \"location\", \"FieldDataType\": \"datetime\", \"FieldRequired\": true}, {\"FieldName\": \"anest_start_loc\", \"FieldType\": \"select\", \"FieldLabel\": \"anest start location\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"canule_loc_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 1 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 1\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}, {\"FieldName\": \"canule_loc_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 2 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 2\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}]'),
 (3, 'altatás vége', '', 2, NULL),
-(4, 'beszállítás', '', 3, NULL);
+(4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]');
 
 --
 -- Eseményindítók `event_definitions`
@@ -501,8 +501,8 @@ CREATE TABLE `studies` (
 --
 
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
-(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 0),
-(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 1),
+(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 2),
+(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 0),
 (3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 0);
 
 --
@@ -550,6 +550,12 @@ CREATE TABLE `subjects` (
 DELIMITER $$
 CREATE TRIGGER `alter subject` AFTER UPDATE ON `subjects` FOR EACH ROW BEGIN
 UPDATE studies SET StudyNCurrent = StudyNCurrent +1 WHERE StudyID = NEW.StudyID;
+UPDATE studies SET StudyNCurrent = StudyNCurrent -1 WHERE StudyID = old.StudyID;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `delete subject` AFTER DELETE ON `subjects` FOR EACH ROW BEGIN
 UPDATE studies SET StudyNCurrent = StudyNCurrent -1 WHERE StudyID = old.StudyID;
 END
 $$
@@ -638,6 +644,7 @@ CREATE TABLE `unit_definitions` (
 --
 
 INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `UnitAmount`, `UnitDesc`) VALUES
+(0, 0, 'n.a.', '-', 1, ''),
 (8, 1, 'milliliter', 'ml', 1, ''),
 (9, 1, 'liter', 'l', 1, ''),
 (10, 2, 'gramm', 'g', 1, ''),
@@ -649,8 +656,7 @@ INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `U
 (16, 5, 'milimeter', 'mm', 1, ''),
 (17, 5, 'centimeter', 'cm', 1, ''),
 (18, 5, 'meter', 'm', 1, ''),
-(19, 8, 'celsius', '˚C', 1, ''),
-(20, 0, 'n.a.', '-', 1, '');
+(19, 8, 'celsius', '˚C', 1, '');
 
 --
 -- Eseményindítók `unit_definitions`
@@ -693,10 +699,7 @@ INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc
 (5, 'length', 'Length in m, cm, mm, and so on.'),
 (6, 'duration', 'Duration in min, s, and so on.'),
 (7, 'flow', 'Fluid flow speed in ml/s ml/h and so on.'),
-(8, 'temperature', 'Temperature in °C, °F or K.'),
-(9, 'time', 'Time  (MM:HH:SS)'),
-(10, 'date', 'Date  (yyyy.mm.dd)'),
-(11, 'datetime', 'Full timestamp (yyyy.mm.dd MM:HH:SS)');
+(8, 'temperature', 'Temperature in °C, °F or K.');
 
 --
 -- Eseményindítók `unit_type_definitions`
@@ -739,7 +742,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-05 11:27:21', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-10 14:18:56', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -791,7 +794,7 @@ ALTER TABLE `event_change_log`
   ADD KEY `EventIndex` (`EventIndex`),
   ADD KEY `EventModifiedBy` (`EventModifiedBy`),
   ADD KEY `EventStudy` (`EventStudy`),
-  ADD KEY `EventSubject` (`EventSubject`);
+  ADD KEY `event_change_log_ibfk_4` (`EventSubject`);
 
 --
 -- A tábla indexei `event_definitions`
@@ -808,9 +811,9 @@ ALTER TABLE `event_log`
   ADD KEY `event_log_ibfk_1` (`EventID`),
   ADD KEY `EventLocation` (`EventLocation`),
   ADD KEY `EventModifiedBy` (`EventModifiedBy`),
-  ADD KEY `EventStudy` (`EventStudy`),
-  ADD KEY `EventStatus` (`EventStatus`),
-  ADD KEY `EventSubject` (`EventSubject`);
+  ADD KEY `event_log_ibfk_4` (`EventStudy`),
+  ADD KEY `event_log_ibfk_5` (`EventStatus`),
+  ADD KEY `event_log_ibfk_6` (`EventSubject`);
 
 --
 -- A tábla indexei `event_status_definitions`
@@ -871,7 +874,7 @@ ALTER TABLE `subject_change_log`
   ADD PRIMARY KEY (`SubjectLogIndex`),
   ADD KEY `CurrentStudyID` (`CurrentStudyID`),
   ADD KEY `ModifiedBy` (`ModifiedBy`),
-  ADD KEY `SubjectIndex` (`SubjectIndex`);
+  ADD KEY `subject_change_log_ibfk_3` (`SubjectIndex`);
 
 --
 -- A tábla indexei `subject_status_definitions`
@@ -1055,7 +1058,7 @@ ALTER TABLE `event_change_log`
   ADD CONSTRAINT `event_change_log_ibfk_1` FOREIGN KEY (`EventIndex`) REFERENCES `event_log` (`EventIndex`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_change_log_ibfk_2` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_change_log_ibfk_3` FOREIGN KEY (`EventStudy`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `event_definitions`
@@ -1070,9 +1073,9 @@ ALTER TABLE `event_log`
   ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventID`) REFERENCES `event_definitions` (`EventID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_2` FOREIGN KEY (`EventLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_3` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `subjects` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_5` FOREIGN KEY (`EventStatus`) REFERENCES `event_status_definitions` (`EventStatusID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `event_log_ibfk_6` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `event_log_ibfk_6` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `subjects`
@@ -1090,7 +1093,7 @@ ALTER TABLE `subjects`
 ALTER TABLE `subject_change_log`
   ADD CONSTRAINT `subject_change_log_ibfk_1` FOREIGN KEY (`CurrentStudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `subject_change_log_ibfk_2` FOREIGN KEY (`ModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `subject_change_log_ibfk_3` FOREIGN KEY (`SubjectIndex`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `subject_change_log_ibfk_3` FOREIGN KEY (`SubjectIndex`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `unit_definitions`
