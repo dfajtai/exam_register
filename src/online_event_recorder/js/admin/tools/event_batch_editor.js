@@ -205,10 +205,12 @@ function createBatchTable(container, table_id, height){
 }
 
 function eventBatchInput(container){
+    var planned_eventStatusID = getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
+
     var params =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
         {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
-        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true},
+        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_eventStatusID},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
@@ -389,8 +391,6 @@ function show_event_batch_modal_edit(container, table, index){
             if(!(field.value==""||field.value==null)) values[field.name]= field.value;
         });
         values["EventType"] = getDefEntryFieldWhere("event_definitions","EventID",values["EventID"],"EventType")
-
-        console.log(values);
         
         table.bootstrapTable("updateRow",{
             index: index,
@@ -613,9 +613,9 @@ function show_event_batch_modal_make(container, table){
             callback: function (result) {
                 if(result){
                     $.each(selected_subjects,function(selected_subject_index,subject_info){
-                        console.log(subject_info);
+                        // console.log(subject_info);
                         $.each(current_event_batch,function(_event_index,event_info){
-                            console.log(event_info);
+                            // console.log(event_info);
 
                             var event_data = {"EventName":event_info["EventName"],
                                               "EventStatus":event_info["EventStatus"],

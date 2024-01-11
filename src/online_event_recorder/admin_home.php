@@ -74,6 +74,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/event_batch_editor.js"></script>
 	<script defer src="js/admin/tools/subject_management.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
+	<script defer src="js/admin/tools/event_log_handler.js"></script>
 
 	<script defer src="js/common/dynamic_form.js"></script>
 
@@ -135,7 +136,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_subject_manager_tool()">Manage Subjects</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Manage Subjects</a>
 							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
 					</li>
@@ -244,7 +245,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			})
 		}
 
-		function show_subject_manager_tool(){
+		function show_subject_register_tool(){
 			updateLocalDefinitionDatabase(
 				function(){
 				var main_container = $("#main_container");
@@ -253,13 +254,32 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
 				main_container.append(_title);
 
-				show_subject_manager(main_container);
+				show_subject_register(main_container);
 				
 				clearAllStatusFromUrl();
 				statusToUrl("tool","SubjectManager");
 				
 				$('.navbar-collapse').collapse('hide');
 			})
+		}
+
+		function show_event_log_tool(){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event log"));
+				main_container.append(_title);
+
+				show_event_log_handler(main_container);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","EventLog");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
 		}
 
 		$(document).ready(function() {
@@ -324,7 +344,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					var tool = statusFromUrl("tool");
 					if(tool=="EventArgEditor") show_event_args_editor_tool();
 					if(tool=="EventBatchEditor") show_event_batch_editor_tool();
-					if(tool=="SubjectManager") show_subject_manager_tool();
+					if(tool=="SubjectManager") show_subject_register_tool();
+					if(tool=="EventLog") show_event_log_tool();
 				}
 				else{
 					show_table("users");

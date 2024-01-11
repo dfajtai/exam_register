@@ -702,7 +702,7 @@ function subjects_table_events(){
     });
 }
 
-function show_subject_manager(container,height){
+function show_subject_register(container,height){
     if(height){
         createSubjectTable(container,subject_table_id,height);  
     }

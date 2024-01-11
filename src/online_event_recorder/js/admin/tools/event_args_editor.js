@@ -195,6 +195,37 @@ function event_args_select_form(container){
 
     container.append($("<hr/>").addClass("hr mt-3 mb-3"));
     container.append(defSelectGroup);
+
+    var defaultValueGroup = $("<div/>").attr("id","defaultValue");
+    container.append(defaultValueGroup);
+
+    defSelectGroup.find("select").change(function(){
+        switch (this.value) {
+            case "location":
+                defaultValueGroup.empty().addClass("row mb-3");
+                dynamicLocationSelect(defaultValueGroup,"FieldDefaultValue","Default value");
+                break;
+            
+            case "bodypart":
+                defaultValueGroup.empty().addClass("row mb-3");
+                dynamicBodypartSelect(defaultValueGroup,"FieldDefaultValue","Default value");
+                break;
+        
+            case "consumable":
+                defaultValueGroup.empty().addClass("row mb-3");
+                dynamicConsumableSelect(defaultValueGroup,"FieldDefaultValue","Default value");
+                break;
+            
+            case "asset":
+                defaultValueGroup.empty().addClass("row mb-3");
+                dynamicAssetSelect(defaultValueGroup,"FieldDefaultValue","Default value");
+                break;
+
+            default:
+                defaultValueGroup.empty().removeClass("row mb-3");
+                break;
+        }
+    });
 }
 
 
@@ -220,15 +251,19 @@ function event_args_input_form(container){
     container.append(dtypeSelectGroup);
 
 
-    var dtypeNumericGroup = $("<div/>").addClass("row mb-3").attr("id","numericParamGroup");
+    var dtypeNumericGroup = $("<div/>").attr("id","numericParamGroup");
     container.append(dtypeNumericGroup);
 
 
+    var defaultValueGroup = $("<div/>").attr("id","defaultValue");
+    container.append(defaultValueGroup);
+
     dtypeSelectGroup.find("select").change(function(){
-
-
+        defaultValueGroup.empty().removeClass("row mb-3");
+        dtypeNumericGroup.empty().removeClass("row mb-3");
+        
         if(this.value=="numeric"){
-            dtypeNumericGroup.empty();
+            dtypeNumericGroup.empty().addClass("row mb-3");
             var _step = $("<div/>").addClass("col-md-4");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
             _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
@@ -252,9 +287,15 @@ function event_args_input_form(container){
 
             connectSelectByAttr(_unitType,_unit, "unit_definitions","UnitType", "UnitTypeID", "UnitID");
 
+            defaultValueGroup.empty().addClass("row mb-3");
+            defaultValueGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","defvalInput").html("Default value"));
+            var defValInput = $("<input/>").addClass("form-control").attr("type","numeric").attr("id","defvalInput").attr("name","FieldDefaultValue").prop('required',false);
+            defaultValueGroup.append($("<div/>").addClass("col-md-9").append(defValInput));
+            
+
         }
         else if(this.value=="range"){
-            dtypeNumericGroup.empty();
+            dtypeNumericGroup.empty().addClass("row mb-3");
             var _step = $("<div/>").addClass("col-md-2");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
             _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
@@ -287,11 +328,76 @@ function event_args_input_form(container){
             dtypeNumericGroup.append(_unit);
 
             connectSelectByAttr(_unitType,_unit, "unit_definitions", "UnitType", "UnitTypeID", "UnitID");
+
+            defaultValueGroup.empty().addClass("row mb-3");
+            defaultValueGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","defvalInput").html("Default value"));
+            var defValInput = $("<input/>").addClass("form-control").attr("type","numeric").attr("id","defvalInput").attr("name","FieldDefaultValue").prop('required',false);
+            defaultValueGroup.append($("<div/>").addClass("col-md-9").append(defValInput));
+            
         }
         else{
-            dtypeNumericGroup.empty();
+            dtypeNumericGroup.empty().removeClass("row mb-3");
+
+            switch (this.value) {
+                case "text":
+                    defaultValueGroup.empty().addClass("row mb-3");
+                    dynamicTextInput(defaultValueGroup,"FieldDefaultValue","Default value");
+                    break;
+                
+                case "longtext":
+                    defaultValueGroup.empty().addClass("row mb-3");
+                    dynamicLongTextInput(defaultValueGroup,"FieldDefaultValue","Default value");
+                    break;
+
+                case "date":
+                    defaultValueGroup.empty().addClass("row mb-3");
+                    dynamicDateInput(defaultValueGroup,"FieldDefaultValue","Default value");
+                    break;
+            
+                case "datetime":
+                    defaultValueGroup.empty().addClass("row mb-3");
+                    dynamicDatetimeInput(defaultValueGroup,"FieldDefaultValue","Default value");
+                    break;
+                
+                case "time":
+                    defaultValueGroup.empty().addClass("row mb-3");
+                    dynamicTimeInput(defaultValueGroup,"FieldDefaultValue","Default value");
+                    break;
+
+                default:
+                    break;
+            }
         }
     })
+}
+
+function event_args_modal(container, modal_id, title){
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
+    var modal_content = $("<div/>").addClass("modal-content");
+
+    var modal_header= $("<div/>").addClass("modal-header");
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html(title));
+    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
+
+    var modal_body = $("<div/>").addClass("modal-body");
+
+    var modal_footer= $("<div/>").addClass("modal-footer");
+    modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
+
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+    modal_content.append(modal_footer);
+
+    modal_dialog.html(modal_content);
+    modal_root.html(modal_dialog);
+
+    modal_footer.find('#clear_form').on('click',function(){
+        $(modal_body).find('form')[0].reset();
+    })
+
+    container.append(modal_root);
 }
 
 
@@ -311,7 +417,6 @@ function event_args_add_form(container,form_id, table){
     var labelInput = $("<input/>").addClass("form-control").attr("type","text").attr("id","label").attr("name","FieldLabel").prop('required',true).attr("placeholder","Field label in visualization.")
     labelGroup.append($("<div/>").addClass("col-md-9").append(labelInput));
 
-    
     var typeGroup = $("<div/>").addClass("row mb-3");
     var typeGroupLabel = $("<div/>").addClass("form-label col-md-3").html("Field Type");
 
@@ -349,6 +454,7 @@ function event_args_add_form(container,form_id, table){
             event_args_input_form(additionalForm);
         }
     })
+
 
 
     form.append(primaryProperties);
@@ -420,7 +526,7 @@ function show_event_args_modal_add_form(container, table){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
-    modal_footer.empty();
+    // modal_footer.empty();
 
     event_args_content_name = "add";
     $( document ).trigger( "_lock", [ "add"] );
@@ -561,7 +667,9 @@ function show_event_args_modal_edit_form(container, table, index){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
-    modal_footer.empty();
+    // modal_footer.empty();
+
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
 
     event_args_content_name = "edit";
     $( document ).trigger( "_lock", [ "edit"] );
@@ -569,12 +677,17 @@ function show_event_args_modal_edit_form(container, table, index){
     event_args_edit_form(modal_body, "edit_form", table, index);
 
     var form = $(modal).find("form");
-    console.log(form);
+    // console.log(form);
     form.on('submit',function(){
         modal.modal('hide');
     })
 
     modal.modal('show');
+
+    modal_footer.find("#revert_form").click(function(){
+        modal_body.empty();
+        event_args_edit_form(modal_body, "edit_form", table, index);
+    })
 
     modal.on("hide.bs.modal",function(){
         event_args_content_name = "";
@@ -607,7 +720,7 @@ function event_args_json_import(container,form_id, table){
 
 }
 
-function show_event_args_modal_json_input_form(container, table){
+function show_event_args_modal_json_import_form(container, table){
     container.empty();
 
     var modal_id = "event_args_add_modal";
@@ -616,7 +729,7 @@ function show_event_args_modal_json_input_form(container, table){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
-    modal_footer.empty();
+    // modal_footer.empty();
 
     var dialog = modal.find(".modal-dialog");
     if(dialog){
@@ -710,30 +823,6 @@ function show_event_args_modal_json_export_form(container, table){
 
 }
 
-function event_args_modal(container, modal_id, title){
-    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
-    var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
-    var modal_content = $("<div/>").addClass("modal-content");
-
-    var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html(title));
-    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
-
-    var modal_body = $("<div/>").addClass("modal-body");
-
-    var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
-
-    modal_content.append(modal_header);
-    modal_content.append(modal_body);
-    modal_content.append(modal_footer);
-
-    modal_dialog.html(modal_content);
-    modal_root.html(modal_dialog);
-
-    container.append(modal_root);
-}
-
 
 function show_event_args_modal_preview(container,table){
     container.empty();
@@ -744,7 +833,12 @@ function show_event_args_modal_preview(container,table){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
 
-    showCustomArgs(modal_body,table.bootstrapTable("getData"));
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.find("#clear_form").remove();
+
+    var preview_container = $("<div/>").addClass("mt-3 pt-3 pb-3 shadow container border");
+    showCustomArgs(preview_container,table.bootstrapTable("getData"));
+    modal_body.append(preview_container);
 
     modal.modal('show');
 
@@ -906,7 +1000,7 @@ function show_event_args_editor(container){
 
 
     toolbar.find("#toolbar_event_args_json_import").on("click",function(e){
-        show_event_args_modal_json_input_form(event_args_modals,table);
+        show_event_args_modal_json_import_form(event_args_modals,table);
     })
 
     toolbar.find("#toolbar_generate_JSON").on("click",function(e){
