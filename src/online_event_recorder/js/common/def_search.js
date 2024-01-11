@@ -89,3 +89,13 @@ function defHasDuplicates(def_name, key){
 
     return hasDuplicates(vals);
 }
+
+
+function getCol(objlist, col){
+    var vals = [];
+    $.each(objlist,function(index,entry){
+        if(entry.hasOwnProperty(col))  vals.push(entry[col]);
+    })
+
+    return vals;
+}

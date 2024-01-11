@@ -46,7 +46,10 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     subject_selector.append($("<span/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
     subject_selector.append(study_dropdown);
 
+    var advanced_search = $("<button/>").addClass("btn btn-outline-dark").html("Advanced search")
+
     widget.append($("<div/>").addClass("col-md-10").append(subject_selector));
+    widget.append($("<div/>").addClass("col-md-2").append(advanced_search));
 
 
     $(study_dropdown).on("change",function(){
@@ -60,9 +63,10 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             ajax = function(callback){return subject_retrieve_ajax({"study_id":selected},callback)};
         }
 
-        ajax(function(res){
+        var old_subject = $(subject_input).val();
 
-            $('.flexdatalist').flexdatalist({
+        ajax(function(res){            
+            $(subject_input).flexdatalist({
                 minLength: 0,
                 toggleSelected:true,
                 searchIn:["Name","SubjectID"],
@@ -71,7 +75,8 @@ function subjectSelectWidget(container, study_id = null, callback = null){
                 textProperty: '{Name} [{SubjectID}]',
                 data: res,
             });
-            
+
+            $(subject_input).val(old_subject);
         });
     })
 
@@ -79,10 +84,40 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         $(subject_input).val("");
     })
 
+    advanced_search.on("click",function(){
+        var modal_id = "subjectSelectorWidgetModal";
+        
+        container.find("#"+modal_id).remove();
+
+        subject_modal(container,modal_id,"Advanced search");
+        var modal = container.find("#"+modal_id);
+
+        var dialog = modal.find(".modal-dialog");
+        if(dialog){
+            dialog.removeClass("modal-lg").addClass("modal-xl");
+        }
+
+        var modal_body = modal.find(".modal-body");
+
+        var modal_footer = modal.find(".modal-footer");
+        modal_footer.empty();
+
+
+        var subject_selector_table_id = "subjectSelectorTable";
+
+        createSubjectTable(modal_body,subject_selector_table_id,200,true);
+        
+        var subject_table = modal_body.find("#"+subject_selector_table_id);
+        subject_table.bootstrapTable("resetView");
+        subject_table.bootstrapTable('hideColumn', 'operate');
+
+        modal.modal("show");
+
+    })
 
 
     $(subject_input).on("change",function(){
-        console.log($(this).val());
+        // console.log($(this).val());
 
         // var selected_subject = $(this).attr("data-value");
         // console.log(selected_subject);
