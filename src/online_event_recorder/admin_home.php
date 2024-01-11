@@ -20,6 +20,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.css" rel="stylesheet" type="text/css">
 
 	<link rel="stylesheet" href="css/my_styles.css">
 
@@ -51,6 +52,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.min.js"></script>
 
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
@@ -72,7 +74,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/admin/tools/event_args_editor.js"></script>
 	<script defer src="js/admin/tools/event_batch_editor.js"></script>
-	<script defer src="js/admin/tools/subject_management.js"></script>
+	<script defer src="js/admin/tools/subject_register.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
 
@@ -83,6 +85,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
+
+	<script defer src="js/common/subjectSelectWidget.js"></script>
 
 	<!-- <script defer src="js/common/file_upload.js"></script> -->
 
@@ -136,7 +140,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Manage Subjects</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Subjects register</a>
 							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
 					</li>
@@ -251,13 +255,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				var main_container = $("#main_container");
 				$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject manager"));
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject register"));
 				main_container.append(_title);
 
 				show_subject_register(main_container);
 				
 				clearAllStatusFromUrl();
-				statusToUrl("tool","SubjectManager");
+				statusToUrl("tool","SubjectRegister");
 				
 				$('.navbar-collapse').collapse('hide');
 			})
@@ -344,7 +348,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					var tool = statusFromUrl("tool");
 					if(tool=="EventArgEditor") show_event_args_editor_tool();
 					if(tool=="EventBatchEditor") show_event_batch_editor_tool();
-					if(tool=="SubjectManager") show_subject_register_tool();
+					if(tool=="SubjectRegister") show_subject_register_tool();
 					if(tool=="EventLog") show_event_log_tool();
 				}
 				else{
