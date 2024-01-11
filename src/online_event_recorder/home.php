@@ -1,6 +1,5 @@
 <?php 
 session_start();
-session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	if($_SESSION['isAdmin']===1){
 		header("Location: admin_home.php?". $_SERVER["QUERY_STRING"]);
@@ -59,9 +58,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
 
-	<script defer src="js/common/def_table_formatters.js"></script>
 
 	<script defer src="js/common/dynamic_form.js"></script>
+	<script defer src="js/common/formatters.js"></script>
 
 	<script defer src="js/common/inactivity_protection.js"></script>
 

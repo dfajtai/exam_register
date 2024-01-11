@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 10. 14:56
+-- Létrehozás ideje: 2024. Jan 11. 09:50
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.13
 
@@ -206,7 +206,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (13, 'consumable_definitions', '2023-12-04 16:12:34', 'bce6ef8'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
 (15, 'event_definitions', '2024-01-08 13:25:44', '6d2f6944'),
-(16, 'studies', '2024-01-10 14:55:28', '8964ad8b');
+(16, 'studies', '2024-01-10 14:55:28', 'f9aa9151');
 
 -- --------------------------------------------------------
 
@@ -276,6 +276,7 @@ CREATE TABLE `event_log` (
   `EventID` int NOT NULL COMMENT 'event_definitions.eventid',
   `EventName` varchar(127) NOT NULL,
   `EventStatus` int DEFAULT NULL COMMENT 'event_status.eventstatusid',
+  `EventPlannedTime` timestamp NULL DEFAULT NULL,
   `EventComment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `EventDataJSON` json DEFAULT NULL,
   `EventStudy` int NOT NULL COMMENT 'studies.studyid',
@@ -742,7 +743,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-10 14:18:56', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-11 09:36:38', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz

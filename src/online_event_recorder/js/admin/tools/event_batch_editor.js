@@ -111,9 +111,24 @@ function eventBatchOperateFormatter(value, row, index) {
 
  function eventbatch_detail_view_formatter(index, row) {
     var detail_view_content = $('<div/>');
+    var detail_view_preview = $('<div/>');
+    
+    var detail_info = $('<p/>');
+    var hidden_keys = ["state"]
+    $.each(row, function (key, value) {
+        if(!(hidden_keys.includes(key))){
+            detail_info.append($("<b/>").html(key+": "));
+            detail_info.append(value+" ");
+        }
+
+    })
+
+    detail_view_content.append($("<div/>").addClass("me-3").append(detail_info));
 
     var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
-    showCustomArgs(detail_view_content,JSON.parse(event_params));
+    showCustomArgs(detail_view_preview,JSON.parse(event_params));
+
+    detail_view_content.append(detail_view_preview);
 
     return detail_view_content.prop("outerHTML");
 }
@@ -178,6 +193,7 @@ function createBatchTable(container, table_id, height){
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
                 {title: 'Comment', field : 'EventComment', align:'center', sortable:true, searchable:true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true, formatter: eventStatusFormatter},
+                {title: 'Planned Time', field : 'EventPlannedTime', align:'center', sortable:true, searchable:true, formatter: datetimeFormatter},
                 {title: 'Location', field : 'EventLocation', align:'center', sortable:true, searchable:true, formatter: locationFormatter},
             ],
             pagination:true,
@@ -193,6 +209,7 @@ function eventBatchInput(container){
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
         {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true},
+        {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
         ]    
@@ -254,6 +271,10 @@ function show_event_batch_modal_add(container, table){
     $(modal).on('hidden.bs.modal',function(){
         $( document ).trigger("_release",["add"]);
     });
+
+    $(modal).on('show.bs.modal',function(){
+        form.find('input[type=datetime-local]').val(null);
+    })
 
     form.on('submit',function(e){
         e.preventDefault();
@@ -340,6 +361,9 @@ function show_event_batch_modal_edit(container, table, index){
                 $(this).val(entry[name]);
             }
         });
+
+        if(entry["EventPlannedTime"]==null | entry["EventPlannedTime"]=="")
+            $(form).find('input[type=datetime-local]').val("");
     }
 
     $(modal).on('show.bs.modal', function () {                   
@@ -595,6 +619,7 @@ function show_event_batch_modal_make(container, table){
 
                             var event_data = {"EventName":event_info["EventName"],
                                               "EventStatus":event_info["EventStatus"],
+                                              "EventPlannedTime":event_info["EventPlannedTime"],
                                               "EventID":event_info["EventID"],
                                               "EventLocation":event_info["EventLocation"],
                                               "EventComment":event_info["EventComment"]?event_info["EventComment"]:'',

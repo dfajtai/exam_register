@@ -57,7 +57,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/admin/table_def_forms/admin_definition_form_handler.js"></script>
 	<script defer src="js/admin/table_def_forms/admin_definition_table_creation.js"></script>
-	<script defer src="js/common/def_table_formatters.js"></script>
 	
 	<script defer src="js/admin/table_def_forms/study_definition_form.js"></script>
 	<script defer src="js/admin/table_def_forms/unit_type_definitions_form.js"></script>

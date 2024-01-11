@@ -27,6 +27,7 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
     if(count($old_event_data) >0){
         $_old_data = $old_event_data[0];
         $event_info = ['EventStatus' => $_old_data["EventStatus"],
+                        'EventPlannedTime' => $_old_data["EventPlannedTime"],
                         'EventComment' => $_old_data["EventComment"],
                         'EventData' => $_old_data["EventData"],
                         'EventLocation' => $_old_data["EventLocation"]];
