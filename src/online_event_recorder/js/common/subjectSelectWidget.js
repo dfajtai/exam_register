@@ -63,8 +63,8 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
     function show_widget(){
         widget.empty();
-        console.log($(window).width());
-        if ($(window).width() < 1200 & $(window).width() >= 576) {
+        // console.log($(window).width());
+        if ($(container).width() < 1200 & $(container).width() >= 576) {
             widget.append($("<div/>").addClass("mb-2").append(subject_selector));
             widget.append($("<div/>").addClass("mb-2").append(study_selector));
             var buttons = $("<div/>").addClass("row");
@@ -73,7 +73,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
             widget.append($("<div/>").addClass("mb-2").append(buttons));
          }
-         else if ($(window).width() < 576) {
+         else if ($(container).width() < 576) {
             widget = widget.removeClass("row").addClass("container");
             widget.append($("<div/>").addClass("col mb-2").append(subject_selector));
             widget.append($("<div/>").addClass("col mb-2").append(study_selector));
@@ -126,8 +126,6 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         }
         results_dom.append(selected_label);
         results_dom.append(selected_subj);
-
-
 
 
         $(selected_subj).html(text_list.join(", "));
@@ -225,7 +223,14 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             $(subject_input).val("");
             var selected_subject_indices = getCol(all_subject,"SubjectIndex");
             show_selected_subjects(result_bar,all_subject);
-            callback(selected_subject_indices,all_subject);
+            // send 'all' if all subject is selected
+            if($(study_dropdown).val()=="all"){
+                callback("all",all_subject);
+            }
+            else{
+                callback(selected_subject_indices,all_subject);
+            }
+            
         }
         else{
             $(subject_input).val("");
