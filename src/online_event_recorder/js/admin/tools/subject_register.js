@@ -83,7 +83,7 @@ window.subject_operate_events = {
     },
 }
 
-function createSubjectTable(container,table_id, height, simplify = false){
+function createSubjectTable(container,table_id, simplify = false){
     var table = $("<table/>").attr("id",table_id);
   
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
@@ -702,13 +702,8 @@ function subjects_table_events(){
     });
 }
 
-function show_subject_register(container,height){
-    if(height){
-        createSubjectTable(container,subject_table_id,height);  
-    }
-    else{
-        createSubjectTable(container,subject_table_id,730);  
-    }
+function show_subject_register(container){
+    createSubjectTable(container,subject_table_id);
     
     var table = $('#'+subject_table_id);
 

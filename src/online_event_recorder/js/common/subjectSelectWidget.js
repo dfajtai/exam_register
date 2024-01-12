@@ -30,10 +30,8 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
     var widget = $("<div/>").addClass("mb-3 mt-3 row");
 
-
     var subject_selector = $("<div/>").addClass("input-group").attr("id","subjectSelector");
     var subject_input = $("<input/>").addClass("form-control flexdatalist");
-    subject_input.prop("data-min-length",1).prop("data-selection-required",1);
     subject_input.attr("placeholder","Type to search...").attr("id","subjectSelect").attr("type","text");
    
     subject_selector.append($("<span/>").attr("for","subjectSelect").html("Select subject: ").addClass("input-group-text"));
@@ -63,20 +61,63 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             ajax = function(callback){return subject_retrieve_ajax({"study_id":selected},callback)};
         }
 
-        var old_subject = $(subject_input).val();
+        ajax(function(res){       
+            // if(res.length>0)
+            // {
+            //     $.each(res,function(index,subject_info){
+            //         if(subject_info["SubjectIndex"]== old_subject)
+            //             {   
+            //                 old_subject_info = {... subject_info};
+            //                 return;
+            //             }
+            //     });
+            //     // console.log(old_subject_info);
+            // }
 
-        ajax(function(res){            
             $(subject_input).flexdatalist({
                 minLength: 0,
+                selectionRequired:false,
                 toggleSelected:true,
                 searchIn:["Name","SubjectID"],
                 visibleProperties: ["Name","SubjectID"],
                 valueProperty: "SubjectIndex",
                 textProperty: '{Name} [{SubjectID}]',
-                data: res,
+                searchContain: true,
+                data: res
+            })
+            // }).promise().done(function(){
+            //     if(old_subject_info){
+            //         let oldtext = old_subject_info.Name + " ["+old_subject_info.SubjectID+"]";
+            //         $(subject_input).trigger("keydown").val(oldtext);
+            //     }
+            // });
+
+
+
+
+            $(subject_input).on('change:flexdatalist', function(event, set, options) {
+                // console.log(set.value);
+                // console.log(set.text);
+                // console.log(options.data);
+                if(set.text=="") return;
+
+                var selected_subject_info = {};
+                $.each(res,function(index,subject_info){
+                    if(subject_info["SubjectIndex"]== set.value)
+                        {   
+                            selected_subject_info = {... subject_info};
+                            return;
+                        }
+                });
+
+                if(callback!=null){
+                    console.log(options);
+                    callback([set.value],[selected_subject_info]);
+                }
             });
 
-            $(subject_input).val(old_subject);
+
+
         });
     })
 
@@ -86,6 +127,8 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
     advanced_search.on("click",function(){
         var modal_id = "subjectSelectorWidgetModal";
+        var form_id = "subjectSelectorWidgetForm";
+        var subject_selector_table_id = "subjectSelectorTable";
         
         container.find("#"+modal_id).remove();
 
@@ -102,29 +145,49 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         var modal_footer = modal.find(".modal-footer");
         modal_footer.empty();
 
+        var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-        var subject_selector_table_id = "subjectSelectorTable";
+        var subject_container = $("<div/>").attr("id","advancedSubjectSelector").addClass("mb-3 container");
 
-        createSubjectTable(modal_body,subject_selector_table_id,200,true);
+        var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
+        var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Choose selected subjects");
+        submitForm.append(submitButton);
+
+        form.append(subject_container);
+        form.append(submitForm);
         
-        var subject_table = modal_body.find("#"+subject_selector_table_id);
-        subject_table.bootstrapTable("resetView");
-        subject_table.bootstrapTable('hideColumn', 'operate');
+        modal_body.append(form);
 
+
+        $(modal).on('show.bs.modal',function(){
+            createSubjectTable(subject_container,subject_selector_table_id,null,true);
+            var subject_table = form.find("#"+subject_selector_table_id);
+            subject_table.bootstrapTable("resetView");
+            subject_table.bootstrapTable('hideColumn', 'operate');
+            
+        });
+
+        $(form).on('submit',function(e){
+            e.preventDefault();
+
+            var subject_table = subject_container.find("#"+subject_selector_table_id);
+            var selected_subjects = $(subject_table).bootstrapTable("getSelections");
+
+            if(selected_subjects.length==0){
+                alert("Please select at least one subject.");
+                return;
+            };
+
+            if(callback!=null){
+                var selected_subject_indices = getCol(selected_subjects,"SubjectIndex");
+                callback(selected_subject_indices,selected_subjects);
+            }
+            modal.modal("hide");
+        })
+        
+        $(subject_input).val("");
         modal.modal("show");
 
-    })
-
-
-    $(subject_input).on("change",function(){
-        // console.log($(this).val());
-
-        // var selected_subject = $(this).attr("data-value");
-        // console.log(selected_subject);
-        // if((typeof callback === 'function')){
-        //     callback(selected_subject);
-        // }
-        
     })
 
 
