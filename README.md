@@ -1,2 +1,2 @@
-# exam_logger
-Exam logging tools
+# exam_register
+Examination data recording tools
