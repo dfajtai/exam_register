@@ -15,7 +15,7 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
-	<title>ExamLogger - Sign up</title>
+	<title>ExamRegister - Sign up</title>
 </head>
 <body>
 	<main class="container vh-20">
