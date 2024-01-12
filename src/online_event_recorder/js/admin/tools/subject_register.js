@@ -89,11 +89,11 @@ function createSubjectTable(container,table_id, simplify = false){
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
 
     if(simplify){
-        var toolbar_content = $("<div/>").addClass("input-group");
+        var toolbar_content = $("<div/>").addClass("input-group col-md-12");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
         study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
         showAllDefs(study_dropdown,"studies","StudyID","StudyName");
-        toolbar_content.append($("<span/>").attr("for","studySelect").html("Show subejcts from Study: ").addClass("input-group-text"))
+        toolbar_content.append($("<span/>").attr("for","studySelect").html("Filter by study: ").addClass("input-group-text"))
         toolbar_content.append(study_dropdown);
         toolbar.append(toolbar_content);
         }
@@ -108,7 +108,7 @@ function createSubjectTable(container,table_id, simplify = false){
         study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
         showAllDefs(study_dropdown,"studies","StudyID","StudyName");
     
-        study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Show subejcts from Study: "));
+        study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Filter by study: "));
         study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
         container.append(study_selector);
     }

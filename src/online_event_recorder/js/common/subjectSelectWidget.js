@@ -28,26 +28,80 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         }});
     }
 
+    var all_subject = null;
+
     var widget = $("<div/>").addClass("mb-3 mt-3 row");
 
     var subject_selector = $("<div/>").addClass("input-group").attr("id","subjectSelector");
+
+    var filter_switch_group = $("<div/>").addClass("form-check form-switch");
+    
+    var filter_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","filterSwitch");
+    filter_switch_group.append(filter_switch);
+    filter_switch_group.append($("<label/>").addClass("form-check-label").attr("for","filterSwitch").html("Select all subject"));
+    subject_selector.append($("<div/>").addClass("input-group-text").append(filter_switch_group));
+    
     var subject_input = $("<input/>").addClass("form-control flexdatalist");
-    subject_input.attr("placeholder","Type to search...").attr("id","subjectSelect").attr("type","text");
+    subject_input.attr("placeholder","Type to search single subject...").attr("id","subjectSelect").attr("type","text");
    
-    subject_selector.append($("<span/>").attr("for","subjectSelect").html("Select subject: ").addClass("input-group-text"));
+    // subject_selector.append($("<span/>").attr("for","subjectSelect").html("Select subject: ").addClass("input-group-text"));
     subject_selector.append(subject_input);
     subject_selector.append($("<button/>").addClass("btn btn-outline-secondary").attr("id","clearSubject").attr("type","button").append($("<i/>").addClass("fa fa-solid fa-x")).attr("type","text"));
 
+
+    var study_selector = $("<div/>").addClass("input-group").attr("id","studySelector");
     var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
     study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
     showAllDefs(study_dropdown,"studies","StudyID","StudyName");
-    subject_selector.append($("<span/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
-    subject_selector.append(study_dropdown);
+    study_selector.append($("<span/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
+    study_selector.append(study_dropdown);
 
-    var advanced_search = $("<button/>").addClass("btn btn-outline-dark").html("Advanced search")
+    var advanced_search = $("<button/>").addClass("btn btn-outline-dark col-md-12").html("Advanced search")
 
-    widget.append($("<div/>").addClass("col-md-10").append(subject_selector));
+    widget.append($("<div/>").addClass("col-md-5").append(subject_selector));
+    widget.append($("<div/>").addClass("col-md-5").append(study_selector));
     widget.append($("<div/>").addClass("col-md-2").append(advanced_search));
+
+    var result_bar = $("<div/>").addClass("mb-3 mt-3 row");
+
+    function show_selected_subjects(container,selected_subjects){
+        container.empty();
+        if(selected_subjects==null){
+            return;
+        }
+
+        var text_list = [];
+        $.each(selected_subjects, function(index,subject){
+            if(!subject.hasOwnProperty("Name")) return;
+            if(!subject.hasOwnProperty("SubjectID")) return;
+            text_list.push(subject.Name + " ["+subject.SubjectID+"]");                   
+        })
+
+        if(text_list.length==0){
+            return;
+        }
+
+        var results_dom = $("<div/>").addClass("input-group").attr("id","selectedSubjects");
+        if(selected_subjects.length>1){
+            var selected_label = $("<span/>").attr("for","subjectSelect").html("Selected subjects: ").addClass("input-group-text");
+            var selected_subj = $("<span/>").attr("id","selectedSubjectsText").addClass("form-control");
+
+        }
+        else{
+            var selected_label = $("<span/>").attr("for","subjectSelect").html("Selected subject: ").addClass("input-group-text");
+            var selected_subj = $("<span/>").attr("id","selectedSubjectsText").addClass("form-control");
+
+        }
+        results_dom.append(selected_label);
+        results_dom.append(selected_subj);
+
+
+
+
+        $(selected_subj).html(text_list.join(", "));
+
+        container.append($("<div/>").addClass("col-md-12").append(results_dom));
+    }
 
 
     $(study_dropdown).on("change",function(){
@@ -73,6 +127,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             //     });
             //     // console.log(old_subject_info);
             // }
+            all_subject = res;
 
             $(subject_input).flexdatalist({
                 minLength: 0,
@@ -92,14 +147,22 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             //     }
             // });
 
-
+            $(filter_switch).trigger('change');
 
 
             $(subject_input).on('change:flexdatalist', function(event, set, options) {
                 // console.log(set.value);
                 // console.log(set.text);
                 // console.log(options.data);
-                if(set.text=="") return;
+                if(set.text==""){
+                    show_selected_subjects(result_bar,null);
+                    if(callback!=null)
+                        callback([],[]);
+                    return;
+                }
+                else{
+                    $(filter_switch).prop("checked",false);
+                }
 
                 var selected_subject_info = {};
                 $.each(res,function(index,subject_info){
@@ -110,15 +173,33 @@ function subjectSelectWidget(container, study_id = null, callback = null){
                         }
                 });
 
+                
                 if(callback!=null){
-                    console.log(options);
+                    // console.log(options);
+                    show_selected_subjects(result_bar,[selected_subject_info]);
                     callback([set.value],[selected_subject_info]);
+                    
                 }
             });
 
 
 
         });
+    })
+
+    $(filter_switch).on("change",function(){
+        var show_all = filter_switch.is(":checked");
+        if(show_all){
+            $(subject_input).val("");
+            var selected_subject_indices = getCol(all_subject,"SubjectIndex");
+            show_selected_subjects(result_bar,all_subject);
+            callback(selected_subject_indices,all_subject);
+        }
+        else{
+            $(subject_input).val("");
+            show_selected_subjects(result_bar,null);
+            callback([],[]);
+        }
     })
 
     $(subject_selector).find("#clearSubject").on("click",function(){
@@ -160,12 +241,13 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
 
         $(modal).on('show.bs.modal',function(){
-            createSubjectTable(subject_container,subject_selector_table_id,null,true);
+            createSubjectTable(subject_container,subject_selector_table_id,true);
             var subject_table = form.find("#"+subject_selector_table_id);
             subject_table.bootstrapTable("resetView");
             subject_table.bootstrapTable('hideColumn', 'operate');
             
         });
+
 
         $(form).on('submit',function(e){
             e.preventDefault();
@@ -180,11 +262,12 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
             if(callback!=null){
                 var selected_subject_indices = getCol(selected_subjects,"SubjectIndex");
+                show_selected_subjects(result_bar,selected_subjects);
                 callback(selected_subject_indices,selected_subjects);
             }
             modal.modal("hide");
         })
-        
+
         $(subject_input).val("");
         modal.modal("show");
 
@@ -201,4 +284,5 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     })
 
     container.append(widget);
+    container.append(result_bar);
 }

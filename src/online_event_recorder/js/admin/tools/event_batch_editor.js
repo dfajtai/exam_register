@@ -567,7 +567,7 @@ function show_event_batch_modal_make(container, table){
     })
 
     $(modal).on('show.bs.modal',function(){
-        createSubjectTable(subject_container,subject_selector_table_id,200,true);
+        createSubjectTable(subject_container,subject_selector_table_id,true);
         
         var subject_table = subject_container.find("#"+subject_selector_table_id);
         subject_table.bootstrapTable("resetView");
