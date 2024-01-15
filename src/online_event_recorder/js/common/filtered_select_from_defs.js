@@ -1,7 +1,7 @@
 function showAllDefs(select_object, def_name, _key, _label){
     $.each(defs[def_name],function(key,entry){
         var opt = $("<option/>").html(entry[_label]).attr("value",entry[_key]);
-
+        // console.log(opt);
         $.each(entry,function(prop_key,prop_val){
             if(!prop_key.toLowerCase().includes("desc"))
             opt.attr(prop_key,prop_val);
@@ -25,7 +25,8 @@ function showDefWhereKeyEqualsValueByReinit(select_object, def_name, def_filter_
 
     // populate the select with options
     $.each(match,function(key,entry){
-        select_object.append($("<option/>").html(entry[select_label]).attr("value",entry[select_value]))
+        
+        select_object.append($("<option/>").html(entry[select_label]).attr("value",parseInt(entry[select_value])))
     });
 }
 

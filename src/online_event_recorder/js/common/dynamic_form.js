@@ -107,14 +107,21 @@ function dynamicDatetimeInput(container,name,label){
     group_container.append($("<i/>").addClass("btn-outline-dark btn update-datetime").append(fa_span));
     var _input = $("<input/>").addClass("form-control").attr("type","datetime-local").attr("id",name+"Input").attr("name",name).attr("step","1");
 
-    _input.val(moment().format("YYYY-MM-DD HH:mm:ss"));
+    // _input.val(moment().format("YYYY-MM-DD HH:mm:ss"));
     group_container.append(_input)
+
+    var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
+    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
 
     current.html(moment().format("YYYY-MM-DD HH:mm:ss"));
     setInterval(function(){current.html(moment().format("YYYY-MM-DD HH:mm:ss"));},1000);
 
     group_container.find(".update-datetime").on("click", function (){
         $(_input).val(current.html());
+    });
+
+    group_container.find(".clear-datetime").on("click", function (){
+        $(_input).val(null);
     });
 
     container.append(_label);
@@ -218,7 +225,7 @@ function dynamicBodypartSelect(container, name, label){
     showAllDefs(_select_1,"side_definitions","SideID","SideName");
     side_select_div.append(_select_1)
 
-    var bodpart_select_div = $("<div/>").addClass("col-md-4");
+    var bodpart_select_div = $("<div/>").addClass("col-md-5");
     var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
     _select_2.append($("<option/>").html("Choose bodypart...").prop('selected',true).attr("value","").attr("required","true"));
     showAllDefs(_select_2,"bodypart_definitions","BodypartName","BodypartName");

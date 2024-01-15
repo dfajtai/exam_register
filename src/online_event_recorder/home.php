@@ -57,6 +57,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/flat_def_info_block.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
+	<script defer src="js/common/additional_functions.js"></script>
 
 
 	<script defer src="js/common/dynamic_form.js"></script>

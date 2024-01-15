@@ -73,7 +73,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 	<script defer src="js/admin/tools/event_args_editor.js"></script>
-	<script defer src="js/admin/tools/event_batch_editor.js"></script>
+	<script defer src="js/admin/tools/event_planner.js"></script>
 	<script defer src="js/admin/tools/subject_register.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
@@ -84,7 +84,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/common/formatters.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
+
 	<script defer src="js/common/def_search.js"></script>
+	<script defer src="js/common/additional_functions.js"></script>
 
 	<script defer src="js/common/subjectSelectWidget.js"></script>
 
@@ -151,7 +153,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event Argument Editor</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_batch_editor_tool()">Event Batch Editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event Planner</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event Log</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event Change Log</a></li>
 						</ul>
@@ -161,7 +163,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 				</ul>
 				<div class="d-flex ">
-					<a class="nav-item btn btn-outline-success ms-3 me-2" href="#" id="become_user_button" >User home</a>
+					<a class="nav-item btn btn-outline-success ms-3 me-2" href="#" id="become_user_button" >USER mode</a>
 					<a class="nav-item btn btn-outline-primary " href="logout.php" >Logout</a>
 				</div>
 			</div>
@@ -231,19 +233,19 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			)			
 		}
 
-		function show_event_batch_editor_tool(){
+		function show_event_planner_tool(){
 			updateLocalDefinitionDatabase(
 				function(){
 				var main_container = $("#main_container");
 				$("#main_container").empty();
 				
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event batch editor"));
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event planner"));
 				main_container.append(_title);
 
-				showEventBatchEditor(main_container);		
+				show_event_planner(main_container);		
 				
 				clearAllStatusFromUrl();
-				statusToUrl("tool","EventBatchEditor");
+				statusToUrl("tool","EventPlanner");
 				
 				$('.navbar-collapse').collapse('hide');
 			})
@@ -347,7 +349,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
 					if(tool=="EventArgEditor") show_event_args_editor_tool();
-					if(tool=="EventBatchEditor") show_event_batch_editor_tool();
+					if(tool=="EventPlanner") show_event_planner_tool();
 					if(tool=="SubjectRegister") show_subject_register_tool();
 					if(tool=="EventLog") show_event_log_tool();
 				}

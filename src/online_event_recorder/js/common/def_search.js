@@ -76,7 +76,7 @@ function getDefCol(def_name, col){
 
     var vals = [];
     $.each(defs[def_name],function(index,entry){
-        if(entry.hasOwnProperty(col))  vals.push({... entry[col]});
+        if(entry.hasOwnProperty(col))  vals.push(entry[col]);
     })
 
     return vals;
@@ -88,14 +88,4 @@ function defHasDuplicates(def_name, key){
     var vals = getDefCol(def_name,key)
 
     return hasDuplicates(vals);
-}
-
-
-function getCol(objlist, col){
-    var vals = [];
-    $.each(objlist,function(index,entry){
-        if(entry.hasOwnProperty(col))  vals.push(entry[col]);
-    })
-
-    return vals;
 }

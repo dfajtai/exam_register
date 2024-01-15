@@ -328,7 +328,6 @@ function initSubjectModalEdit(container, table, index){
     }
     var entry = table.bootstrapTable('getData')[index];
     
-
     container.find("#"+modal_id).remove();
 
     subject_modal(container, modal_id, "Edit Subject");

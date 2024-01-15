@@ -1,8 +1,8 @@
-var event_batch_table_id = "eventBatchTable";
-var event_batch_content = {};
+var event_planner_table_id = "eventPlannerTable";
+var event_planner_content = {};
 
-var event_batch_content_name = "";
-var event_batch_lock_list = [];
+var event_planner_content_name = "";
+var event_planner_lock_list = [];
 
 
 function event_insert_ajax(params,callback = null) {
@@ -20,7 +20,7 @@ function event_insert_ajax(params,callback = null) {
     });
 }
 
-window.event_batch_operate_events = {
+window.event_planner_operate_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
@@ -28,22 +28,22 @@ window.event_batch_operate_events = {
         var data = table.bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+event_batch_table_id).bootstrapTable('getData');
+        var data = $('#'+event_planner_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+event_batch_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
     },
     'click .edit': function (e, value, row, index) {
-        show_event_batch_modal_edit(event_batch_content,$("#"+event_batch_table_id),index);
-        event_batch_content_name = "edit";
+        show_event_planner_modal_edit(event_planner_content,$("#"+event_planner_table_id),index);
+        event_planner_content_name = "edit";
         $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
@@ -61,18 +61,18 @@ window.event_batch_operate_events = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+event_batch_table_id).bootstrapTable('remove', {
+                    $('#'+event_planner_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("eventBatchEditorHistory",JSON.stringify($('#'+event_batch_table_id).bootstrapTable('getData')));
+                    statusToStorage("eventPlannerEditorHistory",JSON.stringify($('#'+event_planner_table_id).bootstrapTable('getData')));
                 }
             }
             });
     }
 }
 
-function eventBatchOperateFormatter(value, row, index) {
+function eventPlannerOperateFormatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var up_down_gorup = $("<div/>").addClass("btn-group me-3 ");
     var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
@@ -96,11 +96,11 @@ function eventBatchOperateFormatter(value, row, index) {
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+event_batch_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+event_planner_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(event_batch_lock_list.length>0){
+    if(event_planner_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
@@ -109,7 +109,7 @@ function eventBatchOperateFormatter(value, row, index) {
 
 
 
- function eventbatch_detail_view_formatter(index, row) {
+ function eventplanner_detail_view_formatter(index, row) {
     var detail_view_content = $('<div/>');
     var detail_view_preview = $('<div/>');
     
@@ -187,7 +187,7 @@ function createBatchTable(container, table_id, height){
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.event_batch_operate_events, formatter: eventBatchOperateFormatter},
+                events: window.event_planner_operate_events, formatter: eventPlannerOperateFormatter},
                 {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
                 {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
@@ -199,12 +199,12 @@ function createBatchTable(container, table_id, height){
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter: eventbatch_detail_view_formatter
+            detailFormatter: eventplanner_detail_view_formatter
             // detailFormatter: simpleFlatFormatter
         });    
 }
 
-function eventBatchInput(container){
+function eventPlannerInput(container){
     var planned_eventStatusID = getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
     var params =  [
@@ -215,10 +215,11 @@ function eventBatchInput(container){
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
         ]    
-    showCustomArgs(container,params);    
+    showCustomArgs(container,params);
+    container.find('[name="EventPlannedTime"]').val(null);
 }
 
-function eventBatchModal(container, modal_id, title){
+function eventPlannerModal(container, modal_id, title){
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
     var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
     var modal_content = $("<div/>").addClass("modal-content");
@@ -245,13 +246,13 @@ function eventBatchModal(container, modal_id, title){
 }
 
 
-function show_event_batch_modal_add(container, table){
-    var modal_id = "eventBatchModalAdd";
+function show_event_planner_modal_add(container, table){
+    var modal_id = "eventPlannerModalAdd";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
 
-    eventBatchModal(container, modal_id, "Add event");
+    eventPlannerModal(container, modal_id, "Add event");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -262,12 +263,12 @@ function show_event_batch_modal_add(container, table){
     var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
-    eventBatchInput(form);
+    eventPlannerInput(form);
     form.append(submitForm);
     
     $(modal).on('hide.bs.modal',function(){
         $( document ).trigger("_release",["add"]);
-        event_batch_content_name = "";
+        event_planner_content_name = "";
     });
 
     $(modal).on('hidden.bs.modal',function(){
@@ -287,7 +288,7 @@ function show_event_batch_modal_add(container, table){
         values["EventType"] = getDefEntryFieldWhere("event_definitions","EventID",values["EventID"],"EventType")
 
         table.bootstrapTable("append",values);
-        statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
         modal.modal('hide');
         form[0].reset();
@@ -303,8 +304,8 @@ function show_event_batch_modal_add(container, table){
 }
 
 
-function show_event_batch_modal_edit(container, table, index){
-    var modal_id = "eventBatchModalEdit";
+function show_event_planner_modal_edit(container, table, index){
+    var modal_id = "eventPlannerModalEdit";
     var form_id = modal_id+"Form";
 
     if(index>table.bootstrapTable('getData').length){
@@ -314,7 +315,7 @@ function show_event_batch_modal_edit(container, table, index){
 
     container.find("#"+modal_id).remove();
 
-    eventBatchModal(container, modal_id, "Edit event");
+    eventPlannerModal(container, modal_id, "Edit event");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -329,13 +330,13 @@ function show_event_batch_modal_edit(container, table, index){
     var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Alter event");
     submitForm.append(submitButton);
 
-    eventBatchInput(form);
+    eventPlannerInput(form);
     form.append(submitForm);
 
     
     $(modal).on('hide.bs.modal',function(){
         $( document ).trigger("_release",["edit"]);
-        event_batch_content_name = "";
+        event_planner_content_name = "";
     })
 
     function init_fields(form,entry){
@@ -398,7 +399,7 @@ function show_event_batch_modal_edit(container, table, index){
             });
 
 
-        statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
         modal.modal('hide');
         form[0].reset();
@@ -412,13 +413,13 @@ function show_event_batch_modal_edit(container, table, index){
     modal.modal('show');
 } 
 
-function show_event_batch_modal_json_import(container, table){
-    var modal_id = "eventBatchModalJSONImport";
+function show_event_planner_modal_json_import(container, table){
+    var modal_id = "eventPlannerModalJSONImport";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
 
-    eventBatchModal(container, modal_id, "Import JSON");
+    eventPlannerModal(container, modal_id, "Import JSON");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -439,7 +440,7 @@ function show_event_batch_modal_json_import(container, table){
     
     $(modal).on('hide.bs.modal',function(){
         $( document ).trigger("_release",["json_import"]);
-        event_batch_content_name = "";
+        event_planner_content_name = "";
     })
 
     form.on('submit',function(e){
@@ -448,7 +449,7 @@ function show_event_batch_modal_json_import(container, table){
         var json_text = $(textarea).val();
         var json = JSON.parse(json_text);
         table.bootstrapTable('append',json);
-        statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+        statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
         modal.modal('hide');
         form[0].reset();
@@ -462,13 +463,13 @@ function show_event_batch_modal_json_import(container, table){
     modal.modal('show');
 }
 
-function show_event_batch_modal_json_export(container, table){
-    var modal_id = "eventBatchModalJSONExport";
+function show_event_planner_modal_json_export(container, table){
+    var modal_id = "eventPlannerModalJSONExport";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
 
-    eventBatchModal(container, modal_id, "Export JSON");
+    eventPlannerModal(container, modal_id, "Export JSON");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -495,7 +496,7 @@ function show_event_batch_modal_json_export(container, table){
     
     $(modal).on('hide.bs.modal',function(){
         $( document ).trigger("_release",["json_export"]);
-        event_batch_content_name = "";
+        event_planner_content_name = "";
     })
 
     $(modal).on('show.bs.modal',function(){
@@ -522,18 +523,18 @@ function show_event_batch_modal_json_export(container, table){
 
 
 
-function show_event_batch_modal_make(container, table){
+function show_event_planner_modal_make(container, table){
     if(table.bootstrapTable("getData").length==0){
         alert("Please add at least one event to the batch.");
         return;
     }
 
-    var modal_id = "eventBatchModalGenerateEvents";
+    var modal_id = "eventPlannerModalGenerateEvents";
     var form_id = modal_id+"Form";
 
     container.find("#"+modal_id).remove();
 
-    eventBatchModal(container, modal_id, "Create events for subjects");
+    eventPlannerModal(container, modal_id, "Create events for subjects");
 
     var modal = container.find("#"+modal_id);
 
@@ -563,7 +564,7 @@ function show_event_batch_modal_make(container, table){
     
     $(modal).on('hide.bs.modal',function(){
         // $( document ).trigger("_release",["make_events"]);
-        // event_batch_content_name = "";
+        // event_planner_content_name = "";
     })
 
     $(modal).on('show.bs.modal',function(){
@@ -587,9 +588,9 @@ function show_event_batch_modal_make(container, table){
             return;
         }
 
-        var current_event_batch = $(table).bootstrapTable("getData");      
+        var current_event_planner = $(table).bootstrapTable("getData");      
 
-        var message = 'You are going to make '+current_event_batch.length+' events (as a batch) for the following subject(s) [N = '+ selected_subjects.length+']:<br>';
+        var message = 'You are going to make '+current_event_planner.length+' events (as a batch) for the following subject(s) [N = '+ selected_subjects.length+']:<br>';
         var subjects = [];
         $.each(selected_subjects,function(index,subject_info){
             subjects.push("Name: " + subject_info["Name"] + " | ID: "+subject_info["SubjectID"]+" | Study: "+ 
@@ -614,7 +615,7 @@ function show_event_batch_modal_make(container, table){
                 if(result){
                     $.each(selected_subjects,function(selected_subject_index,subject_info){
                         // console.log(subject_info);
-                        $.each(current_event_batch,function(_event_index,event_info){
+                        $.each(current_event_planner,function(_event_index,event_info){
                             // console.log(event_info);
 
                             var event_data = {"EventName":event_info["EventName"],
@@ -646,28 +647,28 @@ function show_event_batch_modal_make(container, table){
     modal.modal('show');
 } 
 
-function showEventBatchEditor(container){
-    createBatchTable(container,event_batch_table_id,750);
-    var table = $('#'+event_batch_table_id);
+function show_event_planner(container){
+    createBatchTable(container,event_planner_table_id,750);
+    var table = $('#'+event_planner_table_id);
     
-    if(statusInStorage("eventBatchEditorHistory")){
-        table.bootstrapTable('append',JSON.parse(statusFromStorage("eventBatchEditorHistory")));
+    if(statusInStorage("eventPlannerEditorHistory")){
+        table.bootstrapTable('append',JSON.parse(statusFromStorage("eventPlannerEditorHistory")));
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
     
     toolbar.find(".needs-select").addClass("disabled");
     
-    event_batch_content = $("<div/>").addClass("pt-3");
-    container.append(event_batch_content);
+    event_planner_content = $("<div/>").addClass("pt-3");
+    container.append(event_planner_content);
 
     table.on('all.bs.table',
     // table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
         function(){
-            if(event_batch_lock_list.length>0) return;
+            if(event_planner_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0 && event_batch_lock_list.length==0){
+            if(selection.length>0 && event_planner_lock_list.length==0){
                 toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
@@ -698,33 +699,33 @@ function showEventBatchEditor(container){
 
 
     toolbar.find("#toolbar_add").on("click", function(){
-        show_event_batch_modal_add(container,table);
+        show_event_planner_modal_add(container,table);
 
         $(document).trigger("_lock",["add"]);
-        event_batch_content_name = "add";
+        event_planner_content_name = "add";
     });
 
 
     toolbar.find("#toolbar_make_events").on("click", function(){
-        show_event_batch_modal_make(container,table);
+        show_event_planner_modal_make(container,table);
 
         // $(document).trigger("_lock",["make_events"]);
-        // event_batch_content_name = "make_events";
+        // event_planner_content_name = "make_events";
     });
 
 
     toolbar.find("#toolbar_json_import").on("click", function(){
-        show_event_batch_modal_json_import(container,table);
+        show_event_planner_modal_json_import(container,table);
 
         $(document).trigger("_lock",["json_import"]);
-        event_batch_content_name = "json_import";
+        event_planner_content_name = "json_import";
     });
 
     toolbar.find("#toolbar_json_export").on("click", function(){
-        show_event_batch_modal_json_export(container,table);
+        show_event_planner_modal_json_export(container,table);
 
         $(document).trigger("_lock",["json_export"]);
-        event_batch_content_name = "json_export";
+        event_planner_content_name = "json_export";
     });
 
 
@@ -739,7 +740,7 @@ function showEventBatchEditor(container){
                 table.bootstrapTable("append",_data);
             })
             
-            statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+            statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
         else{
             $('input[name="btSelectItem"]:checked').each(function () {
@@ -749,7 +750,7 @@ function showEventBatchEditor(container){
                 _data["state"] = false;
                 table.bootstrapTable("insertRow",{index:index+1,row:_data});
             })
-            statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+            statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
 
         table.bootstrapTable("resetSearch"); // to call the formatter...
@@ -778,10 +779,10 @@ function showEventBatchEditor(container){
                     })
                     // console.log(indices);
                     table.bootstrapTable("remove",{field:"$index",values:indices});
-                    statusToStorage("eventBatchEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
+                    statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-                    $('#'+event_batch_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-                    $('#'+event_batch_table_id).bootstrapTable("uncheckAll");
+                    $('#'+event_planner_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_planner_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -791,15 +792,15 @@ function showEventBatchEditor(container){
 
     $( document ).on( "operate_lock", {},
         function( event ) {
-            if(event_batch_lock_list.length!=0){
+            if(event_planner_lock_list.length!=0){
                 $(document).find(".lockable").addClass("disabled");
-                if(!event_batch_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                if(!event_planner_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
                 $(document).find(".sortable").prop( "disabled", true );
             }
             else{
-                $(event_batch_content).empty();
+                $(event_planner_content).empty();
                 $(document).find(".lockable").not(".needs-select").removeClass("disabled");
-                if(!event_batch_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                if(!event_planner_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
                 $(document).find(".sortable").prop( "disabled", false );
             }
         });
@@ -807,7 +808,7 @@ function showEventBatchEditor(container){
     $( document ).on( "_lock", {},
         function( event, lock_name ) {
             if(!(lock_name == "" || lock_name == null )){
-                event_batch_lock_list.push(lock_name);
+                event_planner_lock_list.push(lock_name);
                 // console.log("Lock ["+lock_name+"] acquired.");
                 $(this).trigger("operate_lock",[]);
             }
@@ -816,7 +817,7 @@ function showEventBatchEditor(container){
     $( document ).on( "_release", {},
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            event_batch_lock_list = _.without(event_batch_lock_list,lock_name);
+            event_planner_lock_list = _.without(event_planner_lock_list,lock_name);
             // console.log("Lock ["+lock_name+"] released.");
             $(this).trigger("operate_lock",[]);
         }
