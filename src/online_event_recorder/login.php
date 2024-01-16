@@ -1,4 +1,6 @@
-<?php include_once 'php/php_functions.php';
+<?php 
+
+include_once 'php/php_functions.php';
 
 session_start();
 
