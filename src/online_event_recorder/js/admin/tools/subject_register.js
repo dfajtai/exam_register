@@ -33,7 +33,7 @@ function subject_insert_ajax(params,callback = null) {
     $.ajax({
         type: "POST",
         url: 'php/insert_subject.php',
-        dataType: "json",
+        // dataType: "json",
         data: ({subject_info:params}),
         success: function(result){
             callback();
@@ -48,7 +48,7 @@ function subject_update_ajax(key_info,params,callback) {
     $.ajax({
     type: "POST",
     url: 'php/update_subject.php',
-    dataType: "json",
+    // dataType: "json",
     data: ({subject_index:key_info, subject_info:params}),
     success: function(result){
         callback();
@@ -172,13 +172,14 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'ID', field : 'SubjectID', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Name', field : 'Name', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Group', field : 'Group', align:'center', sortable:true, searchable:true,forceExport: true},
-                {title: 'Container', field : 'Container', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Box', field : 'Container', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Location', field : 'Location', align:'center', sortable:true, searchable:true, formatter: "locationFormatter",forceExport: true},
                 {title: 'Status', field : 'Status', align:'center', sortable:true, searchable:true, formatter: "subjectStatusFormatter",forceExport: true},
                 {title: 'Age', field : 'Age', align:'center', sortable:true, searchable:false,forceExport: true},
                 {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter",forceExport: true},
                 {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true},
-                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true}
+                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true},
+                {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter"},
             ],
             pagination:true,
             checkboxHeader:true,
@@ -224,7 +225,7 @@ function subjectFormInputs(container){
     {"FieldName":"Group","FieldLabel":"Group","FieldDataType":"text","FieldType":"input","FieldRequired":false},
     {"FieldName":"Age","FieldLabel":"Age","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"1","FieldUnit":"year","FieldRequired":false},
     {"FieldName":"Sex","FieldLabel":"Sex","FieldType":"select","FieldSource":"sex","FieldRequired":false},
-    {"FieldName":"Container","FieldLabel":"Container","FieldType":"input","FieldDataType":"range", "FieldDataStep":"1","FieldDataMin":"1","FieldDataMax":"30","FieldRequired":false},
+    {"FieldName":"Container","FieldLabel":"Box","FieldType":"input","FieldDataType":"range", "FieldDataStep":"1","FieldDataMin":"1","FieldDataMax":"30","FieldRequired":false},
     {"FieldName":"Weight","FieldLabel":"Weight","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"0.01","FieldUnit":"kg","FieldRequired":false},
     {"FieldName":"Height","FieldLabel":"Height","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"0.01","FieldUnit":"cm","FieldRequired":false},
     {"FieldName":"Location","FieldLabel":"Location","FieldType":"select","FieldSource":"location"},
@@ -305,7 +306,7 @@ function initSubjectModalAdd(container, table){
         e.preventDefault();
         var values = {};
         $.each($(this).serializeArray(), function(i, field) {
-            if(!(field.value==""||field.value==null)) values[field.name]= field.value;
+            values[field.name] = parse_val(field.value==""?null:field.value);
         });
 
         subject_insert_ajax(values,function(){table.bootstrapTable('refresh')});
@@ -402,28 +403,12 @@ function initSubjectModalEdit(container, table, index){
             return;
         }
 
-
         var values = {};
-        form.find("input[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")] = _val;
-            };
-        });
-        form.find("textarea[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")]  = _val;
-            };
 
+        $.each($(this).serializeArray(), function(i, field) {
+            values[field.name] = parse_val(field.value==""?null:field.value);
         });
-        form.find("select[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")]  = _val;
-            };
-        });
-        console.log(values);
+
         subject_update_ajax(entry["SubjectIndex"],values,function(){table.bootstrapTable('refresh')});
         modal.modal('hide');
         form[0].reset();

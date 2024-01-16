@@ -1,4 +1,5 @@
 <?php
+include_once 'php_functions.php';
 use Medoo\Medoo;
 session_start();
 
@@ -11,47 +12,69 @@ if(isset($_POST['subject_index']) && isset($_POST['subject_info']) && isset($_SE
         global $database;
     }
 
-    $updated_values = array();
+    $new_subject_info = $subject_info;
+    array_decode_numbers($new_subject_info);
     
-    foreach($subject_info as $key => $value) 
-    {
-        $updated_values[$key] = $value;
-    }
-    $updated_values["LastChange"] = Medoo::raw('NOW()');
-    $updated_values["ModifiedBy"] = $_SESSION['id'];
+    $has_change = true;
+    $old_subject_info = $database -> select("subjects", "*", ["SubjectIndex"=>$subject_index]);
+    if(count($old_subject_info) >0){
+        $change_test = $old_subject_info[0];
+        unset($change_test["SubjectIndex"]); 
+        unset($change_test["LastChange"]); 
+        unset($change_test["ModifiedBy"]); 
 
-    $old_data = $database -> select("subjects", "*", ["SubjectIndex"=>$subject_index]);
-    if(count($old_data) >0){
-        $_old_data = $old_data[0];
-        $subject_info = [
-                         'SubjectID' => $_old_data['SubjectID'],
-                         'StudyID' => $_old_data['StudyID'],
-                         'Name' => $_old_data['Name'],
-                         'Group' => $_old_data['Group'],
-                         'Age' => $_old_data['Age'],
-                         'Sex' => $_old_data["Sex"],
-                         'Container' => $_old_data["Container"],
-                         'Weight' => $_old_data["Weight"],
-                         'Height' => $_old_data["Height"],
-                         'Location' => $_old_data["Location"], 
-                         'Status' => $_old_data["Status"]];
-         
+        var_error_log($change_test);
+        var_error_log($new_subject_info);
         
-        $database -> insert("subject_change_log", [
-            "SubjectIndex"=>$subject_index, 
-            "CurrentSubjectID"=> array_key_exists('SubjectID', $updated_values) ? $updated_values["SubjectID"] : $_old_data['SubjectID'], 
-            "CurrentStudyID"=>array_key_exists('StudyID', $updated_values) ? $updated_values["StudyID"] : $_old_data['StudyID'],
-            "CurrentSubjectName" => array_key_exists('Name', $updated_values) ? $updated_values["Name"] : $_old_data['Name'],
-            "CurrentSubjectGroup" => array_key_exists('Group', $updated_values) ? $updated_values["Group"] : $_old_data['Group'],
-            "ModifiedBy" => $_old_data["ModifiedBy"],
-            "Timestamp" => $_old_data["LastChange"],
-            "OldData" => json_encode($subject_info)
-        ]);
+        if($change_test==$new_subject_info){
+            $has_change = false;            
+        }
     }
 
-    $res = $database -> update("subjects", $updated_values, ["SubjectIndex"=>$subject_index]);
+    if($has_change){
+        $new_subject_info["LastChange"] = Medoo::raw('NOW()');
+        $new_subject_info["ModifiedBy"] = $_SESSION['id'];
 
-    unset($_POST['subject_index']);
-    unset($_POST['subject_info']);
-    echo json_encode($res);
+        if(count($old_subject_info) >0){
+            $_old_subject_info = $old_subject_info[0];
+            $subject_info = [
+                            'SubjectID' => $_old_subject_info['SubjectID'],
+                            'StudyID' => $_old_subject_info['StudyID'],
+                            'Name' => $_old_subject_info['Name'],
+                            'Group' => $_old_subject_info['Group'],
+                            'Age' => $_old_subject_info['Age'],
+                            'Sex' => $_old_subject_info["Sex"],
+                            'Container' => $_old_subject_info["Container"],
+                            'Weight' => $_old_subject_info["Weight"],
+                            'Height' => $_old_subject_info["Height"],
+                            'Location' => $_old_subject_info["Location"], 
+                            'Status' => $_old_subject_info["Status"],
+                            "ModifiedBy" => $_old_subject_info["ModifiedBy"],
+                            "Timestamp" => $_old_subject_info["LastChange"]
+                        ];
+            
+            
+            $database -> insert("subject_change_log", [
+                "SubjectIndex"=>$subject_index, 
+                "CurrentSubjectID"=> array_key_exists('SubjectID', $new_subject_info) ? $new_subject_info["SubjectID"] : $_old_subject_info['SubjectID'], 
+                "CurrentStudyID"=>array_key_exists('StudyID', $new_subject_info) ? $new_subject_info["StudyID"] : $_old_subject_info['StudyID'],
+                "CurrentSubjectName" => array_key_exists('Name', $new_subject_info) ? $new_subject_info["Name"] : $_old_subject_info['Name'],
+                "CurrentSubjectGroup" => array_key_exists('Group', $new_subject_info) ? $new_subject_info["Group"] : $_old_subject_info['Group'],
+                "ModifiedBy" => $new_subject_info["ModifiedBy"],
+                "Timestamp" => $new_subject_info["LastChange"],
+                "OldData" => json_encode($subject_info)
+            ]);
+        }
+
+        $res = $database -> update("subjects", $new_subject_info, ["SubjectIndex"=>$subject_index]);
+
+        unset($_POST['subject_index']);
+        unset($_POST['subject_info']);
+        echo json_encode($res);
+    }
+    else{
+        unset($_POST['subject_index']);
+        unset($_POST['subject_info']);
+        echo json_encode("no change");
+    }
 }

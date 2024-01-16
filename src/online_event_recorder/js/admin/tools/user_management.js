@@ -16,7 +16,7 @@ function users_definition_insert_ajax(params,callback = null) {
     $.ajax({
         type: "POST",
         url: 'php/insert_to_table.php',
-        dataType: "json",
+        // dataType: "json",
         data: ({table_name: "users",new_info:params}),
         success: function(result){
             callback();
@@ -31,7 +31,7 @@ function users_definition_update_ajax(key_info,params,callback) {
     $.ajax({
     type: "POST",
     url: 'php/update_table.php',
-    dataType: "json",
+    // dataType: "json",
     data: ({table_name: "users", key_info:key_info, updated_info:params}),
     success: function(result){
         callback();

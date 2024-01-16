@@ -288,7 +288,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             createSubjectTable(subject_container,subject_selector_table_id,true);
             var subject_table = form.find("#"+subject_selector_table_id);
             subject_table.bootstrapTable("resetView");
-            subject_table.bootstrapTable('hideColumn', 'operate');
+            subject_table.bootstrapTable('hideColumn', ['operate','LastChange']);
             
         });
 

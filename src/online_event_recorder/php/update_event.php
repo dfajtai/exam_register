@@ -56,7 +56,7 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
     if($has_change){
         $new_event_info["EventData"] = json_encode($updated_data,JSON_NUMERIC_CHECK);
 
-        // var_error_log($new_event_info);
+        // var_error_log($new_event_inf o);
     
         if(!array_key_exists('EventModifiedAt',$new_event_info)){
             $new_event_info["EventModifiedAt"] = Medoo::raw('NOW()');
@@ -70,14 +70,16 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
                             'EventPlannedTime' => $_old_event_info["EventPlannedTime"],
                             'EventComment' => $_old_event_info["EventComment"],
                             'EventData' => $_old_event_info["EventData"],
-                            'EventLocation' => $_old_event_info["EventLocation"]];
+                            'EventLocation' => $_old_event_info["EventLocation"],
+                            "EventModifiedBy" => $_old_event_info["EventModifiedBy"],
+                            "EventModifiedAt" => $_old_event_info["EventModifiedAt"]];
     
             $database -> insert("event_change_log", [
                 "EventIndex"=>$event_index, 
                 "EventStudy"=>$_old_event_info["EventStudy"], 
                 "EventSubject"=>$_old_event_info["EventSubject"],
-                "EventModifiedBy" => $_old_event_info["EventModifiedBy"],
-                "EventModifiedAt" => $_old_event_info["EventModifiedAt"],
+                "EventModifiedBy" => $new_event_info["EventModifiedBy"],
+                "EventModifiedAt" => $new_event_info["EventModifiedAt"],
                 "EventData" => json_encode($old_event_data)
             ]);
         }

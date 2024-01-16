@@ -12,7 +12,7 @@ function event_insert_ajax(params,callback = null) {
     $.ajax({
         type: "POST",
         url: 'php/insert_event.php',
-        dataType: "json",
+        // dataType: "json",
         data: ({event_info:params}),
         success: function(result){
             callback();
@@ -572,7 +572,7 @@ function show_event_planner_modal_make(container, table){
         
         var subject_table = subject_container.find("#"+subject_selector_table_id);
         subject_table.bootstrapTable("resetView");
-        subject_table.bootstrapTable('hideColumn', 'operate');
+        subject_table.bootstrapTable('hideColumn', ['operate','LastChange']);
         
     });
 
@@ -618,14 +618,14 @@ function show_event_planner_modal_make(container, table){
                         $.each(current_event_planner,function(_event_index,event_info){
                             // console.log(event_info);
 
-                            var event_data = {"EventName":event_info["EventName"],
-                                              "EventStatus":event_info["EventStatus"],
-                                              "EventPlannedTime":event_info["EventPlannedTime"],
-                                              "EventID":event_info["EventID"],
-                                              "EventLocation":event_info["EventLocation"],
-                                              "EventComment":event_info["EventComment"]?event_info["EventComment"]:'',
-                                              "EventStudy":subject_info["StudyID"],
-                                              "EventSubject":subject_info["SubjectIndex"]
+                            var event_data = {"EventName": parse_val(event_info["EventName"]),
+                                              "EventStatus":parse_val(event_info["EventStatus"]),
+                                              "EventPlannedTime":parse_val(event_info["EventPlannedTime"]),
+                                              "EventID":parse_val(event_info["EventID"]),
+                                              "EventLocation":parse_val(event_info["EventLocation"]),
+                                              "EventComment":parse_val(event_info["EventComment"]?event_info["EventComment"]:''),
+                                              "EventStudy":parse_val(subject_info["StudyID"]),
+                                              "EventSubject":parse_val(subject_info["SubjectIndex"])
                                             }
                             event_insert_ajax(event_data);
                         });
