@@ -10,12 +10,9 @@ if(isset($_POST['event_info']) && isset($_SESSION['id']) && isset($_SESSION['fna
         global $database;
     }
 
-    $event_data = array();
-    
-    foreach($event_info as $key => $value) 
-    {
-        $event_data[$key] = $value;
-    }
+    $event_data = $event_info;
+    array_decode_numbers($event_data);
+
     if(!array_key_exists('EventModifiedAt',$event_data)){
         $event_data["EventModifiedAt"] = Medoo::raw('NOW()');
     }

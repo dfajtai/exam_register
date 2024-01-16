@@ -10,12 +10,9 @@ if(isset($_POST['subject_info']) && isset($_SESSION['id']) && isset($_SESSION['f
         global $database;
     }
 
-    $subject_data = array();
-    
-    foreach($subject_info as $key => $value) 
-    {
-        $subject_data[$key] = $value;
-    }
+    $subject_data = $subject_info;
+    array_decode_numbers($subject_data);
+
     if(!array_key_exists('LastChange',$subject_data)){
         $subject_data["LastChange"] = Medoo::raw('NOW()');
     }
