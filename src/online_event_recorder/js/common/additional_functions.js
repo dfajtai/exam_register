@@ -52,3 +52,30 @@ function parse_val(val){
     };
     return num_val;
 }
+
+function nullify_obj(obj){
+    // {'key':null, 'key2':null , ...} -> null
+    if(!isObject(obj)) return obj;
+
+    var keys = Object.keys(obj);
+    var non_null_count = 0;
+
+    var res = {};
+    $.each(keys,function(index,key){
+        if(obj[key]!=null){
+            non_null_count+=1;
+            res[key]=obj[key];
+        }
+    })
+    if(non_null_count == 0) return null;
+
+    return res;
+}
+
+function isObject(value) {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+    );
+  }

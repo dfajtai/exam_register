@@ -35,11 +35,15 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
     $old_event_info = $database -> select("event_log", "*", ["EventIndex"=>$event_index]);
     if(count($old_event_info) >0){
         $change_test = $old_event_info[0];
-        unset($change_test["EventIndex"]); 
-        unset($change_test["EventModifiedAt"]); 
-        unset($change_test["EventModifiedBy"]);
+
         $old_data = json_decode($change_test["EventData"]);
         unset($change_test["EventData"]);
+
+        foreach($change_test as $key => $value){
+            if(!array_key_exists($key,$new_event_info)){
+                unset($change_test[$key]);
+            }
+        }
         
         // var_error_log($change_test);
         // var_error_log($new_event_info);

@@ -54,6 +54,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
@@ -367,6 +369,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 </html>
 
 <?php }else {
-	header("Location: login.php?" . $_SERVER["QUERY_STRING"]);
+	header("Location: login.php?". $_SERVER["QUERY_STRING"]);
 	exit;
 } ?>

@@ -7,6 +7,8 @@ var eventlog_visible_subjects = null;
 var eventlog_visible_subjects_info = null;
 var eventlog_subject_string_lookup = {};
 
+var deleted_status =  null;
+var planned_status =  null;
 
 function eventlog_retrieve_all_ajax(params) {
     $.ajax({
@@ -71,7 +73,7 @@ function subjectFormatter(value,row){
     if(value==null) return;
     var res = null;
     if(eventlog_visible_subjects.length==0) return res;
-    
+
     if(eventlog_visible_subjects.includes(value)){
         return eventlog_subject_string_lookup[value];
     }
@@ -81,10 +83,21 @@ function subjectFormatter(value,row){
 function eventlog_operate_formatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
-    
-    var edit_btn = $("<button/>").addClass("btn btn-outline-primary btn-sm edit lockable").append($("<i/>").addClass("fa fa-edit"))
+
+    var edit_btn = $("<button/>").addClass("btn btn-outline-primary btn-sm edit lockable me-1").append($("<i/>").addClass("fa fa-edit"))
     edit_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit event");
     container.append(edit_btn);
+
+    if(row["EventStatus"]!=deleted_status){
+        var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+        btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
+        container.append(btn_remove);
+    }
+    else{
+        var btn_resotre = $("<button/>").addClass("btn btn-outline-success btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
+        btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
+        container.append(btn_resotre);
+    }
 
     // container.append($("<button/>").addClass("btn btn-outline-primary btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
 
@@ -102,6 +115,16 @@ window.eventlog_operate_events = {
         // eventlog_content_name = "edit";
         // $( document ).trigger( "_lock", [ "edit"] );
     },
+    'click .remove': function (e, value, row, index) {
+        eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
+        event_info = {"EventStatus":deleted_status},
+        function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+    },
+    'click .restore': function (e, value, row, index) {
+        eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
+        event_info = {"EventStatus":planned_status},
+        function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+    },
 
 }
 
@@ -111,9 +134,81 @@ function eventlog_query_params(params){
     return params
 }
 
+function eventlog_detail_view_formatter(index, row) {
+    var detail_view_content = $('<div/>');
+    
+    var detail_info = $('<p/>');
+    var hidden_keys = ["state","EventData"]
+    $.each(row, function (key, value) {
+        if(!(hidden_keys.includes(key))){
+            detail_info.append($("<b/>").html(key+": "));
+            detail_info.append(value+" ");
+        }
+
+    })
+
+    detail_view_content.append($("<div/>").addClass("me-3").append(detail_info));
+
+
+    var event_data = JSON.parse(row["EventData"]);
+    if(event_data!==null && isObject(event_data)){
+        var detail_data_info = $('<p/>').append($("<b/>").html("EventData<br/>"));
+        detail_view_content.append($("<div/>").addClass("me-3").append(detail_data_info));
+        var detail_view_data_view= $('<div/>');
+        detail_view_content.append(detail_view_data_view);
+        
+        $.each(event_data, function (key, value) {
+            detail_data_info.append($("<i/>").html(key+": "));
+            detail_data_info.append(value+" ");    
+        })
+
+        var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
+        showCustomArgs(detail_view_data_view,JSON.parse(event_params));
+
+        $(detail_view_data_view).find("input[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in event_data){
+                $(this).val(event_data[name]).trigger("change");
+            }
+        });
+        $(detail_view_data_view).find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in event_data){
+
+                if(name.includes("JSON")){
+                    $(this).val(event_data[name]);
+                }
+                else{
+                    $(this).val(event_data[name]);
+                }
+            }
+        });
+
+        $(detail_view_data_view).find("select[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in event_data){
+                console.log(name);
+                $(this).val(event_data[name]).trigger("change");
+            }
+        });
+    }
+
+
+    // return detail_view_content.prop("outerHTML");
+    return detail_view_content
+}
+
+function eventlog_status_filter(row, filters, hidden_status = null){
+    // console.log(filters);
+    if(hidden_status== null) return true;
+    if(row["EventStatus"]==hidden_status) return false;
+    return true;
+}
+
+
 function create_eventlog_table(container, table_id, simplify = false){
     var table = $("<table/>").attr("id",table_id);
-    
+
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
 
     var subject_selector_container = $("<div/>");
@@ -123,18 +218,23 @@ function create_eventlog_table(container, table_id, simplify = false){
             // console.log(subject_info);
 
             eventlog_visible_subjects_info = subject_info;
-            
+
             if(eventlog_visible_subjects_info.length>0){
                 $(toolbar).empty();
                 toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
                 toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
                 // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
                 toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
-                
+
+                var _switch_group = $("<div/>").addClass("form-check form-switch");
+                var show_deleted_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","showDeletedSwitch");
+                _switch_group.append(show_deleted_switch);
+                _switch_group.append($("<label/>").addClass("form-check-label").attr("for","showDeletedSwitch").html("Show deleted"));
+                toolbar.append($("<button/>").addClass("btn").append(_switch_group));
 
                 toolbar.find("#toolbar_add").on("click", function(){
                     show_eventlog_modal_add(eventlog_content, table);
-            
+
                     // $(document).trigger("_lock",["add"]);
                     // eventlog_content_name = "add";
                 });
@@ -143,16 +243,38 @@ function create_eventlog_table(container, table_id, simplify = false){
                     var selected =table.bootstrapTable("getSelections");
                     $.each(selected, function(index, entry){
                         var data = {... entry};
-            
+
                         delete data["EventIndex"];
                         delete data["state"];
-            
+
                         $.each(data,function(key){
-                            if(data[key]==null) delete data[key];
+                            // if(data[key]==null) delete data[key];
+                            data[key] = parse_val(data[key]);
                         })
+                        if(data["EventData"])  data["EventData"] = JSON.parse(data["EventData"]);
+
                         eventlog_insert_ajax(data,function(){table.bootstrapTable("refresh")});
                     });
                 })
+
+                show_deleted_switch.on("change",function(){
+                    var is_checked = $(this).prop("checked");
+                    if(is_checked){
+                        table.bootstrapTable("resetSearch");
+                        table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(){return true}}});
+                        table.bootstrapTable("filterBy",{});
+                    }
+                    else{
+                        table.bootstrapTable("resetSearch");
+                        table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(row,filters){
+                            var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+                            return eventlog_status_filter(row,filters,deleted_status);
+                        }}});
+                        table.bootstrapTable("filterBy",{});
+                    }
+                })
+
+                toolbar.find("#showDeletedSwitch").trigger("change");
 
             }
             else{
@@ -160,7 +282,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                 table.bootstrapTable('refreshOptions', {  toolbar:toolbar});
             }
 
-            
+
             if(subject_indices=="all"){
                 eventlog_visible_subjects = getCol(subject_info,"SubjectIndex");
                 table.bootstrapTable('refreshOptions', { queryParams:null, ajax: eventlog_retrieve_all_ajax });
@@ -168,23 +290,20 @@ function create_eventlog_table(container, table_id, simplify = false){
             else{
                 eventlog_visible_subjects = subject_indices;
                 table.bootstrapTable('refreshOptions', {  queryParams:eventlog_query_params, ajax: eventlog_retrieve_subjects_ajax});
-                
+
             }
 
             eventlog_subject_string_lookup = {};
             $.each(eventlog_visible_subjects_info,function(index,val){
                 eventlog_subject_string_lookup[val.SubjectIndex] = val.Name + " [" + val.SubjectID + "]";
             })
-
-            
-            
         });
 
     container.append(subject_selector_container);
-        
+
     table.attr("data-toolbar","#"+table_id+"_toolbar");
     table.attr("data-toolbar-align","left");
-    
+
 
     table.attr("data-pagination","false");
     table.attr("data-show-pagination-switch","false");
@@ -209,7 +328,7 @@ function create_eventlog_table(container, table_id, simplify = false){
 
         table.attr("data-detail-view","true");
     }
-    
+
     table.attr("data-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
@@ -241,16 +360,16 @@ function create_eventlog_table(container, table_id, simplify = false){
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
                 {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},
                 {title: 'Location', field : 'EventLocation', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "locationFormatter",},
-                {title: 'Changed', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",},
+                {title: 'Changed', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",visible:false},
                 {title: 'Planned', field : 'EventPlannedTime', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",},
-                
+
               ],
-            
+
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter:simpleFlatFormatter,
-            
+            detailFormatter:eventlog_detail_view_formatter,
+
             idField:"SubjectIndex",
 
             showExport:!simplify,
@@ -261,35 +380,41 @@ function create_eventlog_table(container, table_id, simplify = false){
 }
 
 
-function eventlog_add_form_inputs(form, subject_index = null){    
-    var subject_select =  $("<div/>").addClass("row mb-3").attr("id","eventlog_subject_input_block");
+function subject_select_from_pool(container, subject_pool, subject_index = null){
+    var subject_select =  $("<div/>").addClass("row mb-2").attr("id","eventlog_subject_input_block");
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
     var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect").attr("name","EventSubject");
-    subject_select_dropdow.prop('required',true).addClass("border border-2 border-dark");
-    
-    $.each(eventlog_visible_subjects_info,function(index,entry){
+    subject_select_dropdow.prop('required',true).addClass("data-required border border-2 border-dark").attr("data-name","EventSubject");
+
+    $.each(subject_pool,function(index,entry){
         if(!entry.hasOwnProperty("SubjectIndex")) return;
         let subject_index = entry["SubjectIndex"];
         subject_select_dropdow.append($("<option/>").html(eventlog_subject_string_lookup[subject_index]).attr("value",subject_index));
     });
 
-    if(eventlog_visible_subjects_info.length>1){
+    if(subject_pool.length>1){
         subject_select_dropdow.prepend($("<option/>").html("Choose subject...").prop('selected',true).attr("value",""));
     }
 
     subject_select.append(subject_label);
     subject_select.append($("<div/>").addClass("col-md-9").append(subject_select_dropdow));
-    form.append(subject_select);
+    container.append(subject_select);
 
     subject_select_dropdow.on("change",function(){
         subject_index = $(this).val();
         // console.log(subject_index);
     })
+
     if(subject_index!==null){
         subject_select_dropdow.val(subject_index);
         subject_select.prop("hidden",true);
     }
+}
+
+
+function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
+    subject_select_from_pool(form,subject_pool, subject_index = null)
 
     // var event_param_block =  $("<div/>").addClass("container shadow py-3 my-3");
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
@@ -310,13 +435,7 @@ function eventlog_add_form_inputs(form, subject_index = null){
     form.append(event_param_block);
 
 
-    var event_data_block =  $("<div/>").addClass("row").attr("id","eventlog_event_data_block");
-    var fill_switch_group = $("<div/>").addClass("form-check form-switch");
-    var fill_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","fillDataSwitch");
-    fill_switch_group.append(fill_switch);
-    fill_switch_group.append($("<label/>").addClass("form-check-label").attr("for","fillDataSwitch").html("Fill event data"));
-    event_data_block.append($("<div/>").addClass("row mb-2 ms-1").append(fill_switch_group));
-    
+    var event_data_block =  $("<div/>").addClass("row data-edit").attr("id","eventlog_event_data_block").prop("hidden","true");
 
     var event_form_container = $("<div/>");
     event_data_block.append(event_form_container);
@@ -325,32 +444,19 @@ function eventlog_add_form_inputs(form, subject_index = null){
     var event_template = null;
     event_param_block.find('[name="EventID"]').on("change",function(){
         event_template = $(this).val();
-        fill_switch.trigger("change");
+        if(event_template===null){
+            event_form_container.empty().removeClass("row mb-3");
+            return;
+        };
+        var event_params = getDefEntryFieldWhere('event_definitions','EventID', event_template,'EventFormJSON');
+        if(event_params===null){
+            event_form_container.empty().removeClass("row mb-3");
+            return;
+        };
+        event_form_container.empty().addClass("row mb-3");
+        showCustomArgs(event_form_container,JSON.parse(event_params));
     });
 
-    fill_switch.on("change",function(){
-        var show_data = fill_switch.is(":checked");
-        if(show_data){
-            if(event_template===null){
-                event_form_container.empty().removeClass("row mb-3");
-                return;
-            };
-            var event_params = getDefEntryFieldWhere('event_definitions','EventID', event_template,'EventFormJSON');
-            if(event_params===null){
-                event_form_container.empty().removeClass("row mb-3");
-                return;
-            };
-
-            event_form_container.empty().addClass("row mb-3");
-            showCustomArgs(event_form_container,JSON.parse(event_params));
-
-        }
-        else{
-            event_form_container.empty().removeClass("row mb-3");
-        }
-        
-
-    })
 
 }
 
@@ -365,19 +471,40 @@ function show_eventlog_modal_add(container, table){
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
-    
+
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add event");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
-    eventlog_add_form_inputs(form);
+    eventlog_add_form_inputs(form, eventlog_visible_subjects_info );
     form.append(submitForm);
 
-    
+    var _switch_group = $("<div/>").addClass("form-check form-switch");
+    var dataedit_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","dataeditSwitch");
+    _switch_group.append(dataedit_switch);
+    _switch_group.append($("<label/>").addClass("form-check-label").attr("for","dataeditSwitch").html("Add data to event"));
+    modal_body.append($("<div/>").addClass("input-group-text  mb-3").append(_switch_group));
+
+    dataedit_switch.on("change",function(){
+        var is_checked = $(dataedit_switch).is(":checked");
+        if(is_checked) {
+            form.find(".data-edit").prop("hidden",false);
+            form.find(".data-edit").find(".data-required").prop('required',true);
+        }
+        else{
+            form.find(".data-edit").prop("hidden",true);
+            form.find(".data-edit").find(".data-required").prop("required",false);
+        }
+    })
+
+    modal_body.append(form);
+
+
     $(modal).on('hidden.bs.modal',function(){
         $( document ).trigger("_release",["add"]);
+        form[0].reset();
     })
 
     form.on('submit',function(e){
@@ -397,7 +524,10 @@ function show_eventlog_modal_add(container, table){
                 }
             }
         });
-        event_params["EventData"] = event_data;
+
+        event_params["EventData"] = nullify_obj(event_data);
+
+
 
         event_params["EventStudy"] = getEntryFieldWhere(eventlog_visible_subjects_info,"SubjectIndex",event_params["EventSubject"],"StudyID");
 
@@ -407,41 +537,72 @@ function show_eventlog_modal_add(container, table){
         eventlog_insert_ajax(event_params,function(){table.bootstrapTable('refresh')});
 
         modal.modal('hide');
-        form[0].reset();
     });
 
     modal_footer.find("#clear_form").click(function(){
         $(modal_body).find('form')[0].reset();
         $(modal_body).find(".form-check-input").trigger("change");
     })
-    modal_body.append(form);
+
 
     modal.modal('show');
 }
 
-function eventlog_edit_form_inputs(form, event_id){
+function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
     form.empty();
 
+    var event_param_block = $("<div/>").addClass("expert-edit");
+    subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
     var event_params =   [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":false},
+        {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
     ]
+    showCustomArgs(event_param_block,event_params);
 
+    event_param_block.append($("<hr/>").addClass("my-3"));
+    form.append(event_param_block);
+
+    if(!expert_edit){event_param_block.prop("hidden",true);}
+
+    var event_data_block = $("<div/>").addClass("data-edit");
     var event_data_params = getDefEntryFieldWhere('event_definitions','EventID', event_id,'EventFormJSON');
-    if(event_data_params===null){
-        return;
+    if(event_data_params!==null){
+        showCustomArgs(event_data_block,JSON.parse(event_data_params));
+        // if(expert_edit){
+        //     event_data_block.find(".data-required").prop('required',true)
+        // }
+        // else{
+        //     event_data_block.find(".data-required").prop('required',false)
+        // }
     }
-    event_params = listAppend(event_params,JSON.parse(event_data_params));
-    event_params = listAppend(event_params,[{"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":false}]);
 
-        
-    showCustomArgs(form,event_params);
+    event_data_block.append($("<hr/>").addClass("my-3"));
+    form.append(event_data_block);
 
-    form.find('[name]').prop('required',false).removeClass("border-2 border-dark");
+    var event_status_block = $("<div/>").addClass("status-edit");
+    showCustomArgs(event_status_block,[{"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true}]);
 
-}   
+    form.append(event_status_block);
+
+
+    // form.find('[name]').prop('required',false).removeClass("border-2 border-dark");
+
+
+    event_param_block.find('[name="EventID"]').on("change",function(){
+        var new_event_id = $(this).val();
+        var event_data_params = getDefEntryFieldWhere('event_definitions','EventID', new_event_id,'EventFormJSON');
+        event_data_block.empty();
+        if(event_data_params!==null){
+            showCustomArgs(event_data_block,JSON.parse(event_data_params));
+            // event_data_block.find('[name]').prop('required',false).removeClass("border-2 border-dark");
+            event_data_block.append($("<hr/>").addClass("my-3"));
+        }
+    });
+
+}
 
 
 function show_eventlog_modal_edit(container, table, index){
@@ -456,23 +617,27 @@ function show_eventlog_modal_edit(container, table, index){
 
     container.find("#"+modal_id).remove();
 
-    eventlog_modal(container, modal_id, "Edit event data");
+    eventlog_modal(container, modal_id, "Edit event");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
-    var modal_footer = modal.find(".modal-footer");
-    var modal_footer = modal.find(".modal-footer");
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
 
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-primary").attr("id","revert_form").attr("aria-label","Revert").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","clear_data").attr("aria-label","Remove data").html($("<i/>").addClass("fa fa-text-slash me-2").attr("aria-hidden","true")).append("Clear data"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-success").attr("id","add_copy").attr("aria-label","Add as copy").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Add as copy"));
+
+
+    modal_footer.find("#clear_form").html("Clear everything");
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Update event");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Update event");
     submitForm.append(submitButton);
 
 
-    function init_fields(form,entry){
+    function init_fields(form,entry, trigger_select_change = false){
         $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
@@ -490,11 +655,12 @@ function show_eventlog_modal_edit(container, table, index){
                 }
             }
         });
-        
+
         $(form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                $(this).val(entry[name]).trigger("change");
+                $(this).val(entry[name]);
+                if(trigger_select_change) $(this).trigger("change");
             }
         });
 
@@ -502,6 +668,7 @@ function show_eventlog_modal_edit(container, table, index){
 
         var event_data = JSON.parse(entry["EventData"]);
         if(event_data===null) return;
+        if(!isObject(event_data)) return;
 
         $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
@@ -520,25 +687,55 @@ function show_eventlog_modal_edit(container, table, index){
                 }
             }
         });
-        
+
         $(form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in event_data){
-                $(this).val(event_data[name]).trigger("change");
+                $(this).val(event_data[name]);
+                if(trigger_select_change) $(this).trigger("change");
             }
         });
     }
-    
+
+
     eventlog_edit_form_inputs(form,entry["EventID"]);
 
     form.append(submitForm);
 
-    
+    var _switch_group = $("<div/>").addClass("form-check form-switch");
+    var expertedit_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","experteditSwitch");
+    _switch_group.append(expertedit_switch);
+    _switch_group.append($("<label/>").addClass("form-check-label").attr("for","experteditSwitch").html("Show all arguments"));
+    modal_body.append($("<div/>").addClass("input-group-text  mb-3").append(_switch_group));
+
+    // hide event parameter inputs (subject, eventID, ...)
+    expertedit_switch.on("change",function(){
+        var is_checked = $(expertedit_switch).is(":checked");
+        if(is_checked) {
+            form.find(".expert-edit").prop("hidden",false);
+            $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
+                $(entry).attr("name",$(entry).attr("data-name"));
+            })
+            form.find(".expert-edit").find(".data-required").prop('required',true);
+
+            // modal_footer.find("#add_copy").prop("disabled",false).prop("hidden",false);
+        }
+        else {
+            form.find(".expert-edit").prop("hidden","true");
+            form.find(".expert-edit").find("[name]").removeAttr("name").prop('required',false);
+
+            // modal_footer.find("#add_copy").prop("disabled",true).prop("hidden","true");
+        }
+    });
+
+    modal_body.append(form);
+
     $(modal).on('hidden.bs.modal',function(){
         $( document ).trigger("_release",["edit"]);
-    })
+        form[0].reset();
+    });
 
-    form.on('submit',function(e){
+    form.on('submit',function(e, as_copy=false){
         e.preventDefault();
 
         var event_data = {};
@@ -556,40 +753,89 @@ function show_eventlog_modal_edit(container, table, index){
             // }
         });
 
-        event_params["EventData"] =event_data;
-        event_params["EventID"] = parse_val(entry["EventID"]);
-        event_params["EventSubject"] = parse_val(entry["EventSubject"]);
-
+        event_params["EventData"] = nullify_obj(event_data);
+        // event_params["EventID"] = parse_val(entry["EventID"]);
+        // event_params["EventSubject"] = parse_val(entry["EventSubject"]);
 
         event_params["EventStudy"] = getEntryFieldWhere(eventlog_visible_subjects_info,"SubjectIndex",entry["EventSubject"],"StudyID");
 
-
-
         console.log(event_params);
 
-        eventlog_update_ajax(event_index = parse_val(entry["EventIndex"]),
-                             event_info = event_params,
-                             function(){table.bootstrapTable('refresh')});
+        if(as_copy){
+            eventlog_insert_ajax(event_params,function(){table.bootstrapTable('refresh')});
+        }
+        else{
+            eventlog_update_ajax(event_index = parse_val(entry["EventIndex"]),
+            event_info = event_params,
+            function(){table.bootstrapTable('refresh')});
+        }
 
         modal.modal('hide');
-        form[0].reset();
     });
 
     modal_footer.find("#clear_form").click(function(){
         $(modal_body).find('form')[0].reset();
     })
 
+    modal_footer.find("#clear_data").click(function(){
+        form.find(".data-edit").find("[name]").removeAttr("name").prop('required',false);
+        form.find(".data-edit").prop("hidden",true);
+    });
 
-    $(modal).on('show.bs.modal', function () {                   
+    modal_footer.find("#add_copy").click(function(){
+        $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
+            $(entry).attr("name",$(entry).attr("data-name"));
+        })
+        form.find(".expert-edit").find(".data-required").prop('required',true);          
+
+        if (! $(form)[0].checkValidity()) {
+            
+            $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
+                if($(entry).prop('required')&& ($(entry).val()==null || $(entry).val()=="")){
+                    expertedit_switch.prop("checked",true).trigger("change");
+                    return false;
+                }
+            })
+
+            $(form)[0].reportValidity();
+        }
+        else{
+            form.trigger("submit",true);
+            expertedit_switch.trigger("change");
+        }
+    });
+
+    $(modal).on('show.bs.modal', function () {
         init_fields(form,entry);
+        expertedit_switch.trigger("change");
     })
 
     modal_footer.find("#revert_form").click(function(){
         $(modal_body).find('form')[0].reset();
-        init_fields(form,entry);
-    })
 
-    modal_body.append(form);
+        // reset expert-edit block
+        form.find(".expert-edit").prop("hidden",false);
+        $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
+            $(entry).attr("name",$(entry).attr("data-name"));
+        })
+        form.find(".expert-edit").find(".data-required").prop('required',true);
+        
+
+        // reset data-edit block
+        $.each(form.find(".data-edit").find("[name]"),function(index,entry){
+            $(entry).attr("name",$(entry).attr("data-name"));
+        })
+        form.find(".data-edit").prop("hidden",false);
+        form.find(".data-edit").find(".data-required").prop('required',true);
+
+        // initialize every named fields with the original values
+        init_fields(form,entry);
+
+        // trigger switch to remove names
+        expertedit_switch.trigger("change");
+    });
+
+
 
     modal.modal('show');
 }
@@ -627,7 +873,7 @@ function eventlog_modal(container, modal_id, title){
 function show_event_log_handler(container){
 
     create_eventlog_table(container,eventlog_table_id);
-    
+
     var table = $('#'+eventlog_table_id);
 
     table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table reset-view.bs.table',
@@ -644,9 +890,11 @@ function show_event_log_handler(container){
 
     var toolbar = container.find(".fixed-table-toolbar");
 
-
     eventlog_content = $("<div/>").attr("id","eventlogModalContainer");
     container.append(eventlog_content);
 
     toolbar.find(".needs-select").addClass("disabled");
+
+    deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+    planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 }

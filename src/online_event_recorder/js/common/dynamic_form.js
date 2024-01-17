@@ -31,7 +31,7 @@ function customArgParserTest(container){
 
 function dynamicTextInput(container,name,label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _input = $("<input/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name);
+    var _input = $("<input/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
 
     container.append(_label);
     container.append($("<div/>").addClass("col-md-9").append(_input));
@@ -39,7 +39,7 @@ function dynamicTextInput(container,name,label){
 
 function dynamicLongTextInput(container,name,label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _input = $("<textarea/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name).attr("rows",5);
+    var _input = $("<textarea/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("rows",5);
 
     container.append(_label);
     container.append($("<div/>").addClass("col-md-9").append(_input));
@@ -55,7 +55,7 @@ function dynamicDateInput(container,name,label){
     var fa_span =$("<i/>").addClass("fa fa-arrow-right update-date");
     group_container.append($("<span/>").addClass("btn-outline-dark btn update-date").append(fa_span));
 
-    var _input = $("<input/>").addClass("form-control").attr("type","date").attr("id",name+"Input").attr("name",name);
+    var _input = $("<input/>").addClass("form-control").attr("type","date").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
 
     _input.val(moment().format("YYYY-MM-DD"));
     group_container.append(_input)
@@ -80,7 +80,7 @@ function dynamicTimeInput(container,name,label){
 
     var fa_span =$("<span/>").addClass("fa fa-arrow-right update-date");
     group_container.append($("<i/>").addClass("btn-outline-dark btn update-date").append(fa_span));
-    var _input = $("<input/>").addClass("form-control").attr("type","time").attr("id",name+"Input").attr("name",name).attr("step","1");
+    var _input = $("<input/>").addClass("form-control").attr("type","time").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
 
     _input.val(moment().format("HH:mm:ss"));
     group_container.append(_input)
@@ -105,7 +105,7 @@ function dynamicDatetimeInput(container,name,label){
 
     var fa_span =$("<span/>").addClass("fa fa-arrow-right update-datetime");
     group_container.append($("<i/>").addClass("btn-outline-dark btn update-datetime").append(fa_span));
-    var _input = $("<input/>").addClass("form-control").attr("type","datetime-local").attr("id",name+"Input").attr("name",name).attr("step","1");
+    var _input = $("<input/>").addClass("form-control").attr("type","datetime-local").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
 
     // _input.val(moment().format("YYYY-MM-DD HH:mm:ss"));
     group_container.append(_input)
@@ -133,7 +133,7 @@ function dynamicNumericInput(container,name,label,arg){
 
     var group_container = $("<div/>").addClass("input-group");
     
-    var _input = $("<input/>").addClass("form-control").attr("type","numeric").attr("id",name+"Input").attr("name",name);
+    var _input = $("<input/>").addClass("form-control").attr("type","numeric").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
     if(arg.hasOwnProperty("FieldDataStep")) _input.attr("step",arg.FieldDataStep);
 
     group_container.append(_input)
@@ -153,7 +153,7 @@ function dynamicRangeInput(container,name,label,arg){
 
     var group_container = $("<div/>").addClass("input-group");
     
-    var _input = $("<input/>").addClass("form-control form-range w-50 mt-2 me-2").attr("type","range").attr("id",name+"Input").attr("name",name);
+    var _input = $("<input/>").addClass("form-control form-range w-50 mt-2 me-2").attr("type","range").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
     if(arg.hasOwnProperty("FieldDataStep")) _input.attr("step",arg.FieldDataStep);
     if(arg.hasOwnProperty("FieldDataMin")) _input.attr("min",arg.FieldDataMin);
     if(arg.hasOwnProperty("FieldDataMax")) _input.attr("max",arg.FieldDataMax);
@@ -201,14 +201,14 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
     else if(datatype=="numeric")  dynamicNumericInput(container,name,label,arg);
     else if(datatype=="range")  dynamicRangeInput(container,name,label,arg);
     
-    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark");
+    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark data-required");
     if(default_value!=null) container.find("[name="+name+"]").val(default_value).trigger("change");
 }
 
 
 function dynamicLocationSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose location...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"location_definitions","LocationID","LocationName");
 
@@ -226,8 +226,8 @@ function dynamicBodypartSelect(container, name, label){
     side_select_div.append(_select_1)
 
     var bodpart_select_div = $("<div/>").addClass("col-md-5");
-    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
-    _select_2.append($("<option/>").html("Choose bodypart...").prop('selected',true).attr("value","").attr("required","true"));
+    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_2.append($("<option/>").html("Choose bodypart...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"bodypart_definitions","BodypartName","BodypartName");
     bodpart_select_div.append(_select_2);
     
@@ -249,7 +249,7 @@ function dynamicConsumableSelect(container, name, label){
     constype_select_div.append(_select_1)
 
     var cons_select_div = $("<div/>").addClass("col-md-5");
-    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_2.append($("<option/>").html("Choose consumable...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"consumable_definitions","ConsumableName","ConsumableName");
     cons_select_div.append(_select_2);
@@ -272,8 +272,8 @@ function dynamicEventSelect(container, name, label){
     type_select_div.append(_select_1)
 
     var event_select_div = $("<div/>").addClass("col-md-5");
-    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
-    _select_2.append($("<option/>").html("Choose event...").prop('selected',true).attr("value","").attr("required","true"));
+    var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_2.append($("<option/>").html("Choose event...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"event_definitions","EventID","EventName");
     event_select_div.append(_select_2);
     
@@ -286,7 +286,7 @@ function dynamicEventSelect(container, name, label){
 
 function dynamicAssetSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose asset...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"asset_definitions","AssetID","AssetName");
 
@@ -297,7 +297,7 @@ function dynamicAssetSelect(container, name, label){
 
 function dynamicStudySelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose study...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"studies","StudyID","StudyName");
 
@@ -308,7 +308,7 @@ function dynamicStudySelect(container, name, label){
 
 function dynamicSexSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose sex...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"sex_definitions","SexID","SexName");
 
@@ -319,7 +319,7 @@ function dynamicSexSelect(container, name, label){
 
 function dynamicEventStatusSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose event status...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"event_status_definitions","EventStatusID","EventStatusName");
 
@@ -330,7 +330,7 @@ function dynamicEventStatusSelect(container, name, label){
 
 function dynamicSubjectStatusSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
-    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose subject status...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"subject_status_definitions","StatusID","StatusName");
 
@@ -359,7 +359,7 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
         case 'study':  dynamicStudySelect(container,name,label); break;
     }
     
-    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark");
+    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark data-required");
     if(default_value!=null) container.find("[name="+name+"]").val(default_value).trigger("change");
 }
 

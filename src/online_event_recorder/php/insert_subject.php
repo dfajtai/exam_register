@@ -1,4 +1,5 @@
 <?php
+include_once 'php_functions.php';
 use Medoo\Medoo;
 session_start();
 

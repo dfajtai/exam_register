@@ -16,6 +16,8 @@ function var_error_log( $object=null ){
 }
 
 function array_decode_numbers(&$array){
+  if($array==null) return;
+  
   foreach($array as $key => $value) 
   {
     if($value==''){

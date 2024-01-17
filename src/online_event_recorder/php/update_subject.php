@@ -19,12 +19,12 @@ if(isset($_POST['subject_index']) && isset($_POST['subject_info']) && isset($_SE
     $old_subject_info = $database -> select("subjects", "*", ["SubjectIndex"=>$subject_index]);
     if(count($old_subject_info) >0){
         $change_test = $old_subject_info[0];
-        unset($change_test["SubjectIndex"]); 
-        unset($change_test["LastChange"]); 
-        unset($change_test["ModifiedBy"]); 
 
-        var_error_log($change_test);
-        var_error_log($new_subject_info);
+        foreach($change_test as $key => $value){
+            if(!array_key_exists($key,$new_event_info)){
+                unset($change_test[$key]);
+            }
+        }
         
         if($change_test==$new_subject_info){
             $has_change = false;            

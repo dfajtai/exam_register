@@ -56,25 +56,25 @@ if(isset($_POST['uname']) &&
                exit;
             }else {
             $em = "Incorect User name or password";
-            header("Location: ../login.php?error=$em&$data");
+            header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
             exit;
          }
 
          }else {
             $em = "Incorect User name or password";
-            header("Location: ../login.php?error=$em&$data");
+            header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
             exit;
          }
 
       }else {
          $em = "Incorect User name or password";
-         header("Location: ../login.php?error=$em&$data");
+         header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
          exit;
       }
     }
 
 
 }else {
-	header("Location: ../login.php?error=error");
+	header("Location: ../login.php?error=error&". $_SERVER["QUERY_STRING"]);
 	exit;
 }

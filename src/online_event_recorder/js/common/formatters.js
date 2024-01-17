@@ -101,7 +101,7 @@ function subjectStatusFormatter(value,row){
 function datetimeFormatter(value,row){
     if(value==null) return;
     try {
-        return moment(value).format('YYYY.MM.DD. hh:mm:ss');
+        return moment(value).format('YYYY.MM.DD. HH:mm:ss');
     } catch (error) {
         return;
     }

@@ -259,8 +259,8 @@ function show_event_planner_modal_add(container, table){
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add event");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
     eventPlannerInput(form);
@@ -326,8 +326,8 @@ function show_event_planner_modal_edit(container, table, index){
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Alter event");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Alter event");
     submitForm.append(submitButton);
 
     eventPlannerInput(form);
@@ -431,8 +431,8 @@ function show_event_planner_modal_json_import(container, table){
     input_div.append(textarea);
     form.append(input_div);
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Import");
     submitForm.append(submitButton);
 
     form.append(submitForm);
@@ -487,7 +487,7 @@ function show_event_planner_modal_json_export(container, table){
     form.append(input_div);
 
 
-    // var submitForm = $("<div/>").addClass("row mb-3 text-center");
+    // var submitForm = $("<div/>").addClass("row text-center");
     // var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import");
     // submitForm.append(submitButton);
 

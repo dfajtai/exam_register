@@ -3,8 +3,8 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
 
     form_input_function(form);
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add new");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Add new");
     submitForm.append(submitButton);
 
 
@@ -124,8 +124,8 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
 
     form_input_function(form);
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Save changes");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Save changes");
     submitForm.append(submitButton);
 
     form.append(submitForm);

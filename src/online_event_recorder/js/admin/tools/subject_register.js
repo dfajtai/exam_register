@@ -290,8 +290,8 @@ function initSubjectModalAdd(container, table){
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Add Subject");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Add Subject");
     submitForm.append(submitButton);
 
     subjectFormInputs(form);
@@ -339,8 +339,8 @@ function initSubjectModalEdit(container, table, index){
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Alter Subject");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Alter Subject");
     submitForm.append(submitButton);
 
     subjectFormInputs(form);
@@ -430,8 +430,8 @@ function initSubjectBatchModalEdit(container, table){
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Alter Subjects");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Alter Subjects");
     submitForm.append(submitButton);
 
     subjectBatchFormInputs(form);
@@ -545,8 +545,8 @@ function initSubjectModalImport(container,table){
     form.append(table_container);
 
 
-    var submitForm = $("<div/>").addClass("row mb-3 text-center");
-    var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Import Subjects");
+    var submitForm = $("<div/>");
+    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Import Subjects");
     submitForm.append(submitButton);
 
     modal_footer.find("#clear_form").click(function(){
@@ -711,7 +711,8 @@ function show_subject_register(container){
             delete data["state"];
 
             $.each(data,function(key){
-                if(data[key]==null) delete data[key];
+                // if(data[key]==null) delete data[key];
+                data[key] = parse_val(data[key]);
             })
             subject_insert_ajax(data,function(){table.bootstrapTable("refresh")});
         });
