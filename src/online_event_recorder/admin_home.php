@@ -59,6 +59,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
+	<script defer src="js/common/inactivity_protection.js"></script>
+	
 
 	<script defer src="js/admin/table_def_forms/admin_definition_form_handler.js"></script>
 	<script defer src="js/admin/table_def_forms/admin_definition_table_creation.js"></script>
@@ -74,6 +76,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/event_type_definitions_form.js"></script>
 	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
 
+	<script defer src="js/common/def_search.js"></script>
+	<script defer src="js/common/additional_functions.js"></script>
+
+	<script defer src="js/common/formatters.js"></script>
+	<script defer src="js/common/filtered_select_from_defs.js"></script>
+
+	<script defer src="js/common/dynamic_form.js"></script>
+
+	<script defer src="js/common/subjectSelectWidget.js"></script>
 
 	<script defer src="js/admin/tools/event_args_editor.js"></script>
 	<script defer src="js/admin/tools/event_planner.js"></script>
@@ -81,17 +92,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/user_management.js"></script>
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
 
-	<script defer src="js/common/dynamic_form.js"></script>
-
 	<script defer src="js/common/inactivity_protection.js"></script>
-
-	<script defer src="js/common/formatters.js"></script>
-	<script defer src="js/common/filtered_select_from_defs.js"></script>
-
-	<script defer src="js/common/def_search.js"></script>
-	<script defer src="js/common/additional_functions.js"></script>
-
-	<script defer src="js/common/subjectSelectWidget.js"></script>
 
 	<!-- <script defer src="js/common/file_upload.js"></script> -->
 
@@ -183,6 +184,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script>
 		var available_def_tables = Object();
+		var deleted_status =  null;
+		var planned_status =  null;
 
 		function show_table(def_name){
 			
@@ -345,6 +348,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							"studies":{"title":"Studies","func":initStudyDefinitionsTable},
 							};
 
+				deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+				planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
 				if (statusInUrl("def")){
 					show_table(statusFromUrl("def"));

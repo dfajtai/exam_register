@@ -40,7 +40,7 @@ function eventlog_insert_ajax(event_info,callback = null) {
     if(callback === null){
         callback = function(){};
     }
-    
+
     var data = {};
     data["event_info"]=event_info;
     if(!isObject(event_info)){
@@ -123,12 +123,18 @@ window.eventlog_operate_events = {
     'click .remove': function (e, value, row, index) {
         eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
         event_info = {"EventStatus":deleted_status},
-        function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+        function(){
+            $('#'+eventlog_table_id).bootstrapTable('refresh');
+            $('#'+eventlog_table_id).bootstrapTable('resetView');
+        });
     },
     'click .restore': function (e, value, row, index) {
         eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
         event_info = {"EventStatus":planned_status},
-        function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+        function(){
+            $('#'+eventlog_table_id).bootstrapTable('refresh');
+            $('#'+eventlog_table_id).bootstrapTable('resetView');
+        });
     },
 
 }
