@@ -21,7 +21,7 @@ if(isset($_POST['event_info']) && isset($_SESSION['id']) && isset($_SESSION['fna
 
     $event_data = [];
     foreach ($event_info as $index => $value) {
-        // single isntance 
+        // single instance 
         $_event_data = $value; 
         array_decode_numbers($_event_data);
         if(!array_key_exists('EventModifiedAt',$_event_data)){

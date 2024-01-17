@@ -26,15 +26,22 @@ function subject_retrieve_ajax(params) {
     }});
 }
 
-function subject_insert_ajax(params,callback = null) {
+function subject_insert_ajax(subject_info,callback = null) {
     if(callback === null){
         callback = function(){};
     }
+    
+    var data = {};
+    data["subject_info"]=subject_info;
+    if(!isObject(subject_info)){
+        data["multiple"] = true;
+    }
+    
     $.ajax({
         type: "POST",
         url: 'php/insert_subject.php',
         // dataType: "json",
-        data: ({subject_info:params}),
+        data: data,
         success: function(result){
             callback();
         }
@@ -629,7 +636,7 @@ function initSubjectModalImport(container,table){
             callback: function (result) {
                 if(result){
                     // validate data
-                    
+                    var validated_elements = [];
                     $.each(data,function(index){
                         let element = data[index];
                         
@@ -653,10 +660,11 @@ function initSubjectModalImport(container,table){
                             validated_element["Status"] = getDefEntryFieldWhere("subject_status_definitions","StatusName",element["Status"],"StatusID");
                         
                         // console.log(validated_element);
-
-                        subject_insert_ajax(validated_element);
+                        validated_elements.push(validated_element)
+                        
                     });
 
+                    subject_insert_ajax(validated_elements);
 
                     modal.modal('hide');
                     modal.on('hidden.bs.modal',function(e){
@@ -704,18 +712,23 @@ function show_subject_register(container){
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
         var selected =table.bootstrapTable("getSelections");
+
+        var data = [];
+
         $.each(selected, function(index, entry){
-            var data = {... entry};
+            var _data = {... entry};
 
-            delete data["SubjectIndex"];
-            delete data["state"];
+            delete _data["SubjectIndex"];
+            delete _data["state"];
 
-            $.each(data,function(key){
-                // if(data[key]==null) delete data[key];
-                data[key] = parse_val(data[key]);
+            $.each(_data,function(key){
+                // if(_data[key]==null) delete _data[key];
+                _data[key] = parse_val(_data[key]);
             })
-            subject_insert_ajax(data,function(){table.bootstrapTable("refresh")});
+            data.push(_data);
         });
+
+        subject_insert_ajax(data,function(){table.bootstrapTable("refresh")});
     })
 
     initSubjectBatchModalEdit(subject_content,table);
