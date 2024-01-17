@@ -36,15 +36,22 @@ function eventlog_retrieve_subjects_ajax(params) {
 }
 
 
-function eventlog_insert_ajax(params,callback = null) {
+function eventlog_insert_ajax(event_info,callback = null) {
     if(callback === null){
         callback = function(){};
     }
+    
+    var data = {};
+    data["event_info"]=event_info;
+    if(!isObject(event_info)){
+        data["multiple"] = true;
+    }
+    
     $.ajax({
         type: "POST",
         url: 'php/insert_event.php',
         // dataType: "json",
-        data: {event_info:params},
+        data: data,
         success: function(result){
             callback();
         }
@@ -263,20 +270,24 @@ function create_eventlog_table(container, table_id, simplify = false){
 
                 toolbar.find("#toolbar_duplicate").on("click",function(e){
                     var selected =table.bootstrapTable("getSelections");
+
+                    var data = [];
                     $.each(selected, function(index, entry){
-                        var data = {... entry};
+                        var _data = {... entry};
 
-                        delete data["EventIndex"];
-                        delete data["state"];
+                        delete _data["EventIndex"];
+                        delete _data["state"];
 
-                        $.each(data,function(key){
-                            // if(data[key]==null) delete data[key];
-                            data[key] = parse_val(data[key]);
+                        $.each(_data,function(key){
+                            // if(_data[key]==null) delete _data[key];
+                            _data[key] = parse_val(_data[key]);
                         })
-                        if(data["EventData"])  data["EventData"] = JSON.parse(data["EventData"]);
+                        if(_data["EventData"])  _data["EventData"] = JSON.parse(_data["EventData"]);
 
-                        eventlog_insert_ajax(data,function(){table.bootstrapTable("refresh")});
+                        data.push(_data);
+                        
                     });
+                    eventlog_insert_ajax(data,function(){table.bootstrapTable("refresh")});
                 })
 
                 show_deleted_switch.on("change",function(){
@@ -382,7 +393,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
                 {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},
                 {title: 'Location', field : 'EventLocation', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "locationFormatter",},
-                {title: 'Changed', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",visible:false},
+                {title: 'ModifiedAt', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",visible:false},
                 {title: 'ModifiedBy', field : 'EventModifiedBy', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "userFormatter",visible:false},
                 {title: 'Planned', field : 'EventPlannedTime', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",},
                 {title: 'Data', field : 'EventData', align:'center', sortable:false, searchable:false, forceExport: true, formatter: "jsonFormatter", visible:false},
@@ -423,7 +434,7 @@ function subject_select_from_pool(container, subject_pool, subject_index = null)
 
     subject_select.append(subject_label);
     subject_select.append($("<div/>").addClass("col-md-9").append(subject_select_dropdow));
-    container.append(subject_select);
+    container.append($("<div/>").append(subject_select));
 
     subject_select_dropdow.on("change",function(){
         subject_index = $(this).val();
@@ -438,10 +449,11 @@ function subject_select_from_pool(container, subject_pool, subject_index = null)
 
 
 function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
-    subject_select_from_pool(form,subject_pool, subject_index = null)
-
     // var event_param_block =  $("<div/>").addClass("container shadow py-3 my-3");
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
+
+    event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
+    subject_select_from_pool(event_param_block,subject_pool, subject_index = null)
     var planned_eventStatusID = getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
@@ -460,6 +472,8 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
 
 
     var event_data_block =  $("<div/>").addClass("row data-edit").attr("id","eventlog_event_data_block").prop("hidden","true");
+    event_data_block.append($("<hr/>").addClass("my-3"));
+    event_data_block.append($("<p/>").append($("<b/>").html("Event data")));
 
     var event_form_container = $("<div/>");
     event_data_block.append(event_form_container);
@@ -469,16 +483,17 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     event_param_block.find('[name="EventID"]').on("change",function(){
         event_template = $(this).val();
         if(event_template===null){
-            event_form_container.empty().removeClass("row mb-3");
+            event_form_container.empty();
             return;
         };
         var event_params = getDefEntryFieldWhere('event_definitions','EventID', event_template,'EventFormJSON');
         if(event_params===null){
-            event_form_container.empty().removeClass("row mb-3");
+            event_form_container.empty();
             return;
         };
-        event_form_container.empty().addClass("row mb-3");
+        event_form_container.empty();
         showCustomArgs(event_form_container,JSON.parse(event_params));
+        $(document).find("#dataeditSwitch").trigger("change");
     });
 
 
@@ -515,21 +530,41 @@ function show_eventlog_modal_add(container, table){
         var is_checked = $(dataedit_switch).is(":checked");
         if(is_checked) {
             form.find(".data-edit").prop("hidden",false);
+            $.each(form.find(".data-edit").find("[data-name]"),function(index,entry){
+                $(entry).attr("name",$(entry).attr("data-name"));
+            })
             form.find(".data-edit").find(".data-required").prop('required',true);
+
         }
         else{
             form.find(".data-edit").prop("hidden",true);
-            form.find(".data-edit").find(".data-required").prop("required",false);
+            form.find(".data-edit").find(".data-required").removeAttr("name").prop("required",false);
         }
     })
 
     modal_body.append(form);
 
-
     $(modal).on('hidden.bs.modal',function(){
         $( document ).trigger("_release",["add"]);
         form[0].reset();
     })
+
+    // if (!$(form)[0].checkValidity()) {
+            
+    //     $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
+    //         if($(entry).prop('required')&& ($(entry).val()==null || $(entry).val()=="")){
+    //             expertedit_switch.prop("checked",true).trigger("change");
+    //             return false;
+    //         }
+    //     })
+
+    //     $(form)[0].reportValidity();
+    // }
+    // else{
+    //     form.trigger("submit",true);
+    //     expertedit_switch.trigger("change");
+    // }
+
 
     form.on('submit',function(e){
         e.preventDefault();

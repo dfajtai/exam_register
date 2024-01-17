@@ -5,15 +5,22 @@ var event_planner_content_name = "";
 var event_planner_lock_list = [];
 
 
-function event_insert_ajax(params,callback = null) {
+function event_insert_ajax(event_info,callback = null) {
     if(callback === null){
         callback = function(){};
     }
+    
+    var data = {};
+    data["event_info"]=event_info;
+    if(!isObject(event_info)){
+        data["multiple"] = true;
+    }
+    
     $.ajax({
         type: "POST",
         url: 'php/insert_event.php',
         // dataType: "json",
-        data: ({event_info:params}),
+        data: data,
         success: function(result){
             callback();
         }
@@ -613,12 +620,13 @@ function show_event_planner_modal_make(container, table){
             },
             callback: function (result) {
                 if(result){
+                    var event_data = [];
                     $.each(selected_subjects,function(selected_subject_index,subject_info){
                         // console.log(subject_info);
                         $.each(current_event_planner,function(_event_index,event_info){
                             // console.log(event_info);
 
-                            var event_data = {"EventName": parse_val(event_info["EventName"]),
+                            var _event_data = {"EventName": parse_val(event_info["EventName"]),
                                               "EventStatus":parse_val(event_info["EventStatus"]),
                                               "EventPlannedTime":parse_val(event_info["EventPlannedTime"]),
                                               "EventID":parse_val(event_info["EventID"]),
@@ -627,9 +635,10 @@ function show_event_planner_modal_make(container, table){
                                               "EventStudy":parse_val(subject_info["StudyID"]),
                                               "EventSubject":parse_val(subject_info["SubjectIndex"])
                                             }
-                            event_insert_ajax(event_data);
+                            event_data.push(_event_data);
                         });
                     });
+                    event_insert_ajax(event_data);
                 }
             }
             });
