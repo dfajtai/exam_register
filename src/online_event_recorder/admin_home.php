@@ -155,10 +155,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event Argument Editor</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event Planner</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event Log</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event Change Log</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event template editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event planner</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event log</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event change log</a></li>
 						</ul>
 					</li>
 
@@ -223,7 +223,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					var main_container = $("#main_container");
 					$("#main_container").empty();
 					
-					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event argument editor"));
+					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event template editor"));
 					main_container.append(_title);
 
 					show_event_args_editor(main_container);		

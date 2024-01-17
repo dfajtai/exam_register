@@ -92,7 +92,7 @@ function createSubjectTable(container,table_id, simplify = false){
         var toolbar_content = $("<div/>").addClass("input-group col-md-12");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
         study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
-        showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+        showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
         toolbar_content.append($("<span/>").attr("for","studySelect").html("Filter by study: ").addClass("input-group-text"))
         toolbar_content.append(study_dropdown);
         toolbar.append(toolbar_content);
@@ -106,7 +106,7 @@ function createSubjectTable(container,table_id, simplify = false){
         var study_selector = $("<div/>").addClass("row mt-3 mb-3");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
         study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
-        showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+        showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
     
         study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Filter by study: "));
         study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));
@@ -523,7 +523,7 @@ function initSubjectModalImport(container,table){
     var study_selector = $("<div/>").addClass("row mt-3 mb-3");
     var study_dropdown = $("<select/>").addClass("form-control").attr("id","targetStudySelect").attr("type","text").prop("required",true);
     study_dropdown.append($("<option/>").html("Choose study...").prop('selected',true).attr("value",""));
-    showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+    showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
 
     study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Select target Study: "));
     study_selector.append($("<div/>").addClass("col-md-9").append(study_dropdown));

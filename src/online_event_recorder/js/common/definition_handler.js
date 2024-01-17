@@ -1,5 +1,7 @@
 var defs = Object();
 
+var users = {};
+
 function simpleChecksum(input){
     return (CRC32.str(JSON.stringify(input))>>>0).toString(16);
 }
@@ -45,6 +47,7 @@ function updateRemoteDefinitionChecksum(){
             
     );
 }
+
 
 
 function updateLocalDefinitionDatabase(callback){
@@ -142,4 +145,14 @@ function updateLocalDefinitionDatabase(callback){
             }
         })
 
+    $.ajax({type:"GET",
+    url:"php/retrieve_table_where.php",
+    dataType:"json",
+    data:({table_name:"users",columns:["UserID","UserName"]}),
+    success:function(result){
+        $.each(result,function(index,data){
+            users[data["UserID"]] = data["UserName"];
+        })
+        // console.log(users);
+    }});
 }

@@ -52,7 +52,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     var study_selector = $("<div/>").addClass("input-group").attr("id","studySelector");
     var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
     study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
-    showAllDefs(study_dropdown,"studies","StudyID","StudyName");
+    showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
     study_selector.append($("<span/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
     study_selector.append(study_dropdown);
 

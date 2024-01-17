@@ -7,8 +7,6 @@ var eventlog_visible_subjects = null;
 var eventlog_visible_subjects_info = null;
 var eventlog_subject_string_lookup = {};
 
-var deleted_status =  null;
-var planned_status =  null;
 
 function eventlog_retrieve_all_ajax(params) {
     $.ajax({
@@ -137,41 +135,66 @@ function eventlog_query_params(params){
 function eventlog_detail_view_formatter(index, row) {
     var detail_view_content = $('<div/>');
     
-    var detail_info = $('<p/>');
+    var detail_info = $('<p/>').append($("<b/>").html("Event parameters<br/>"));
     var hidden_keys = ["state","EventData"]
     $.each(row, function (key, value) {
         if(!(hidden_keys.includes(key))){
-            detail_info.append($("<b/>").html(key+": "));
-            detail_info.append(value+" ");
+            detail_info.append($("<i/>").html(key+": "));
+            detail_info.append(value+"&emsp;");  
         }
 
     })
 
     detail_view_content.append($("<div/>").addClass("me-3").append(detail_info));
 
-
     var event_data = JSON.parse(row["EventData"]);
+    
+    var detail_data_info = $('<p/>').append($("<b/>").html("Event data<br/>"));
+    detail_view_content.append($("<div/>").addClass("me-3").append(detail_data_info));
+    
     if(event_data!==null && isObject(event_data)){
-        var detail_data_info = $('<p/>').append($("<b/>").html("EventData<br/>"));
-        detail_view_content.append($("<div/>").addClass("me-3").append(detail_data_info));
-        var detail_view_data_view= $('<div/>');
-        detail_view_content.append(detail_view_data_view);
-        
         $.each(event_data, function (key, value) {
             detail_data_info.append($("<i/>").html(key+": "));
-            detail_data_info.append(value+" ");    
+            detail_data_info.append(value+"&emsp;");    
         })
+    }
+    else{
+        detail_data_info.append($("<i/>").html("Event data is not defined yet."));
+    }
 
-        var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
-        showCustomArgs(detail_view_data_view,JSON.parse(event_params));
+    var detail_view_data_form = $('<form/>').addClass("needs-validation");
+    detail_view_content.append(detail_view_data_form);
 
-        $(detail_view_data_view).find("input[name]").each(function(){
+    var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
+    showCustomArgs(detail_view_data_form,JSON.parse(event_params));
+
+    var update_data_btn = $("<button/>").addClass("btn btn-outline-primary my-2 w-100").attr("type","submit").html("Update event data");
+    detail_view_data_form.append(update_data_btn);
+
+    detail_view_data_form.on('submit',function(e){
+        e.preventDefault();
+        
+        var event_data = {};
+        $.each($(this).serializeArray(), function(i, field) {
+            // console.log(field);
+            event_data[field.name] = get_readable_value(detail_view_data_form,field.name,field.value);
+        });
+
+        event_data = nullify_obj(event_data);
+        eventlog_update_ajax(event_index = parse_val( parse_val(row["EventIndex"])),
+            event_info = {"EventData":event_data},
+            function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+    })
+
+    // show values
+    if(event_data!==null && isObject(event_data)){
+        $(detail_view_data_form).find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in event_data){
                 $(this).val(event_data[name]).trigger("change");
             }
         });
-        $(detail_view_data_view).find("textarea[name]").each(function(){
+        $(detail_view_data_form).find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in event_data){
 
@@ -184,15 +207,14 @@ function eventlog_detail_view_formatter(index, row) {
             }
         });
 
-        $(detail_view_data_view).find("select[name]").each(function(){
+        $(detail_view_data_form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in event_data){
-                console.log(name);
-                $(this).val(event_data[name]).trigger("change");
+                set_with_value($(this),event_data[name]);
+                $(this).trigger("change");
             }
         });
     }
-
 
     // return detail_view_content.prop("outerHTML");
     return detail_view_content
@@ -361,7 +383,9 @@ function create_eventlog_table(container, table_id, simplify = false){
                 {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},
                 {title: 'Location', field : 'EventLocation', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "locationFormatter",},
                 {title: 'Changed', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",visible:false},
+                {title: 'ModifiedBy', field : 'EventModifiedBy', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "userFormatter",visible:false},
                 {title: 'Planned', field : 'EventPlannedTime', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",},
+                {title: 'Data', field : 'EventData', align:'center', sortable:false, searchable:false, forceExport: true, formatter: "jsonFormatter", visible:false},
 
               ],
 
@@ -515,20 +539,15 @@ function show_eventlog_modal_add(container, table){
         var event_def_keys = ["EventID","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
 
         $.each($(this).serializeArray(), function(i, field) {
-            if(!(field.value==""||field.value==null)) {
-                if(event_def_keys.includes(field.name)){
-                    event_params[field.name] = field.value;
-                }
-                else{
-                    event_data[field.name] = field.value;
-                }
+            if(event_def_keys.includes(field.name)){
+                event_params[field.name] = parse_val(field.value==""?null:field.value);
+            }
+            else{
+                event_data[field.name] = get_readable_value(form,field.name,field.value);
             }
         });
 
         event_params["EventData"] = nullify_obj(event_data);
-
-
-
         event_params["EventStudy"] = getEntryFieldWhere(eventlog_visible_subjects_info,"SubjectIndex",event_params["EventSubject"],"StudyID");
 
         // console.log(event_params);
@@ -552,6 +571,7 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
     form.empty();
 
     var event_param_block = $("<div/>").addClass("expert-edit");
+    event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
     subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
     var event_params =   [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":false},
@@ -568,15 +588,10 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
     if(!expert_edit){event_param_block.prop("hidden",true);}
 
     var event_data_block = $("<div/>").addClass("data-edit");
+    event_data_block.append($("<p/>").append($("<b/>").html("Event data")));
     var event_data_params = getDefEntryFieldWhere('event_definitions','EventID', event_id,'EventFormJSON');
     if(event_data_params!==null){
         showCustomArgs(event_data_block,JSON.parse(event_data_params));
-        // if(expert_edit){
-        //     event_data_block.find(".data-required").prop('required',true)
-        // }
-        // else{
-        //     event_data_block.find(".data-required").prop('required',false)
-        // }
     }
 
     event_data_block.append($("<hr/>").addClass("my-3"));
@@ -624,7 +639,7 @@ function show_eventlog_modal_edit(container, table, index){
 
     var modal_footer = modal.find(".modal-footer");
     modal_footer.prepend($("<button/>").addClass("btn btn-outline-primary").attr("id","revert_form").attr("aria-label","Revert").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","clear_data").attr("aria-label","Remove data").html($("<i/>").addClass("fa fa-text-slash me-2").attr("aria-hidden","true")).append("Clear data"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","clear_data").attr("aria-label","Remove data").html($("<i/>").addClass("fa fa-text-slash me-2").attr("aria-hidden","true")).append("Empty event data"));
     modal_footer.prepend($("<button/>").addClass("btn btn-outline-success").attr("id","add_copy").attr("aria-label","Add as copy").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Add as copy"));
 
 
@@ -659,7 +674,7 @@ function show_eventlog_modal_edit(container, table, index){
         $(form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                $(this).val(entry[name]);
+                set_with_value($(this),entry[name]);
                 if(trigger_select_change) $(this).trigger("change");
             }
         });
@@ -691,7 +706,7 @@ function show_eventlog_modal_edit(container, table, index){
         $(form).find("select[name]").each(function(){
             var name = $(this).attr("name");
             if(name in event_data){
-                $(this).val(event_data[name]);
+                set_with_value($(this),event_data[name]);
                 if(trigger_select_change) $(this).trigger("change");
             }
         });
@@ -705,7 +720,7 @@ function show_eventlog_modal_edit(container, table, index){
     var _switch_group = $("<div/>").addClass("form-check form-switch");
     var expertedit_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","experteditSwitch");
     _switch_group.append(expertedit_switch);
-    _switch_group.append($("<label/>").addClass("form-check-label").attr("for","experteditSwitch").html("Show all arguments"));
+    _switch_group.append($("<label/>").addClass("form-check-label").attr("for","experteditSwitch").html("Show event parameters"));
     modal_body.append($("<div/>").addClass("input-group-text  mb-3").append(_switch_group));
 
     // hide event parameter inputs (subject, eventID, ...)
@@ -748,7 +763,7 @@ function show_eventlog_modal_edit(container, table, index){
                     event_params[field.name] = parse_val(field.value==""?null:field.value);
                 }
                 else{
-                    event_data[field.name] = parse_val(field.value==""?null:field.value);
+                    event_data[field.name] = get_readable_value(form,field.name,field.value);
                 }
             // }
         });
@@ -759,7 +774,7 @@ function show_eventlog_modal_edit(container, table, index){
 
         event_params["EventStudy"] = getEntryFieldWhere(eventlog_visible_subjects_info,"SubjectIndex",entry["EventSubject"],"StudyID");
 
-        console.log(event_params);
+        // console.log(event_params);
 
         if(as_copy){
             eventlog_insert_ajax(event_params,function(){table.bootstrapTable('refresh')});
@@ -895,6 +910,4 @@ function show_event_log_handler(container){
 
     toolbar.find(".needs-select").addClass("disabled");
 
-    deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-    planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 }

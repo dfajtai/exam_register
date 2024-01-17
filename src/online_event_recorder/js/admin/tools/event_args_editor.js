@@ -73,7 +73,7 @@ function eventOperateFormatter(value, row, index) {
     container.append(up_down_gorup);
 
     var btn_edit = $("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit"));
-    var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"))
+    var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
     btn_edit.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit");
     btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove");
 
@@ -273,7 +273,7 @@ function event_args_input_form(container){
             _unitType.append($("<label/>").addClass("form-label").attr("for","unitTypeSelect").html("Field Unit Type"));
             var type_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitTypeSelect");
             type_select_dropdow.append($("<option/>").html("Choose Unit Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-            showAllDefs(type_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName");
+            showAllDefs(type_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName","UnitTypeName");
             _unitType.append(type_select_dropdow);
             dtypeNumericGroup.append(_unitType);
 
@@ -281,7 +281,7 @@ function event_args_input_form(container){
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
             var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit").prop('required',true);;
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-            showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit");
+            showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit","UnitUnit");
             _unit.append(unit_select_dropdow);
             dtypeNumericGroup.append(_unit);
 
@@ -315,7 +315,7 @@ function event_args_input_form(container){
             _unitType.append($("<label/>").addClass("form-label").attr("for","unitTypeSelect").html("Field Unit Type"));
             var type_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitTypeSelect");
             type_select_dropdow.append($("<option/>").html("Choose Unit Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-            showAllDefs(type_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName");
+            showAllDefs(type_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName","UnitTypeName");
             _unitType.append(type_select_dropdow);
             dtypeNumericGroup.append(_unitType);
 
@@ -323,7 +323,7 @@ function event_args_input_form(container){
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
             var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit");
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-            showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit");
+            showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit","UnitUnit");
             _unit.append(unit_select_dropdow);
             dtypeNumericGroup.append(_unit);
 

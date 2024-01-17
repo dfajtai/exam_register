@@ -107,3 +107,27 @@ function datetimeFormatter(value,row){
     }
 }
 
+function jsonFormatter(value,row){
+    var val = nullify_obj(JSON.parse(value));
+    if(val==null) return;
+    try {
+        var res = "";
+        $.each(val,function(key,_val){
+            res+="'"+key+"'='"+_val+"', ";
+        })
+        return res.slice(0,-2);
+    } catch (error) {
+        return;
+    }
+}
+
+function userFormatter(value,row){
+    var uid = parse_val(value);
+
+    if(uid==null) return;
+    if(users == null) return;
+    if(!isObject(users)) return;
+    
+    if(uid in users) return users[uid];
+    return "Unknown user '" + String(uid) + "'";
+}

@@ -1,10 +1,12 @@
-function showAllDefs(select_object, def_name, _key, _label){
+function showAllDefs(select_object, def_name, _key, _label, _readable = null){
     $.each(defs[def_name],function(key,entry){
         var opt = $("<option/>").html(entry[_label]).attr("value",entry[_key]);
         // console.log(opt);
         $.each(entry,function(prop_key,prop_val){
-            if(!prop_key.toLowerCase().includes("desc"))
-            opt.attr(prop_key,prop_val);
+            if(!prop_key.toLowerCase().includes("desc")){
+                opt.attr(prop_key,prop_val);
+                if(prop_key == _readable) opt.attr("data-readable",prop_val);
+            }
         })
 
         select_object.append(opt);

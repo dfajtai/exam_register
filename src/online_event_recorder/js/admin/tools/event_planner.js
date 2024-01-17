@@ -118,7 +118,7 @@ function eventPlannerOperateFormatter(value, row, index) {
     $.each(row, function (key, value) {
         if(!(hidden_keys.includes(key))){
             detail_info.append($("<b/>").html(key+": "));
-            detail_info.append(value+" ");
+            detail_info.append(value+"&emsp;");
         }
 
     })

@@ -89,3 +89,8 @@ function defHasDuplicates(def_name, key){
 
     return hasDuplicates(vals);
 }
+
+
+
+var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+var planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
