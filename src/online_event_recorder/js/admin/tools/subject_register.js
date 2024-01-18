@@ -48,19 +48,21 @@ function subject_insert_ajax(subject_info,callback = null) {
     });
 }
 
-function subject_update_ajax(key_info,params,callback) {
+function subject_update_ajax(key_info,params,callback,return_ajax = false) {
     if(callback === null){
         callback = function(){};
     }
-    $.ajax({
-    type: "POST",
-    url: 'php/update_subject.php',
-    // dataType: "json",
-    data: ({subject_index:key_info, subject_info:params}),
-    success: function(result){
-        callback();
-    }
+    var ajax = $.ajax({
+        type: "POST",
+        url: 'php/update_subject.php',
+        // dataType: "json",
+        data: ({subject_index:key_info, subject_info:params}),
+        success: function(result){
+            callback();
+        }
     });
+    if(return_ajax) return ajax;
+    $.when(ajax);
 }
 
 
@@ -447,6 +449,7 @@ function initSubjectBatchModalEdit(container, table){
    
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["batch_edit"]);
+        form[0].reset();
     })
 
     modal_footer.find("#clear_form").click(function(){
@@ -486,14 +489,20 @@ function initSubjectBatchModalEdit(container, table){
 
         var selection =  table.bootstrapTable('getSelections');
 
+
+        var ajax_list = [];
         $.each(selection, function(index,entry){
-            subject_update_ajax(entry["SubjectIndex"],values,function(){table.bootstrapTable('refresh')});
+            var ajax = subject_update_ajax(entry["SubjectIndex"],values,function(){},true);
+            ajax_list.push(ajax);
         })
-        
-        modal.modal('hide');
-        form[0].reset();
+
+        $.when.apply(this,ajax_list).then(function(){
+            // console.log("DONE!");
+            table.bootstrapTable("refresh");
+            modal.modal("hide");
+        })
     });
-    
+
     return modal_id;
 }
 
