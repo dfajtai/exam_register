@@ -58,11 +58,11 @@ function eventlog_insert_ajax(event_info,callback = null) {
     });
 }
 
-function eventlog_update_ajax(event_index, event_info,callback = null) {
+function eventlog_update_ajax(event_index, event_info, callback = null, return_ajax = false) {
     if(callback === null){
         callback = function(){};
     }
-    $.ajax({
+    var ajax = $.ajax({
         type: "POST",
         url: 'php/update_event.php',
         // dataType: "json",
@@ -71,6 +71,8 @@ function eventlog_update_ajax(event_index, event_info,callback = null) {
             callback();
         }
     });
+    if(return_ajax) return ajax;
+    $.when(ajax);
 }
 
 
@@ -296,6 +298,11 @@ function create_eventlog_table(container, table_id, simplify = false){
                     eventlog_insert_ajax(data,function(){table.bootstrapTable("refresh")});
                 })
 
+                toolbar.find("#toolbar_batch_edit").on("click", function(){
+                    show_eventlog_batch_edit(eventlog_content, table);
+
+                });
+
                 show_deleted_switch.on("change",function(){
                     var is_checked = $(this).prop("checked");
                     if(is_checked){
@@ -460,11 +467,11 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
 
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
     subject_select_from_pool(event_param_block,subject_pool, subject_index = null)
-    var planned_eventStatusID = getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
+
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
         {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
-        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_eventStatusID},
+        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_status},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
@@ -477,7 +484,7 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     form.append(event_param_block);
 
 
-    var event_data_block =  $("<div/>").addClass("row data-edit").attr("id","eventlog_event_data_block").prop("hidden","true");
+    var event_data_block =  $("<div/>").addClass("data-edit").attr("id","eventlog_event_data_block").prop("hidden","true");
     event_data_block.append($("<hr/>").addClass("my-3"));
     event_data_block.append($("<p/>").append($("<b/>").html("Event data")));
 
@@ -554,23 +561,6 @@ function show_eventlog_modal_add(container, table){
         $( document ).trigger("_release",["add"]);
         form[0].reset();
     })
-
-    // if (!$(form)[0].checkValidity()) {
-            
-    //     $.each(form.find(".expert-edit").find("[data-name]"),function(index,entry){
-    //         if($(entry).prop('required')&& ($(entry).val()==null || $(entry).val()=="")){
-    //             expertedit_switch.prop("checked",true).trigger("change");
-    //             return false;
-    //         }
-    //     })
-
-    //     $(form)[0].reportValidity();
-    // }
-    // else{
-    //     form.trigger("submit",true);
-    //     expertedit_switch.trigger("change");
-    // }
-
 
     form.on('submit',function(e){
         e.preventDefault();
@@ -787,7 +777,7 @@ function show_eventlog_modal_edit(container, table, index){
     modal_body.append(form);
 
     $(modal).on('hidden.bs.modal',function(){
-        $( document ).trigger("_release",["edit"]);
+        // $( document ).trigger("_release",["edit"]);
         form[0].reset();
     });
 
@@ -896,7 +886,224 @@ function show_eventlog_modal_edit(container, table, index){
     modal.modal('show');
 }
 
+function show_eventlog_batch_edit(container, table){
+    var modal_id = "eventlog_modalEdit";
+    var form_id = modal_id+"Form";
 
+    var selected =table.bootstrapTable("getSelections");
+
+    if(selected.length==0){
+        return
+    }
+
+    container.find("#"+modal_id).remove();
+
+    eventlog_modal(container, modal_id, "Edit selected events");
+    
+    var modal = container.find("#"+modal_id);
+    var modal_body = modal.find(".modal-body");
+
+    var modal_footer = modal.find(".modal-footer");
+    modal_footer.find("#clear_form").remove();
+
+    var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
+    
+    var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
+    event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
+    subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
+    $(event_param_block.find("label")[0]).html("New subject");
+
+    var event_params_config =  [
+        {"FieldName":"EventName","FieldLabel":"New event name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
+        {"FieldName":"EventID","FieldLabel":"New event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventStatus","FieldLabel":"New status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true},
+        {"FieldName":"EventPlannedTime","FieldLabel":"New planned time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
+        {"FieldName":"EventLocation","FieldLabel":"New location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
+        {"FieldName":"EventComment","FieldLabel":"New comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
+        ];
+
+    showCustomArgs(event_param_block,event_params_config);
+       
+    event_param_block.find('.data-required').prop("required",false).removeClass("border border-2 border-dark");
+    event_param_block.find('[name="EventPlannedTime"]').val(null);
+    
+    var nullable_elements = $(event_param_block).find(":not(.data-required)[name]");
+    // iterate over nullable elments
+    $.each(nullable_elements,function(index, element){
+        var element_name = $(element).prop("name");
+        var switch_id = "remove"+element_name+"Switch";
+
+        var remove_prop_switch_group = $("<div/>").addClass("form-check form-switch");
+        var remove_prop_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id",switch_id);
+        remove_prop_switch.addClass("prop-remove").attr("prop-name",element_name);
+        remove_prop_switch_group.append(remove_prop_switch);
+        remove_prop_switch_group.append($("<label/>").addClass("form-check-label").attr("for",switch_id).html("Set '"+ element_name +"' parameter to 'NULL'."));
+        event_param_block.append($("<div/>").addClass("mb-1").append(remove_prop_switch_group));
+    })
+
+
+    event_param_block.append($("<hr/>").addClass("my-3"));
+    var remove_data_switch_group = $("<div/>").addClass("form-check form-switch");
+    var remove_data_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","removedataSwitch");
+    remove_data_switch_group.append(remove_data_switch);
+    remove_data_switch_group.append($("<label/>").addClass("form-check-label").attr("for","removedataSwitch").html("Remove data - use this on your own responsibility"));
+    event_param_block.append($("<div/>").addClass("mb-3").append(remove_data_switch_group));
+
+
+    form.append(event_param_block);
+    modal_body.append(form);
+    
+    var modal_body_btns = $("<div/>").addClass("row");
+    var btn_batch_duplicate = $("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_duplicate").attr("aria-label","Duplicate events with new parameters").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Duplicate events with new parameters");
+    var btn_batch_update =$("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_update").attr("aria-label","Update selected events").html($("<i/>").addClass("fa fa-arrows-spin me-2").attr("aria-hidden","true")).append("Update selected events");
+    modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_duplicate));
+    modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_update));
+    modal_body.append($("<div/>").append(modal_body_btns));
+
+    function read_settings(){
+        var remove_data = remove_data_switch.prop("checked");
+        var event_params = {};
+        $.each($(form).serializeArray(), function(i, field) {
+            // console.log(field);
+
+            // if it is not required it can be empty
+            var element = $(event_param_block).find(":not(.data-required)[name='"+field.name+"']");
+            if(element.length>0){
+                // but only if it is allowed to...
+                var checkbox = $(event_param_block).find(".prop-remove[prop-name='"+field.name+"']");
+                if(checkbox.length>0){
+                    var allow_remove = $(checkbox[0]).prop("checked");
+                    if(allow_remove){
+                        event_params[field.name] = null;
+                        return true;
+                    }
+                }
+            }
+            // except null values are skipped
+            var parsed_val = parse_val(field.value);
+            if(parsed_val!=null)
+                event_params[field.name] = parsed_val;
+            
+        });
+        
+        if(remove_data){ 
+            event_params["EventData"] = null;
+        }
+
+        return event_params;
+    }
+
+    btn_batch_duplicate.on("click",function(){
+
+        var update_params = read_settings();
+        console.log(update_params);
+
+        var message = 'You are going to duplicate the selected';
+        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> event';
+        if(Object.entries(update_params).length>0){
+            message+=', with the following parameters updated:<br/>';
+            $.each(update_params,function(key,value){
+                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+            });
+        }
+        else{
+            message+=".";
+        }
+
+        bootbox.confirm({
+            message: message + '<br/>Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    var event_info_list = []
+                    $.each(selected,function(index,entry){
+                        var event_info = {... entry};
+                        delete event_info.EventIndex;
+                        delete event_info.EventModifiedAt;
+                        delete event_info.EventModifiedBy;
+                        delete event_info.state;
+
+                        event_info["EventData"] = JSON.parse(event_info["EventData"]);
+
+                        $.each(update_params,function(key,value){
+                            event_info[key]=value;
+                        });
+
+                        event_info_list.push(event_info);
+                    })
+                    event_insert_ajax(event_info_list,function(){
+                        table.bootstrapTable("refresh");
+                        modal.modal("hide");
+                    });
+                }
+            }
+            });
+    })
+
+    btn_batch_update.on("click",function(){
+
+        var update_params = read_settings();
+        console.log(update_params);
+
+        var message = 'You are going to update the selected';
+        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> event';
+        if(Object.entries(update_params).length>0){
+            message+=', with the following parameters updated:<br/>';
+            $.each(update_params,function(key,value){
+                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+            });
+        }
+        else{
+            message+=".";
+        }
+
+        bootbox.confirm({
+            message: message + '<br/>Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    // bundle multiple update together
+                    var ajax_list = [];
+                    $.each(selected,function(index,entry){
+                        var ajax = eventlog_update_ajax(parse_val(entry.EventIndex), update_params,function(){
+                            // console.log(parse_val(entry.EventIndex));
+                        },true);
+                        ajax_list.push(ajax);
+                    });
+                    $.when.apply(this,ajax_list).then(function(){
+                        // console.log("DONE!");
+                        table.bootstrapTable("refresh");
+                        modal.modal("hide");
+                    })
+                }
+            }
+            });
+    })
+
+    $(modal).on('hidden.bs.modal',function(){
+        form[0].reset();
+    });
+
+    modal.modal('show');
+}
 
 
 function eventlog_modal(container, modal_id, title){
