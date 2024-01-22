@@ -91,6 +91,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/subject_register.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
+	<script defer src="js/admin/tools/event_changelog_handler.js"></script>
 
 	<script defer src="js/common/inactivity_protection.js"></script>
 
@@ -116,7 +117,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarAdminLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarAdminLink">
+						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarAdminLink">
 							<li>
 								<a class="dropdown-item" href="#" onclick="show_table('users')">Manage users</a>
 							</li>
@@ -129,7 +130,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarDefsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Definitions</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarDefsLink">
+						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDefsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('locations')">Location definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('bodyparts')">Bodypart definitions</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_table('unit_types')">Unit Type definitions</a></li>
@@ -145,7 +146,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarSubjectsLink">
+						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarSubjectsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Subjects register</a>
 							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
@@ -154,7 +155,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarEventsLink">
+						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event template editor</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event planner</a></li>
@@ -167,8 +168,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 				</ul>
 				<div class="d-flex ">
-					<a class="nav-item btn btn-outline-success ms-3 me-2" href="#" id="become_user_button" >USER mode</a>
-					<a class="nav-item btn btn-outline-primary " href="logout.php" >Logout</a>
+					<a class="nav-item btn btn-outline-light ms-3 me-2" href="#" id="become_user_button" >USER mode</a>
+					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
 				</div>
 			</div>
 
@@ -294,6 +295,25 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
+		function show_event_change_log_tool(){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event change log"));
+				main_container.append(_title);
+
+				show_event_changelog_handler(main_container);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","EventChangeLog");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
+		}
+
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
 				clearAllStatusFromUrl();
@@ -360,6 +380,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="EventPlanner") show_event_planner_tool();
 					if(tool=="SubjectRegister") show_subject_register_tool();
 					if(tool=="EventLog") show_event_log_tool();
+					if(tool=="EventChangeLog") show_event_change_log_tool();
 				}
 				else{
 					show_table("users");

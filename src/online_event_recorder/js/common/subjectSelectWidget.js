@@ -49,11 +49,11 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     subject_selector.append($("<button/>").addClass("btn btn-outline-secondary").attr("id","clearSubject").attr("type","button").append($("<i/>").addClass("fa fa-solid fa-x")).attr("type","text"));
 
 
-    var study_selector = $("<div/>").addClass("input-group").attr("id","studySelector");
+    var study_selector = $("<div/>").addClass("input-group h-100").attr("id","studySelector");
     var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
     study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
     showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
-    study_selector.append($("<span/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
+    study_selector.append($("<label/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
     study_selector.append(study_dropdown);
 
     var advanced_search = $("<button/>").addClass("btn btn-outline-dark col-sm-12").html("Advanced search")

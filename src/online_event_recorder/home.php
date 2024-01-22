@@ -100,7 +100,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 				</ul>
 				<div class="d-flex ">
-					<a class="nav-item btn btn-outline-primary " href="logout.php" >Logout</a>
+					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
 				</div>
 			</div>
 		</div>

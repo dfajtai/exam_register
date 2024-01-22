@@ -76,7 +76,7 @@ function eventlog_update_ajax(event_index, event_info, callback = null, return_a
 }
 
 
-function subjectFormatter(value,row){
+function eventlog_subjectFormatter(value,row){
     if(value==null) return;
     var res = null;
     if(eventlog_visible_subjects.length==0) return res;
@@ -400,7 +400,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.eventlog_operate_events, formatter: eventlog_operate_formatter, forceHide:true},
                 {title: '#', field : 'EventIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
-                {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "subjectFormatter"},
+                {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventlog_subjectFormatter"},
                 {title: 'Study', field : 'EventStudy', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
                 {title: 'Event Name', field : 'EventName', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
@@ -418,7 +418,7 @@ function create_eventlog_table(container, table_id, simplify = false){
             smartDisplay:true,
             detailFormatter:eventlog_detail_view_formatter,
 
-            idField:"SubjectIndex",
+            idField:"EventID",
 
             showExport:!simplify,
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],
@@ -428,7 +428,7 @@ function create_eventlog_table(container, table_id, simplify = false){
 }
 
 
-function subject_select_from_pool(container, subject_pool, subject_index = null){
+function eventlog_subject_select_from_pool(container, subject_pool, subject_index = null){
     var subject_select =  $("<div/>").addClass("row mb-2").attr("id","eventlog_subject_input_block");
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
@@ -466,7 +466,7 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
 
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    subject_select_from_pool(event_param_block,subject_pool, subject_index = null)
+    eventlog_subject_select_from_pool(event_param_block,subject_pool, subject_index = null)
 
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
@@ -603,7 +603,7 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
 
     var event_param_block = $("<div/>").addClass("expert-edit");
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
+    eventlog_subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
     var event_params =   [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":false},
         {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
@@ -910,7 +910,7 @@ function show_eventlog_batch_edit(container, table){
     
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
+    eventlog_subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
     $(event_param_block.find("label")[0]).html("New subject");
 
     var event_params_config =  [

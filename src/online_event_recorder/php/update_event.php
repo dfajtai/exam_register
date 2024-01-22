@@ -70,7 +70,9 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
         
         if(count($old_event_info) >0){
             $_old_event_info = $old_event_info[0];
-            $old_event_data = ['EventStatus' => $_old_event_info["EventStatus"],
+            $old_event_data = [
+                            'EventID' => $_old_event_info["EventID"],
+                            'EventStatus' => $_old_event_info["EventStatus"],
                             'EventPlannedTime' => $_old_event_info["EventPlannedTime"],
                             'EventComment' => $_old_event_info["EventComment"],
                             'EventData' => $_old_event_info["EventData"],

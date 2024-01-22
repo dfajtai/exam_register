@@ -7,6 +7,17 @@ function getCol(objlist, col){
     return vals;
 }
 
+function onlyUnique(value, index, array) {
+    return array.indexOf(value) === index;
+}
+
+function getColUnique(objlist, col){
+    var vals = getCol(objlist,col);
+    var unique = vals.filter(onlyUnique);
+
+    return unique;
+}
+
 function getEntryWhere(objlist, key, value){
     var result_entry = null;
     $.each(objlist,function(index,entry){
