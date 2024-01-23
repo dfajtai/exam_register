@@ -1,5 +1,38 @@
 
 function subjectSelectWidget(container, study_id = null, callback = null){
+    var subject_select_widget_debug = false;
+
+    var lastSelectedIndices = [];
+    var lastSelectedInfo = [];
+
+
+    // callback double fire prevention
+    function regulated_callback(new_indices, new_info){
+        var _new_indices = nullify_array(new_indices,true);
+        var _new_info = nullify_array(new_info,true);
+
+        var _lastSelectedIndices = nullify_array(lastSelectedIndices,true);
+        var _lastSelectedInfo = nullify_array(lastSelectedInfo,true);
+        
+
+        if(subject_select_widget_debug) console.log(JSON.stringify(_lastSelectedIndices) + " -> " + JSON.stringify(_new_indices));
+        if(subject_select_widget_debug) console.log(JSON.stringify(_lastSelectedInfo) + " -> " + JSON.stringify(_new_info));
+
+        if((_new_indices!=_lastSelectedIndices)&&(_new_info!=_lastSelectedInfo)){
+            lastSelectedIndices = new_indices;
+            lastSelectedInfo = new_info;
+            if(callback!=null){
+                if(subject_select_widget_debug) console.log("SubjectSelectWidget callback called.")
+                callback(new_indices,new_info);
+            }
+        }
+        else{
+            if(subject_select_widget_debug) console.log("SubjectSelectWidget callback skipped.")
+        }
+        
+    }
+
+
     function subject_retrieve_all_ajax(callback = null) {
         if(callback === null){
             callback = function(){};
@@ -142,10 +175,17 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             ajax = subject_retrieve_all_ajax;
         }
         else{
-            ajax = function(callback){return subject_retrieve_ajax({"study_id":selected},callback)};
+            ajax = function(callback){
+                if(subject_select_widget_debug) console.log("study changed");
+                return subject_retrieve_ajax({"study_id":selected},callback);
+            };
         }
 
         ajax(function(res){       
+            $(filter_switch).prop("checked",false).trigger('change');
+            // $(filter_switch).trigger('change');
+
+
             // if(res.length>0)
             // {
             //     $.each(res,function(index,subject_info){
@@ -170,6 +210,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
                 searchContain: true,
                 data: res
             })
+
             // }).promise().done(function(){
             //     if(old_subject_info){
             //         let oldtext = old_subject_info.Name + " ["+old_subject_info.SubjectID+"]";
@@ -177,17 +218,18 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             //     }
             // });
 
-            $(filter_switch).trigger('change');
-
 
             $(subject_input).on('change:flexdatalist', function(event, set, options) {
                 // console.log(set.value);
                 // console.log(set.text);
                 // console.log(options.data);
                 if(set.text==""){
-                    show_selected_subjects(result_bar,null);
+                    show_selected_subjects(result_bar,null);                    
+                    
+                    if(filter_switch.is(":checked")) return;
                     if(callback!=null)
-                        callback([],[]);
+                        if(subject_select_widget_debug) console.log("subject '' selected");
+                        regulated_callback([],[]);
                     return;
                 }
                 else{
@@ -203,11 +245,11 @@ function subjectSelectWidget(container, study_id = null, callback = null){
                         }
                 });
 
-                
                 if(callback!=null){
                     // console.log(options);
+                    if(subject_select_widget_debug) console.log("single subject selected");
                     show_selected_subjects(result_bar,[selected_subject_info]);
-                    callback([set.value],[selected_subject_info]);
+                    regulated_callback([set.value],[selected_subject_info]);
                     
                 }
             });
@@ -225,17 +267,22 @@ function subjectSelectWidget(container, study_id = null, callback = null){
             show_selected_subjects(result_bar,all_subject);
             // send 'all' if all subject is selected
             if($(study_dropdown).val()=="all"){
-                callback("all",all_subject);
+                if(subject_select_widget_debug) console.log("all subject selected");
+                regulated_callback("all",all_subject);
             }
             else{
-                callback(selected_subject_indices,all_subject);
+                if(subject_select_widget_debug) console.log("multiple subject selected");
+                regulated_callback(selected_subject_indices,all_subject);
             }
             
         }
+        // double firing ?
         else{
+            if(subject_select_widget_debug) console.log("subject select reseted");
             $(subject_input).val("");
+
             show_selected_subjects(result_bar,null);
-            callback([],[]);
+            regulated_callback([],[]);
         }
     })
 
@@ -244,9 +291,16 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     })
 
     reset_widget.on("click",function(){
-        $(subject_input).val("");
-        $(filter_switch).prop("checked",false);
-        $(filter_switch).trigger('change');
+        
+        if($(filter_switch).prop("checked")){
+            $(filter_switch).prop("checked",false);
+            $(filter_switch).trigger('change');
+        }
+        else{
+            $(subject_input).val("");
+            regulated_callback([],[]);
+        }
+        show_selected_subjects(result_bar,null);
 
     })
 
@@ -306,8 +360,9 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
             if(callback!=null){
                 var selected_subject_indices = getCol(selected_subjects,"SubjectIndex");
+                if(subject_select_widget_debug) console.log("subject(s) selected with advanced");
                 show_selected_subjects(result_bar,selected_subjects);
-                callback(selected_subject_indices,selected_subjects);
+                regulated_callback(selected_subject_indices,selected_subjects);
             }
             modal.modal("hide");
         })

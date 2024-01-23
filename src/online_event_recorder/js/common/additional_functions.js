@@ -49,7 +49,9 @@ function listPrepend(orig_array, new_array){
 }
 
 
-function parse_val(val){
+function parse_val(val, dummy = false){
+    if(dummy) return val;
+
     if(val==null) return null;
     if(val=="") return null;
     var num_val = parseInt(val);
@@ -64,7 +66,7 @@ function parse_val(val){
     return num_val;
 }
 
-function nullify_obj(obj){
+function nullify_obj(obj, parse = false){
     // {'key':null, 'key2':null , ...} -> null
     if(!isObject(obj)) return obj;
 
@@ -73,9 +75,27 @@ function nullify_obj(obj){
 
     var res = {};
     $.each(keys,function(index,key){
-        if(obj[key]!=null){
+        let val = parse_val(obj[key],parse);
+        if(val!=null){
             non_null_count+=1;
-            res[key]=obj[key];
+            res[key]=val;
+        }
+    })
+    if(non_null_count == 0) return null;
+
+    return res;
+}
+
+function nullify_array(array, parse = false){
+    if(!Array.isArray(array)) return array;
+
+    var non_null_count = 0;
+    var res = [];
+    $.each(array,function(index,entry){
+        let val = parse_val(entry,parse);
+        if(entry!=null){
+            non_null_count+=1;
+            res.push(val);
         }
     })
     if(non_null_count == 0) return null;

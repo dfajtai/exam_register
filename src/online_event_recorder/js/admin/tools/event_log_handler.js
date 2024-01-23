@@ -9,6 +9,7 @@ var eventlog_subject_string_lookup = {};
 
 
 function eventlog_retrieve_all_ajax(params) {
+    // console.log("retrieve all subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_table.php',
@@ -21,6 +22,7 @@ function eventlog_retrieve_all_ajax(params) {
 
 
 function eventlog_retrieve_subjects_ajax(params) {
+    // console.log("retrieve some subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_subject_events.php',
@@ -306,12 +308,12 @@ function create_eventlog_table(container, table_id, simplify = false){
                 show_deleted_switch.on("change",function(){
                     var is_checked = $(this).prop("checked");
                     if(is_checked){
-                        table.bootstrapTable("resetSearch");
+                        // table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(){return true}}});
                         table.bootstrapTable("filterBy",{});
                     }
                     else{
-                        table.bootstrapTable("resetSearch");
+                        // table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(row,filters){
                             var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
                             return eventlog_status_filter(row,filters,deleted_status);
@@ -321,6 +323,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                 })
 
                 toolbar.find("#showDeletedSwitch").trigger("change");
+                table.bootstrapTable('refreshOptions', {  toolbar:toolbar});
 
             }
             else{
@@ -1150,6 +1153,14 @@ function show_event_log_handler(container){
             $(document).find(".needs-select").addClass("disabled");
         }
     });
+
+    // table.on('refresh-options.bs.table',function(options){
+    //     console.log(options);
+    // })
+
+    // table.on('refresh.bs.table',function(params){
+    //     console.log(params);
+    // })
 
     var toolbar = container.find(".fixed-table-toolbar");
 

@@ -7,65 +7,70 @@ var event_changelog_visible_subjects = null;
 var event_changelog_visible_subjects_info = null;
 var event_changelog_subject_string_lookup = {};
 
+var event_changelog_retrieve_lock = true;
 
 var event_changelog_visible_event_indices = [];
+
 var event_changelog_current_status_lookup = {};
+var event_changelog_current_status_lock = true;
 
 
 function event_changelog_retrieve_all_ajax(params) {
+    // if(! event_changelog_retrieve_lock){
+    //     params.error(true);
+    //     return;
+    // }
+    // event_changelog_retrieve_lock = false;
+
+    console.log("retrieve all subj: "+ JSON.stringify(params));
     $.ajax({
     type: "GET",
     url: 'php/retrieve_table.php',
     dataType: "json",
     data: ({table_name: "event_change_log"}),
     success: function (result) {
-        params.success({"rows":result, "total":result.length});
         event_changelog_visible_event_indices = getColUnique(result,"EventIndex");
-        if(params.data.hasOwnProperty("callback"))
-        {
-            console.log("retrieve all success");
-            params.data.callback(result);
-        }
+        update_evet_changelog_current_status(function(){
+            params.success({"rows":result, "total":result.length});
+        })
+        event_changelog_retrieve_lock = true;
     },
     error: function (er) {
-        params.error(er);
         event_changelog_visible_event_indices = [];
-        event_changelog_current_status_lookup = {};
-        if(params.data.hasOwnProperty("callback"))
-        {
-            console.log("retrieve all failed");
-            params.data.callback();
-        }
+        update_evet_changelog_current_status(function(){
+            params.error(er);
+        })
+        event_changelog_retrieve_lock = true;
     }});
 }
 
 
 function event_changelog_retrieve_subjects_ajax(params) {
-    console.log(params.data.indices);
+    // if(! event_changelog_retrieve_lock){
+    //     params.error(true);
+    //     return;
+    // }
+    // event_changelog_retrieve_lock = false;
 
+    console.log("retrieve some subj: "+ JSON.stringify(params));
     $.ajax({
     type: "GET",
     url: 'php/retrieve_subject_event_changes.php',
     dataType: "json",
     data: ({subject_index: params.data.indices}),
-    success: function (result) {
-        params.success({"rows":result, "total":result.length});
+    success: function (result) { 
         event_changelog_visible_event_indices = getColUnique(result,"EventIndex");
-        if(params.data.hasOwnProperty("callback"))
-        {
-            console.log("retrieve selected success");
-            params.data.callback(result);
-        }
+        update_evet_changelog_current_status(function(){
+            params.success({"rows":result, "total":result.length});
+        })
+        event_changelog_retrieve_lock = true;
     },
     error: function (er) {
-        params.error(er);
         event_changelog_visible_event_indices = [];
-        event_changelog_current_status_lookup = {};
-        if(params.data.hasOwnProperty("callback"))
-        {
-            console.log("retrieve selected failed");
-            params.data.callback();
-        }
+        update_evet_changelog_current_status(function(){
+            params.error(er);
+        })
+        event_changelog_retrieve_lock = true;
     }
     });
 }
@@ -77,18 +82,18 @@ function event_changelog_retrieve_event_by_index_ajax(params) {
     dataType: "json",
     data: ({table_name: "event_change_log","where":{"EventIndex":params.data.event_index}}),
     success: function (result) {
-        params.success({"rows":result, "total":result.length});
         event_changelog_visible_event_indices = getColUnique(result,"EventIndex");
-        if(params.data.hasOwnProperty("callback"))
-            params.data.callback(result);
+        update_evet_changelog_current_status(function(){
+            params.success({"rows":result, "total":result.length});
+        })            
     },
     error: function (er) {
         params.error(er);
         event_changelog_visible_event_indices = [];
-        event_changelog_current_status_lookup = {};
-        // if(params.data.hasOwnProperty("callback"))
-        //     params.data.callback(er);
-    }
+        update_evet_changelog_current_status(function(){
+            params.error(er);
+        })
+        }
     });
 }
 
@@ -109,29 +114,44 @@ function event_changelog_revert_ajax(event_index, event_info, callback = null) {
 
 
 function update_evet_changelog_current_status(callback = null){
-    console.log(event_changelog_visible_event_indices);
+    // console.log(event_changelog_visible_event_indices);
     if(event_changelog_visible_event_indices==null)
         return;
 
-    if(callback === null){
-        callback = function(){};
-    }
+    // prevent double calling
+    // if(!event_changelog_current_status_lock)
+    // {
+    //     if(callback !== null){
+    //         console.log("update blocked but calling callback anyways");
+    //         callback();
+    //     }
+    //     return;
+    // }
+        
 
     event_changelog_current_status_lookup = {};
-    
+
+    event_changelog_current_status_lock = false;
     $.ajax({
         type: "GET",
         url: 'php/retrieve_table_where.php',
         dataType: "json",
         data: ({table_name: "event_log","where":{"EventIndex":event_changelog_visible_event_indices}}),
         success: function (result) {
+
+
             $.each(result,function(index,entry){
                 var event_index = entry["EventIndex"];
                 delete entry["EventIndex"];
                 event_changelog_current_status_lookup[event_index] = entry;
             });
+
             console.log(event_changelog_current_status_lookup);
-            callback();
+            if(callback !== null){
+                callback();
+            }
+            event_changelog_current_status_lock = true;
+            
         }
     }) 
 
@@ -216,10 +236,6 @@ window.event_changelog_operate_events = {
 
 function event_changelog_query_params(params){
     params.indices = event_changelog_visible_subjects;
-    params.callback = function(result){
-        console.log("calling update status");
-        // update_evet_changelog_current_status();
-    }
     return params
 }
 
@@ -275,7 +291,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
             }
             if(subject_indices=="all"){
                 event_changelog_visible_subjects = getCol(subject_info,"SubjectIndex");
-                table.bootstrapTable('refreshOptions', { queryParams:event_changelog_query_params, ajax: event_changelog_retrieve_all_ajax });
+                table.bootstrapTable('refreshOptions', { queryParams: null, ajax: event_changelog_retrieve_all_ajax });
             }
             else{
                 event_changelog_visible_subjects = subject_indices;
@@ -294,6 +310,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
     table.attr("data-toolbar","#"+table_id+"_toolbar");
     table.attr("data-toolbar-align","left");
 
+    // table.attr("data-cache","false");
 
     table.attr("data-pagination","false");
     table.attr("data-show-pagination-switch","false");
@@ -371,7 +388,6 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
         });
 
     if(event_index!=null){
-
         table.bootstrapTable('refreshOptions', {    queryParams:function(params){
             params.event_index=event_index;
             params.callback = function(res){
