@@ -108,7 +108,7 @@ function datetimeFormatter(value,row){
 }
 
 function jsonFormatter(value,row){
-    var val = nullify_obj(JSON.parse(value));
+    var val = nullify_obj(isString(value)? JSON.parse(value):value);
     if(val==null) return;
     try {
         var res = "";

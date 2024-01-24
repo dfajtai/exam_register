@@ -81,9 +81,10 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
                             "EventModifiedAt" => $_old_event_info["EventModifiedAt"]];
     
             $database -> insert("event_change_log", [
-                "EventIndex"=>$event_index, 
+                "EventIndex"=>$event_index,
                 "EventStudy"=>$_old_event_info["EventStudy"], 
                 "EventSubject"=>$_old_event_info["EventSubject"],
+                "EventName" => $_old_event_info["EventName"],
                 "EventModifiedBy" => $new_event_info["EventModifiedBy"],
                 "EventModifiedAt" => $new_event_info["EventModifiedAt"],
                 "EventData" => json_encode($old_event_data)

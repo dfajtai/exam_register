@@ -9,7 +9,7 @@ var eventlog_subject_string_lookup = {};
 
 
 function eventlog_retrieve_all_ajax(params) {
-    console.log("retrieve all subj");
+    // console.log("retrieve all subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_table.php',
@@ -22,7 +22,7 @@ function eventlog_retrieve_all_ajax(params) {
 
 
 function eventlog_retrieve_subjects_ajax(params) {
-    console.log("retrieve some subj");
+    // console.log("retrieve some subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_subject_events.php',

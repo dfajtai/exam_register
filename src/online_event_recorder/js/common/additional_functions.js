@@ -29,6 +29,16 @@ function getEntryWhere(objlist, key, value){
     return result_entry;
 }
 
+function getEntriesWhere(objlist, key, value){
+    var result_entries = [];
+    $.each(objlist,function(index,entry){
+        if(String(entry[key])===String(value)) {
+            result_entries.push({... entry});
+        }
+    })
+    return result_entries;
+}
+
 function getEntryFieldWhere(objlist, key, value, field){
     var result_entry = getEntryWhere(objlist, key, value);
 
@@ -109,4 +119,8 @@ function isObject(value) {
         value !== null &&
         !Array.isArray(value)
     );
+  }
+
+  function isString(string_candidate){
+    return typeof string_candidate === 'string' || string_candidate instanceof String;
   }
