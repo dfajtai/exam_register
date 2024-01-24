@@ -13,7 +13,8 @@ function createUserTable(container, table_id, height){
 
     table.attr("data-height",String(height));
 
-    table.attr("data-search","true");    
+    table.attr("data-search","true");
+    table.attr("data-regex-search","true");    
     table.attr("data-visible-search","true");
 
     table.attr("data-show-refresh","true");

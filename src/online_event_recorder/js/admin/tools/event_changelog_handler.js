@@ -7,8 +7,6 @@ var event_changelog_visible_subjects = null;
 var event_changelog_visible_subjects_info = null;
 var event_changelog_subject_string_lookup = {};
 
-var event_changelog_retrieve_lock = true;
-
 var event_changelog_visible_event_indices = [];
 
 var event_changelog_current_status_lookup = {};
@@ -16,12 +14,6 @@ var event_changelog_current_status_lock = true;
 
 
 function event_changelog_retrieve_all_ajax(params) {
-    // if(! event_changelog_retrieve_lock){
-    //     params.error(true);
-    //     return;
-    // }
-    // event_changelog_retrieve_lock = false;
-
     console.log("retrieve all subj: "+ JSON.stringify(params));
     $.ajax({
     type: "GET",
@@ -33,25 +25,17 @@ function event_changelog_retrieve_all_ajax(params) {
         update_evet_changelog_current_status(function(){
             params.success({"rows":result, "total":result.length});
         })
-        event_changelog_retrieve_lock = true;
     },
     error: function (er) {
         event_changelog_visible_event_indices = [];
         update_evet_changelog_current_status(function(){
             params.error(er);
         })
-        event_changelog_retrieve_lock = true;
     }});
 }
 
 
 function event_changelog_retrieve_subjects_ajax(params) {
-    // if(! event_changelog_retrieve_lock){
-    //     params.error(true);
-    //     return;
-    // }
-    // event_changelog_retrieve_lock = false;
-
     console.log("retrieve some subj: "+ JSON.stringify(params));
     $.ajax({
     type: "GET",
@@ -63,14 +47,12 @@ function event_changelog_retrieve_subjects_ajax(params) {
         update_evet_changelog_current_status(function(){
             params.success({"rows":result, "total":result.length});
         })
-        event_changelog_retrieve_lock = true;
-    },
+       },
     error: function (er) {
         event_changelog_visible_event_indices = [];
         update_evet_changelog_current_status(function(){
             params.error(er);
         })
-        event_changelog_retrieve_lock = true;
     }
     });
 }
@@ -252,7 +234,6 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
             // console.log(subject_indices);
             // console.log(subject_info);
 
-
             event_changelog_visible_subjects_info = subject_info;
 
             if(event_changelog_visible_subjects_info.length>0){
@@ -267,6 +248,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 
 
                 event_filter.on("change",function(){
+                    console.log("filter changed");
                     var event_filter_text = parse_val($(this).val());
                     if(event_filter_text==null){
                         table.bootstrapTable("resetSearch");
@@ -284,20 +266,36 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
                 _filter_group.find("#clear").on("click",function(){
                     toolbar.find("#event_filter").val(null).trigger("change");
                 })
-                toolbar.find("#event_filter").trigger("change");
             }
             else{
                 $(toolbar).empty();
             }
+
+            var event_filter_text = parse_val($(event_filter).val());
+            var options = {};
+            if(event_filter_text == null){
+                options["filterOptions"] = {'filterAlgorithm':function(){return true}};
+            }
+            else{
+                options["filterOptions"] = {'filterAlgorithm':function(row,filters){
+                    return row["EventIndex"]==event_filter_text;
+                }};
+            }
+
+
             if(subject_indices=="all"){
                 event_changelog_visible_subjects = getCol(subject_info,"SubjectIndex");
-                table.bootstrapTable('refreshOptions', { queryParams: null, ajax: event_changelog_retrieve_all_ajax });
+                options["queryParams"] = function(params) { return params };
+                options["ajax"] = event_changelog_retrieve_all_ajax;
             }
             else{
                 event_changelog_visible_subjects = subject_indices;
-                table.bootstrapTable('refreshOptions', {  queryParams:event_changelog_query_params, ajax: event_changelog_retrieve_subjects_ajax});
-
+                options["queryParams"] = event_changelog_query_params;
+                options["ajax"] = event_changelog_retrieve_subjects_ajax;
             }
+
+            table.bootstrapTable('refreshOptions',options);
+            table.bootstrapTable("filterBy",{});
 
             event_changelog_subject_string_lookup = {};
             $.each(event_changelog_visible_subjects_info,function(index,val){
@@ -336,7 +334,9 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
         table.attr("data-detail-view","true");
     }
 
+
     table.attr("data-search","true");
+    table.attr("data-regex-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
     table.attr("data-show-search-clear-button","true");
@@ -380,7 +380,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
             smartDisplay:true,
             detailFormatter:simpleFlatFormatter,
 
-            idField:"E",
+            idField:"EventChangeLogIndex",
 
             showExport:!simplify,
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],

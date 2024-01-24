@@ -9,7 +9,7 @@ var eventlog_subject_string_lookup = {};
 
 
 function eventlog_retrieve_all_ajax(params) {
-    // console.log("retrieve all subj");
+    console.log("retrieve all subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_table.php',
@@ -22,7 +22,7 @@ function eventlog_retrieve_all_ajax(params) {
 
 
 function eventlog_retrieve_subjects_ajax(params) {
-    // console.log("retrieve some subj");
+    console.log("retrieve some subj");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_subject_events.php',
@@ -307,13 +307,14 @@ function create_eventlog_table(container, table_id, simplify = false){
 
                 show_deleted_switch.on("change",function(){
                     var is_checked = $(this).prop("checked");
+                    console.log("filter changed");
                     if(is_checked){
-                        // table.bootstrapTable("resetSearch");
+                        table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(){return true}}});
                         table.bootstrapTable("filterBy",{});
                     }
                     else{
-                        // table.bootstrapTable("resetSearch");
+                        table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(row,filters){
                             var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
                             return eventlog_status_filter(row,filters,deleted_status);
@@ -321,26 +322,38 @@ function create_eventlog_table(container, table_id, simplify = false){
                         table.bootstrapTable("filterBy",{});
                     }
                 })
-
-                toolbar.find("#showDeletedSwitch").trigger("change");
-                table.bootstrapTable('refreshOptions', {  toolbar:toolbar});
-
+                // toolbar.find("#showDeletedSwitch").trigger("change");   
             }
             else{
                 $(toolbar).empty();
-                table.bootstrapTable('refreshOptions', {  toolbar:toolbar});
             }
 
+            var show_deleted_switch_checked = $(show_deleted_switch).prop("checked");
+            var options = {};
+            if(show_deleted_switch_checked){
+                options["filterOptions"] = {'filterAlgorithm':function(){return true}};
+            }
+            else{
+                options["filterOptions"] = {'filterAlgorithm':function(row,filters){
+                    var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+                    return eventlog_status_filter(row,filters,deleted_status);
+                }};
+            }
 
             if(subject_indices=="all"){
                 eventlog_visible_subjects = getCol(subject_info,"SubjectIndex");
-                table.bootstrapTable('refreshOptions', { queryParams:null, ajax: eventlog_retrieve_all_ajax });
+                options["queryParams"] = function(params) { return params };
+                options["ajax"] = eventlog_retrieve_all_ajax;
             }
             else{
                 eventlog_visible_subjects = subject_indices;
-                table.bootstrapTable('refreshOptions', {  queryParams:eventlog_query_params, ajax: eventlog_retrieve_subjects_ajax});
-
+                options["queryParams"] = eventlog_query_params;
+                options["ajax"] = eventlog_retrieve_subjects_ajax;
             }
+
+            table.bootstrapTable('refreshOptions',options);
+            table.bootstrapTable("filterBy",{});
+
 
             eventlog_subject_string_lookup = {};
             $.each(eventlog_visible_subjects_info,function(index,val){
@@ -379,6 +392,7 @@ function create_eventlog_table(container, table_id, simplify = false){
     }
 
     table.attr("data-search","true");
+    table.attr("data-regex-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
     table.attr("data-show-search-clear-button","true");
@@ -421,7 +435,7 @@ function create_eventlog_table(container, table_id, simplify = false){
             smartDisplay:true,
             detailFormatter:eventlog_detail_view_formatter,
 
-            idField:"EventID",
+            idField:"EventIndex",
 
             showExport:!simplify,
             exportTypes: ['csv','json','excel','doc','txt','sql','xml',"pdf"],

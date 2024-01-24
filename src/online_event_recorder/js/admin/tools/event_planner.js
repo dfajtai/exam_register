@@ -169,6 +169,7 @@ function createBatchTable(container, table_id, height){
     table.attr("data-show-footer","false");
 
     table.attr("data-search","true");
+    table.attr("data-regex-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
     table.attr("data-show-search-clear-button","true");
