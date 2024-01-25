@@ -117,7 +117,6 @@ function eventlog_operate_formatter(value, row, index) {
     return container.prop("outerHTML");
   }
 
-
 window.eventlog_operate_events = {
     'click .edit': function (e, value, row, index) {
         show_eventlog_modal_edit(eventlog_content,$("#"+eventlog_table_id),index);
@@ -140,7 +139,6 @@ window.eventlog_operate_events = {
             $('#'+eventlog_table_id).bootstrapTable('resetView');
         });
     },
-
 }
 
 function eventlog_query_params(params){

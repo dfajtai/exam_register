@@ -55,7 +55,7 @@ window.event_planner_operate_events = {
     },
     'click .remove': function (e, value, row, index) {
         bootbox.confirm({
-            message: 'You are going to the selected event: "'+ row["EventName"] +'".<br>Do you want to proceed?',
+            message: 'You are going to the selected event: "'+ row["EventName"] +'".<br/>Do you want to proceed?',
             buttons: {
             confirm: {
             label: 'Yes',

@@ -13,7 +13,7 @@ function simpleFlatFormatter(index, row) {
 
 
 function unitTypeFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
     var name = getDefEntryFieldWhere("unit_type_definitions","UnitTypeID",value,"UnitTypeName");
     if (name){return name}
     else {return "Unknown type '" + String(value) + "'"}
@@ -21,7 +21,7 @@ function unitTypeFormatter(value,row){
 }
 
 function studyFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("studies","StudyID",value,"StudyName");
     if (name){return name}
@@ -30,7 +30,7 @@ function studyFormatter(value,row){
 }
 
 function sideFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("side_definitions","SideID",value,"SideShortName");
     if (name){return name}
@@ -39,7 +39,7 @@ function sideFormatter(value,row){
 }
 
 function consumableTypeFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("consumable_type_definitions","ConsumableTypeID",value,"ConsumableTypeName");
     if (name){return name}
@@ -48,7 +48,7 @@ function consumableTypeFormatter(value,row){
 
 
 function locationFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("location_definitions","LocationID",value,"LocationName");
     if (name){return name}
@@ -56,7 +56,7 @@ function locationFormatter(value,row){
 }
 
 function sexFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("sex_definitions","SexID",value,"SexName");
     if (name){return name}
@@ -65,7 +65,7 @@ function sexFormatter(value,row){
 
 
 function eventFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var event_name = getDefEntryFieldWhere("event_definitions","EventID",value,"EventName")
     if (event_name){return event_name}
@@ -73,7 +73,7 @@ function eventFormatter(value,row){
 }
 
 function eventTypeFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("event_type_definitions","EventTypeID",value,"EventTypeName");
     if (name){return name}
@@ -82,7 +82,7 @@ function eventTypeFormatter(value,row){
 
 
 function eventStatusFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("event_status_definitions","EventStatusID",value,"EventStatusName");
     if (name){return name}
@@ -90,7 +90,7 @@ function eventStatusFormatter(value,row){
 }
 
 function subjectStatusFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
 
     var name = getDefEntryFieldWhere("subject_status_definitions","StatusID",value,"StatusName");
     if (name){return name}
@@ -99,7 +99,7 @@ function subjectStatusFormatter(value,row){
 
 
 function datetimeFormatter(value,row){
-    if(value==null) return;
+    if(value==null) return value;
     try {
         return moment(value).format('YYYY.MM.DD. HH:mm:ss');
     } catch (error) {

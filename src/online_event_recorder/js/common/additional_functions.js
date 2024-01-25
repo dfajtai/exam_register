@@ -124,3 +124,33 @@ function isObject(value) {
   function isString(string_candidate){
     return typeof string_candidate === 'string' || string_candidate instanceof String;
   }
+
+function isObjectOrArray(object) {
+    return object != null && typeof object === 'object';
+}
+
+function isEqual(var1,var2){
+    if(typeof var1 != typeof var2) return false;
+
+    // if(var1==null && var2!= null) return false;
+    // if(var2==null && var1!= null) return false;
+
+    if(isObjectOrArray(var1) && isObjectOrArray(var2)){
+        const keys1 = Object.keys(var1);
+        const keys2 = Object.keys(var2);
+
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        
+        for (let key of keys1) {
+            if (var1[key] !== var2[key]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    return var1 == var2;
+
+}
