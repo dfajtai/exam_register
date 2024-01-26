@@ -39,6 +39,33 @@ function consumable_definition_update_ajax(key_info,params,callback) {
     });
 }
 
+function consumable_def_formatter(consumable_def){
+    if(!isObject(consumable_def)){
+        return consumable_def;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "ConsumableType":
+                return consumableTypeFormatter(value,null);
+                break;
+            case "ConsumableUnitType":
+                return unitTypeFormatter(value,null);
+                break;            
+            
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(consumable_def,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
 
 
 function initConsumableDefinitionsTable(container,tableId){
@@ -62,7 +89,7 @@ function initConsumableDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,consumable_def_formatter)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax:consumable_definition_retrieve_ajax });

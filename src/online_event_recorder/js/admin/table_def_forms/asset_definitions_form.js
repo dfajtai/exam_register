@@ -39,6 +39,31 @@ function asset_definition_update_ajax(key_info,params,callback) {
     });
 }
 
+function asset_def_formatter(asset_def){
+    if(!isObject(asset_def)){
+        return asset_def;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "AssetLocation":
+                return locationFormatter(value,null);
+                break;            
+        
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(asset_def,function(key,value){
+        res[key] = format_value(value,key);
+    })
+    return res;
+}
+
+
 function initAssetDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
     table.bootstrapTable({
@@ -60,7 +85,7 @@ function initAssetDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,asset_def_formatter)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax: asset_definition_retrieve_ajax });

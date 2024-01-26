@@ -115,14 +115,49 @@ function eventPlannerOperateFormatter(value, row, index) {
 }
 
 
+function event_planner_row_formatter(row){
+    if(!isObject(row)){
+        return row;
+    }
 
- function eventplanner_detail_view_formatter(index, row) {
+    function format_value(value,col){
+        switch (col) {
+            case "EventTemplateID":
+                return eventFormatter(value,null);
+                break;
+            case "EventLocation":
+                return locationFormatter(value,null);
+                break;            
+            case "EventStatus":
+                return eventStatusFormatter(value,null);
+                break;         
+                
+            case "EventType":
+                return eventTypeFormatter(value,null);
+                break;   
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(row,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
+
+function eventplanner_detail_view_formatter(index, row) {
     var detail_view_content = $('<div/>');
     var detail_view_preview = $('<div/>');
     
     var detail_info = $('<p/>');
     var hidden_keys = ["state"]
-    $.each(row, function (key, value) {
+
+
+    $.each(event_planner_row_formatter(row), function (key, value) {
         if(!(hidden_keys.includes(key))){
             detail_info.append($("<b/>").html(key+": "));
             detail_info.append(value+"&emsp;");
@@ -208,7 +243,6 @@ function createBatchTable(container, table_id, height){
             checkboxHeader:true,
             smartDisplay:true,
             detailFormatter: eventplanner_detail_view_formatter
-            // detailFormatter: detail_as_table_formatter
         });    
 }
 

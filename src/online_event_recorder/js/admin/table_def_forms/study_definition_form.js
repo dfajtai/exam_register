@@ -84,7 +84,7 @@ function initStudyDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,null)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax:study_definition_retrieve_ajax });

@@ -147,14 +147,55 @@ function eventlog_query_params(params){
     return params
 }
 
+
+function event_log_row_formatter(row){
+    if(!isObject(row)){
+        return row;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "EventStudy":
+                return studyFormatter(value,null);
+                break;
+            case "EventSubject":
+                return eventlog_subjectFormatter(value,null);
+                break;
+            case "EventModifiedBy":
+                return userFormatter(value,null);
+                break;
+            case "EventTemplate":
+                return eventFormatter(value,null);
+                break;
+            case "EventLocation":
+                return locationFormatter(value,null);
+                break;            
+            case "EventStatus":
+                return eventStatusFormatter(value,null);
+                break;         
+                  
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(row,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
+
 function eventlog_detail_view_formatter(index, row) {
     var detail_view_content = $('<div/>');
     
     var detail_info = $('<p/>').append($("<b/>").html("Event parameters<br/>"));
     var hidden_keys = ["state","EventData"]
-    $.each(row, function (key, value) {
+    $.each(event_log_row_formatter(row), function (key, value) {
         if(!(hidden_keys.includes(key))){
-            detail_info.append($("<i/>").html(key+": "));
+            detail_info.append($("<b/>").html(key+": "));
             detail_info.append(value+"&emsp;");  
         }
 
@@ -169,7 +210,7 @@ function eventlog_detail_view_formatter(index, row) {
     
     if(event_data!==null && isObject(event_data)){
         $.each(event_data, function (key, value) {
-            detail_data_info.append($("<i/>").html(key+": "));
+            detail_data_info.append($("<b/>").html(key+": "));
             detail_data_info.append(value+"&emsp;");    
         })
     }

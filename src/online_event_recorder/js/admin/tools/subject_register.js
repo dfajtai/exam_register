@@ -92,6 +92,44 @@ window.subject_operate_events = {
     },
 }
 
+
+function subject_register_subject_formatter(subject_entry){
+    if(!isObject(subject_entry)){
+        return subject_entry;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "StudyID":
+                return studyFormatter(value,null);
+                break;
+            case "Sex":
+                return sexFormatter(value,null);
+                break;            
+            case "Location":
+                return locationFormatter(value,null);
+                break;
+            case "Status":
+                return subjectStatusFormatter(value,null);
+                break;            
+            case "ModifiedBy":
+                return userFormatter(value,null);
+                break;            
+        
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(subject_entry,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
+
 function createSubjectTable(container,table_id, simplify = false){
     var table = $("<table/>").attr("id",table_id);
   
@@ -194,7 +232,7 @@ function createSubjectTable(container,table_id, simplify = false){
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter:detail_as_table_formatter,
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,subject_register_subject_formatter)},
 
             idField:"SubjectIndex",
 

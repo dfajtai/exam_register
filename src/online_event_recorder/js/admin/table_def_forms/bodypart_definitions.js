@@ -39,6 +39,30 @@ function bodypart_definitions_update_ajax(key_info,params,callback) {
     });
 }
 
+function bodypart_def_formatter(bodypart_def){
+    if(!isObject(bodypart_def)){
+        return bodypart_def;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "Side":
+                return sideFormatter(value,null);
+                break;
+        
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(bodypart_def,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
 
 function initBodypartDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
@@ -60,7 +84,7 @@ function initBodypartDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,bodypart_def_formatter)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax:bodypart_definitions_retrieve_ajax });

@@ -39,6 +39,31 @@ function unit_definition_update_ajax(key_info,params,callback) {
     });
 }
 
+function unit_definition_formatter(unit_definition){
+    if(!isObject(unit_definition)){
+        return unit_definition;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "UnitType":
+                return eventFormatter(value,null);
+                break;
+                    
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(unit_definition,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
+
 function initUnitDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
     table.bootstrapTable({
@@ -61,7 +86,7 @@ function initUnitDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,unit_definition_formatter)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax:unit_definition_retrieve_ajax });

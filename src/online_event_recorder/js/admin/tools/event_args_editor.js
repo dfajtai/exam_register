@@ -161,7 +161,7 @@ function create_event_args_table(container, table_id, height){
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,null)}
         });
 
 }

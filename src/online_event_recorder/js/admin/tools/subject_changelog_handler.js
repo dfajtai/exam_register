@@ -321,7 +321,7 @@ window.subject_changelog_operate_events = {
         table.append(table_body);
         var message = "";
         if(change_count>0){
-            var message = "You are going to revert event [SubjectIndex = '"+subject_index+"'] to its '" + this_version["LastChange"] +"' status.<br/><br/>";
+            var message = "You are going to revert the selected subject to its '" + this_version["LastChange"] +"' status.<br/><br/>";
             message+= "Please confirm the planned changes!<br/><br/>";
             message+=$(table).prop("outerHTML");
 

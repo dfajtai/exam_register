@@ -402,7 +402,7 @@ window.event_changelog_operate_events = {
         table.append(table_body);
         var message = "";
         if(change_count>0){
-            var message = "You are going to revert event [EventIndex = '"+event_index+"'] to its '" + this_version["EventModifiedAt"] +"' status.<br/><br/>";
+            var message = "You are going to revert the selected event to its '" + this_version["EventModifiedAt"] +"' status.<br/><br/>";
             message+= "Please confirm the planned changes!<br/><br/>";
             message+=$(table).prop("outerHTML");
 

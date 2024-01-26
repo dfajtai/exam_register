@@ -39,6 +39,30 @@ function event_definition_update_ajax(key_info,params,callback) {
     });
 }
 
+function event_template_def_formatter(event_template_def){
+    if(!isObject(event_template_def)){
+        return event_template_def;
+    }
+
+    function format_value(value,col){
+        switch (col) {
+            case "EventType":
+                return eventTypeFormatter(value,null);
+                break;
+        
+            default:
+                return value;
+                break;
+        }
+    }
+
+    var res  = {};
+    $.each(event_template_def,function(key,value){
+        res[key] = format_value(value,key);
+    })
+
+    return res;
+}
 
 function initEventDefinitionsTable(container,tableId){
     var table = $('#'+tableId);
@@ -60,7 +84,7 @@ function initEventDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:detail_as_table_formatter
+            detailFormatter: function(index,row){return detail_as_table_formatter(index,row,event_template_def_formatter)}
         });
     
     table.bootstrapTable('refreshOptions', { ajax:event_definition_retrieve_ajax });
