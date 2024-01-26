@@ -3,7 +3,7 @@ function event_definition_retrieve_ajax(params) {
     type: "GET",
     url: 'php/retrieve_table.php',
     dataType: "json",
-    data: ({table_name: "event_definitions"}),
+    data: ({table_name: "event_template_definitions"}),
     success: function (result) {
         params.success({"rows":result, "total":result.length})
     }});
@@ -17,7 +17,7 @@ function event_definition_insert_ajax(params,callback = null) {
         type: "POST",
         url: 'php/insert_to_table.php',
         dataType: "json",
-        data: ({table_name: "event_definitions",new_info:params}),
+        data: ({table_name: "event_template_definitions",new_info:params}),
         success: function(result){
             callback();
         }
@@ -32,7 +32,7 @@ function event_definition_update_ajax(key_info,params,callback) {
     type: "POST",
     url: 'php/update_table.php',
     dataType: "json",
-    data: ({table_name: "event_definitions", key_info:key_info, updated_info:params}),
+    data: ({table_name: "event_template_definitions", key_info:key_info, updated_info:params}),
     success: function(result){
         callback();
     }
@@ -45,7 +45,7 @@ function initEventDefinitionsTable(container,tableId){
     table.bootstrapTable({
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
-                {title: 'ID', field : 'EventID', align:'center', sortable:true, searchable:false, visible:false},
+                {title: 'ID', field : 'EventTemplateID', align:'center', sortable:true, searchable:false, visible:false},
                 {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: 'eventTypeFormatter'},
                 {title: 'Desc', field : 'EventDesc', align:'center', sortable:true, searchable:true},
@@ -60,13 +60,16 @@ function initEventDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:simpleFlatFormatter
+            detailFormatter:detail_as_table_formatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:event_definition_retrieve_ajax });
 
     modalInsert("Event template", container,"event_modal_add_new",tableId, eventDefinitionInputs, event_definition_insert_ajax);
-    modalUpdate("Event template", container,"event_modal_edit_selected",tableId, eventDefinitionInputs, event_definition_update_ajax,"EventID");
+    modalUpdate("Event template", container,"event_modal_edit_selected",tableId, eventDefinitionInputs, event_definition_update_ajax,"EventTemplateID");
+    
+    container.find("#event_modal_add_new").find(".modal-dialog").addClass("modal-xl");
+    container.find("#event_modal_edit_selected").find(".modal-dialog").addClass("modal-xl");
     
 
     // add preview button

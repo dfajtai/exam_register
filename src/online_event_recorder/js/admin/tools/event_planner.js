@@ -132,7 +132,7 @@ function eventPlannerOperateFormatter(value, row, index) {
 
     detail_view_content.append($("<div/>").addClass("me-3").append(detail_info));
 
-    var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
+    var event_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', row['EventTemplateID'],'EventFormJSON');
     showCustomArgs(detail_view_preview,JSON.parse(event_params));
 
     detail_view_content.append(detail_view_preview);
@@ -197,7 +197,7 @@ function createBatchTable(container, table_id, height){
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.event_planner_operate_events, formatter: eventPlannerOperateFormatter},
                 {title: 'Name', field : 'EventName', align:'center', sortable:true, searchable:true},
-                {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
+                {title: 'Template', field : 'EventTemplateID', align:'center', sortable:true, searchable:true, formatter: eventFormatter},
                 {title: 'Type', field : 'EventType', align:'center', sortable:true, searchable:true, formatter: eventTypeFormatter},
                 {title: 'Comment', field : 'EventComment', align:'center', sortable:true, searchable:true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true, formatter: eventStatusFormatter},
@@ -208,14 +208,14 @@ function createBatchTable(container, table_id, height){
             checkboxHeader:true,
             smartDisplay:true,
             detailFormatter: eventplanner_detail_view_formatter
-            // detailFormatter: simpleFlatFormatter
+            // detailFormatter: detail_as_table_formatter
         });    
 }
 
 function eventPlannerInput(container){
     var params =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
-        {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventTemplateID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_status},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
@@ -291,7 +291,7 @@ function show_event_planner_modal_add(container, table){
         $.each($(this).serializeArray(), function(i, field) {
             if(!(field.value==""||field.value==null)) values[field.name]= field.value;
         });
-        values["EventType"] = getDefEntryFieldWhere("event_definitions","EventID",values["EventID"],"EventType")
+        values["EventType"] = getDefEntryFieldWhere("event_template_definitions","EventTemplateID",values["EventTemplateID"],"EventType")
 
         table.bootstrapTable("append",values);
         statusToStorage("eventPlannerEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
@@ -397,7 +397,7 @@ function show_event_planner_modal_edit(container, table, index){
         $.each($(this).serializeArray(), function(i, field) {
             if(!(field.value==""||field.value==null)) values[field.name]= field.value;
         });
-        values["EventType"] = getDefEntryFieldWhere("event_definitions","EventID",values["EventID"],"EventType")
+        values["EventType"] = getDefEntryFieldWhere("event_template_definitions","EventTemplateID",values["EventTemplateID"],"EventType")
         
         table.bootstrapTable("updateRow",{
             index: index,
@@ -628,7 +628,7 @@ function show_event_planner_modal_make(container, table){
                             var _event_data = {"EventName": parse_val(event_info["EventName"]),
                                               "EventStatus":parse_val(event_info["EventStatus"]),
                                               "EventPlannedTime":parse_val(event_info["EventPlannedTime"]),
-                                              "EventID":parse_val(event_info["EventID"]),
+                                              "EventTemplate":parse_val(event_info["EventTemplateID"]),
                                               "EventLocation":parse_val(event_info["EventLocation"]),
                                               "EventComment":parse_val(event_info["EventComment"]?event_info["EventComment"]:''),
                                               "EventStudy":parse_val(subject_info["StudyID"]),

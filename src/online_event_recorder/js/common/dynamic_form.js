@@ -274,10 +274,10 @@ function dynamicEventSelect(container, name, label){
     var event_select_div = $("<div/>").addClass("col-md-5");
     var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_2.append($("<option/>").html("Choose event...").prop('selected',true).attr("value",""));
-    showAllDefs(_select_2,"event_definitions","EventID","EventName","EventName");
+    showAllDefs(_select_2,"event_template_definitions","EventTemplateID","EventName","EventName");
     event_select_div.append(_select_2);
     
-    connectSelectByAttr(type_select_div,event_select_div, "event_definitions","EventType", "EventTypeID", "EventID");
+    connectSelectByAttr(type_select_div,event_select_div, "event_template_definitions","EventType", "EventTypeID", "EventTemplateID");
 
     container.append(_label);
     container.append(type_select_div);

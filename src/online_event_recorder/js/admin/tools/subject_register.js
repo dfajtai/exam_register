@@ -194,7 +194,7 @@ function createSubjectTable(container,table_id, simplify = false){
             pagination:true,
             checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter:simpleFlatFormatter,
+            detailFormatter:detail_as_table_formatter,
 
             idField:"SubjectIndex",
 
@@ -239,6 +239,7 @@ function subjectFormInputs(container){
     {"FieldName":"Weight","FieldLabel":"Weight","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"0.01","FieldUnit":"kg","FieldRequired":false},
     {"FieldName":"Height","FieldLabel":"Height","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"0.01","FieldUnit":"cm","FieldRequired":false},
     {"FieldName":"Location","FieldLabel":"Location","FieldType":"select","FieldSource":"location"},
+    {"FieldName":"Comment","FieldLabel":"Comment","FieldType":"input","FieldDataType":"longtext"},
     {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status"}
     ]
 
@@ -254,7 +255,7 @@ function subjectBatchFormInputs(container){
     {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status"},
     {"FieldName":"Sex","FieldLabel":"Sex","FieldType":"select","FieldSource":"sex","FieldRequired":false},
     {"FieldName":"Age","FieldLabel":"Age","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"1","FieldUnit":"year","FieldRequired":false},
-
+    {"FieldName":"Comment","FieldLabel":"Comment","FieldType":"input","FieldDataType":"longtext"},
     ]
 
     showCustomArgs(container,params);    

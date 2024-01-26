@@ -206,7 +206,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
-(15, 'event_definitions', '2024-01-17 10:48:26', 'ebeb3b91'),
+(15, 'event_template_definitions', '2024-01-17 10:48:26', 'ebeb3b91'),
 (16, 'studies', '2024-01-16 10:23:12', 'd6aea30a');
 
 -- --------------------------------------------------------
@@ -229,11 +229,11 @@ CREATE TABLE `event_change_log` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_definitions`
+-- Tábla szerkezet ehhez a táblához `event_template_definitions`
 --
 
-CREATE TABLE `event_definitions` (
-  `EventID` int NOT NULL,
+CREATE TABLE `event_template_definitions` (
+  `EventTemplateID` int NOT NULL,
   `EventName` varchar(32) NOT NULL,
   `EventDesc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `EventType` int NOT NULL,
@@ -241,28 +241,28 @@ CREATE TABLE `event_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `event_definitions`
+-- A tábla adatainak kiíratása `event_template_definitions`
 --
 
-INSERT INTO `event_definitions` (`EventID`, `EventName`, `EventDesc`, `EventType`, `EventFormJSON`) VALUES
+INSERT INTO `event_template_definitions` (`EventTemplateID`, `EventName`, `EventDesc`, `EventType`, `EventFormJSON`) VALUES
 (1, 'vérvétel', '', 1, '[{\"FieldName\": \"bodypart\", \"FieldType\": \"select\", \"FieldLabel\": \"vervetel_helye\", \"FieldSource\": \"bodypart\", \"FieldRequired\": true}, {\"FieldName\": \"volume\", \"FieldType\": \"input\", \"FieldUnit\": \"ml\", \"FieldLabel\": \"terfogat\", \"FieldDataMax\": \"20\", \"FieldDataMin\": \"0\", \"FieldDataStep\": \"0.1\", \"FieldDataType\": \"range\", \"FieldRequired\": true}]'),
 (2, 'altatás kezdete', '', 2, '[{\"FieldName\": \"anest_start\", \"FieldType\": \"input\", \"FieldLabel\": \"anest_start\", \"FieldSource\": \"location\", \"FieldDataType\": \"datetime\", \"FieldRequired\": true}, {\"FieldName\": \"anest_start_loc\", \"FieldType\": \"select\", \"FieldLabel\": \"anest start location\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"canule_loc_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 1 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 1\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}, {\"FieldName\": \"canule_loc_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 2 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 2\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}]'),
 (3, 'altatás vége', '', 2, '[{\"FieldName\": \"asd\", \"FieldType\": \"input\", \"FieldLabel\": \"asasd\", \"FieldDataType\": \"date\", \"FieldRequired\": false}, {\"FieldName\": \"asd2\", \"FieldType\": \"select\", \"FieldLabel\": \"asasd\", \"FieldSource\": \"consumable\", \"FieldDataType\": \"date\", \"FieldRequired\": false, \"FieldDefaultValue\": \"heparin\"}]'),
 (4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]');
 
 --
--- Eseményindítók `event_definitions`
+-- Eseményindítók `event_template_definitions`
 --
 DELIMITER $$
-CREATE TRIGGER `event_definitions_insert` AFTER INSERT ON `event_definitions` FOR EACH ROW UPDATE definition_tables
+CREATE TRIGGER `event_template_definitions_insert` AFTER INSERT ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
-WHERE TableName = "event_definitions"
+WHERE TableName = "event_template_definitions"
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `event_definitions_update` AFTER UPDATE ON `event_definitions` FOR EACH ROW UPDATE definition_tables
+CREATE TRIGGER `event_template_definitions_update` AFTER UPDATE ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
-WHERE TableName = "event_definitions"
+WHERE TableName = "event_template_definitions"
 $$
 DELIMITER ;
 
@@ -274,7 +274,7 @@ DELIMITER ;
 
 CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
-  `EventID` int NOT NULL COMMENT 'event_definitions.eventid',
+  `EventTemplateID` int NOT NULL COMMENT 'event_template_definitions.EventTemplateID',
   `EventName` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `EventStatus` int DEFAULT NULL COMMENT 'event_status.eventstatusid',
   `EventPlannedTime` timestamp NULL DEFAULT NULL,
@@ -799,10 +799,10 @@ ALTER TABLE `event_change_log`
   ADD KEY `event_change_log_ibfk_1` (`EventIndex`);
 
 --
--- A tábla indexei `event_definitions`
+-- A tábla indexei `event_template_definitions`
 --
-ALTER TABLE `event_definitions`
-  ADD PRIMARY KEY (`EventID`),
+ALTER TABLE `event_template_definitions`
+  ADD PRIMARY KEY (`EventTemplateID`),
   ADD KEY `EventType` (`EventType`);
 
 --
@@ -810,7 +810,7 @@ ALTER TABLE `event_definitions`
 --
 ALTER TABLE `event_log`
   ADD PRIMARY KEY (`EventIndex`),
-  ADD KEY `event_log_ibfk_1` (`EventID`),
+  ADD KEY `event_log_ibfk_1` (`EventTemplateID`),
   ADD KEY `EventLocation` (`EventLocation`),
   ADD KEY `EventModifiedBy` (`EventModifiedBy`),
   ADD KEY `event_log_ibfk_4` (`EventStudy`),
@@ -947,10 +947,10 @@ ALTER TABLE `event_change_log`
   MODIFY `EventChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `event_definitions`
+-- AUTO_INCREMENT a táblához `event_template_definitions`
 --
-ALTER TABLE `event_definitions`
-  MODIFY `EventID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+ALTER TABLE `event_template_definitions`
+  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT a táblához `event_log`
@@ -1063,16 +1063,16 @@ ALTER TABLE `event_change_log`
   ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `event_definitions`
+-- Megkötések a táblához `event_template_definitions`
 --
-ALTER TABLE `event_definitions`
-  ADD CONSTRAINT `event_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `event_template_definitions`
+  ADD CONSTRAINT `event_template_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `event_log`
 --
 ALTER TABLE `event_log`
-  ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventID`) REFERENCES `event_definitions` (`EventID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventTemplateID`) REFERENCES `event_template_definitions` (`EventTemplateID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_2` FOREIGN KEY (`EventLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_3` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,

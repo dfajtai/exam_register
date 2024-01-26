@@ -21,7 +21,7 @@ if(isset($_POST['subject_index']) && isset($_POST['subject_info']) && isset($_SE
         $change_test = $old_subject_info[0];
 
         foreach($change_test as $key => $value){
-            if(!array_key_exists($key,$new_event_info)){
+            if(!array_key_exists($key,$new_subject_info)){
                 unset($change_test[$key]);
             }
         }
@@ -48,21 +48,23 @@ if(isset($_POST['subject_index']) && isset($_POST['subject_info']) && isset($_SE
                             'Weight' => $_old_subject_info["Weight"],
                             'Height' => $_old_subject_info["Height"],
                             'Location' => $_old_subject_info["Location"], 
+                            "Comment" => $_old_subject_info["Comment"],
                             'Status' => $_old_subject_info["Status"],
                             "ModifiedBy" => $_old_subject_info["ModifiedBy"],
-                            "Timestamp" => $_old_subject_info["LastChange"]
+                            "Timestamp" => $_old_subject_info["LastChange"],
                         ];
             
             
             $database -> insert("subject_change_log", [
                 "SubjectIndex"=>$subject_index, 
-                "CurrentSubjectID"=> array_key_exists('SubjectID', $new_subject_info) ? $new_subject_info["SubjectID"] : $_old_subject_info['SubjectID'], 
-                "CurrentStudyID"=>array_key_exists('StudyID', $new_subject_info) ? $new_subject_info["StudyID"] : $_old_subject_info['StudyID'],
-                "CurrentSubjectName" => array_key_exists('Name', $new_subject_info) ? $new_subject_info["Name"] : $_old_subject_info['Name'],
-                "CurrentSubjectGroup" => array_key_exists('Group', $new_subject_info) ? $new_subject_info["Group"] : $_old_subject_info['Group'],
+                "NewSubjectID"=> array_key_exists('SubjectID', $new_subject_info) ? $new_subject_info["SubjectID"] : $_old_subject_info['SubjectID'], 
+                "NewStudyID"=>array_key_exists('StudyID', $new_subject_info) ? $new_subject_info["StudyID"] : $_old_subject_info['StudyID'],
+                "NewSubjectName" => array_key_exists('Name', $new_subject_info) ? $new_subject_info["Name"] : $_old_subject_info['Name'],
+                "NewSubjectGroup" => array_key_exists('Group', $new_subject_info) ? $new_subject_info["Group"] : $_old_subject_info['Group'],
+                "NewSubjectStatus" => array_key_exists('Status', $new_subject_info) ? $new_subject_info["Status"] : $_old_subject_info['Status'],
                 "ModifiedBy" => $new_subject_info["ModifiedBy"],
                 "Timestamp" => $new_subject_info["LastChange"],
-                "OldData" => json_encode($subject_info)
+                "SubjectData" => json_encode($subject_info)
             ]);
         }
 

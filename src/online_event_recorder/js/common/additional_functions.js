@@ -113,6 +113,10 @@ function nullify_array(array, parse = false){
     return res;
 }
 
+function isArray(val){
+    return Array.isArray(val);
+}
+
 function isObject(value) {
     return (
         typeof value === 'object' &&

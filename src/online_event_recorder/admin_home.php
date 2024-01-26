@@ -74,7 +74,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/table_def_forms/consumable_type_definitions_form.js"></script>
 	<script defer src="js/admin/table_def_forms/asset_definitions_form.js"></script>
 	<script defer src="js/admin/table_def_forms/event_type_definitions_form.js"></script>
-	<script defer src="js/admin/table_def_forms/event_definitions_form.js"></script>
+	<script defer src="js/admin/table_def_forms/event_template_definitions_form.js"></script>
 
 	<script defer src="js/common/def_search.js"></script>
 	<script defer src="js/common/additional_functions.js"></script>
@@ -92,6 +92,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/user_management.js"></script>
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
 	<script defer src="js/admin/tools/event_changelog_handler.js"></script>
+	<script defer src="js/admin/tools/subject_changelog_handler.js"></script>
 
 	<script defer src="js/common/inactivity_protection.js"></script>
 
@@ -314,6 +315,26 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
+
+		function show_subject_change_log_tool(){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject change log"));
+				main_container.append(_title);
+
+				show_subject_changelog_handler(main_container);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","SubjectChangeLog");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
+		}
+
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
 				clearAllStatusFromUrl();
@@ -381,6 +402,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="SubjectRegister") show_subject_register_tool();
 					if(tool=="EventLog") show_event_log_tool();
 					if(tool=="EventChangeLog") show_event_change_log_tool();
+					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
 				}
 				else{
 					show_table("users");

@@ -180,7 +180,7 @@ function eventlog_detail_view_formatter(index, row) {
     var detail_view_data_form = $('<form/>').addClass("needs-validation");
     detail_view_content.append(detail_view_data_form);
 
-    var event_params = getDefEntryFieldWhere('event_definitions','EventID', row['EventID'],'EventFormJSON');
+    var event_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', row['EventTemplate'],'EventFormJSON');
     showCustomArgs(detail_view_data_form,JSON.parse(event_params));
 
     var update_data_btn = $("<button/>").addClass("btn btn-outline-primary my-2 w-100").attr("type","submit").html("Update event data");
@@ -419,7 +419,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                 {title: 'Study', field : 'EventStudy', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
                 {title: 'Event Name', field : 'EventName', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
-                {title: 'Template', field : 'EventID', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},
+                {title: 'Template', field : 'EventTemplate', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},
                 {title: 'Location', field : 'EventLocation', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "locationFormatter",},
                 {title: 'ModifiedAt', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "datetimeFormatter",visible:false},
                 {title: 'ModifiedBy', field : 'EventModifiedBy', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "userFormatter",visible:false},
@@ -485,7 +485,7 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
 
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
-        {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventTemplate","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_status},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
@@ -494,7 +494,7 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     showCustomArgs(event_param_block,event_params_config);
 
     event_param_block.find('[name="EventPlannedTime"]').val(null);
-    // event_param_block.find('[name="EventID"]').parent().parent().remove();
+    // event_param_block.find('[name="EventTemplate"]').parent().parent().remove();
 
     form.append(event_param_block);
 
@@ -508,13 +508,13 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     form.append(event_data_block);
 
     var event_template = null;
-    event_param_block.find('[name="EventID"]').on("change",function(){
+    event_param_block.find('[name="EventTemplate"]').on("change",function(){
         event_template = $(this).val();
         if(event_template===null){
             event_form_container.empty();
             return;
         };
-        var event_params = getDefEntryFieldWhere('event_definitions','EventID', event_template,'EventFormJSON');
+        var event_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', event_template,'EventFormJSON');
         if(event_params===null){
             event_form_container.empty();
             return;
@@ -582,7 +582,7 @@ function show_eventlog_modal_add(container, table){
 
         var event_data = {};
         var event_params = {};
-        var event_def_keys = ["EventID","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
+        var event_def_keys = ["EventTemplate","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
 
         $.each($(this).serializeArray(), function(i, field) {
             if(event_def_keys.includes(field.name)){
@@ -621,7 +621,7 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
     eventlog_subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
     var event_params =   [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":false},
-        {"FieldName":"EventID","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventTemplate","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
@@ -635,7 +635,7 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
 
     var event_data_block = $("<div/>").addClass("data-edit");
     event_data_block.append($("<p/>").append($("<b/>").html("Event data")));
-    var event_data_params = getDefEntryFieldWhere('event_definitions','EventID', event_id,'EventFormJSON');
+    var event_data_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', event_id,'EventFormJSON');
     if(event_data_params!==null){
         showCustomArgs(event_data_block,JSON.parse(event_data_params));
     }
@@ -652,9 +652,9 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
     // form.find('[name]').prop('required',false).removeClass("border-2 border-dark");
 
 
-    event_param_block.find('[name="EventID"]').on("change",function(){
+    event_param_block.find('[name="EventTemplate"]').on("change",function(){
         var new_event_id = $(this).val();
-        var event_data_params = getDefEntryFieldWhere('event_definitions','EventID', new_event_id,'EventFormJSON');
+        var event_data_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', new_event_id,'EventFormJSON');
         event_data_block.empty();
         if(event_data_params!==null){
             showCustomArgs(event_data_block,JSON.parse(event_data_params));
@@ -759,7 +759,7 @@ function show_eventlog_modal_edit(container, table, index){
     }
 
 
-    eventlog_edit_form_inputs(form,entry["EventID"]);
+    eventlog_edit_form_inputs(form,entry["EventTemplate"]);
 
     form.append(submitForm);
 
@@ -769,7 +769,7 @@ function show_eventlog_modal_edit(container, table, index){
     _switch_group.append($("<label/>").addClass("form-check-label").attr("for","experteditSwitch").html("Show event parameters"));
     modal_body.append($("<div/>").addClass("input-group-text  mb-3").append(_switch_group));
 
-    // hide event parameter inputs (subject, eventID, ...)
+    // hide event parameter inputs (subject, EventTemplate, ...)
     expertedit_switch.on("change",function(){
         var is_checked = $(expertedit_switch).is(":checked");
         if(is_checked) {
@@ -801,7 +801,7 @@ function show_eventlog_modal_edit(container, table, index){
 
         var event_data = {};
         var event_params = {};
-        var event_def_keys = ["EventID","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
+        var event_def_keys = ["EventTemplate","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
 
         $.each($(this).serializeArray(), function(i, field) {
             // if(!(field.value==""||field.value==null)) {
@@ -815,7 +815,7 @@ function show_eventlog_modal_edit(container, table, index){
         });
 
         event_params["EventData"] = nullify_obj(event_data);
-        // event_params["EventID"] = parse_val(entry["EventID"]);
+        // event_params["EventTemplate"] = parse_val(entry["EventTemplate"]);
         // event_params["EventSubject"] = parse_val(entry["EventSubject"]);
 
         event_params["EventStudy"] = getEntryFieldWhere(eventlog_visible_subjects_info,"SubjectIndex",entry["EventSubject"],"StudyID");
@@ -930,7 +930,7 @@ function show_eventlog_batch_edit(container, table){
 
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"New event name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
-        {"FieldName":"EventID","FieldLabel":"New event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
+        {"FieldName":"EventTemplate","FieldLabel":"New event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
         {"FieldName":"EventStatus","FieldLabel":"New status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true},
         {"FieldName":"EventPlannedTime","FieldLabel":"New planned time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"New location","FieldType":"select","FieldSource":"location", "FieldRequired":false},

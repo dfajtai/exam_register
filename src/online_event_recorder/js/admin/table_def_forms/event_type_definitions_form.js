@@ -59,7 +59,7 @@ function initEventTypeDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:simpleFlatFormatter
+            detailFormatter:detail_as_table_formatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:event_type_definition_retrieve_ajax });

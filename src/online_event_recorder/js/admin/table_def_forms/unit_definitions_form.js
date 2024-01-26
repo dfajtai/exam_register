@@ -61,7 +61,7 @@ function initUnitDefinitionsTable(container,tableId){
             autoRefresh:true,
             autoRefreshStatus:false,
             showAutoRefresh:true,
-            detailFormatter:simpleFlatFormatter
+            detailFormatter:detail_as_table_formatter
         });
     
     table.bootstrapTable('refreshOptions', { ajax:unit_definition_retrieve_ajax });

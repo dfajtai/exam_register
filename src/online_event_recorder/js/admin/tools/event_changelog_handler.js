@@ -79,20 +79,6 @@ function event_changelog_retrieve_event_by_index_ajax(params) {
     });
 }
 
-function event_changelog_revert_ajax(event_index, event_info, callback = null) {
-    if(callback === null){
-        callback = function(){};
-    }
-    $.ajax({
-        type: "POST",
-        url: 'php/update_event.php',
-        // dataType: "json",
-        data: {event_index: event_index, event_info:event_info},
-        success: function(result){
-            callback();
-        }
-    });
-}
 
 function event_changelog_entry_to_event_log_format(entry){   
     if(!isObject(entry)) return entry;
@@ -112,7 +98,7 @@ function event_changelog_entry_to_event_log_format(entry){
 
 
     var alike_object = {
-        "EventID": data_tag["EventID"],
+        "EventTemplate": data_tag["EventTemplate"],
         "EventSubject": entry["EventSubject"],
         "EventStudy": entry["EventStudy"],
         "EventName": entry["EventName"],
@@ -143,7 +129,7 @@ function event_changelog_event_log_alike_formatter(alike_object){
 
     function format_value(value,col){
         switch (col) {
-            case "EventID":
+            case "EventTemplate":
                 return eventFormatter(value,null);
                 break;
             case "EventSubject":
@@ -302,7 +288,7 @@ function event_changelog_template_formatter(value,row){
     var res = null;
     try {
         row_data = JSON.parse(row["EventData"]);
-        var old_event_id = row_data["EventID"];
+        var old_event_id = row_data["EventTemplate"];
         return eventFormatter(old_event_id,row);
 
     } catch (error) {
@@ -352,7 +338,7 @@ window.event_changelog_operate_events = {
         var keys = _.without(Object.keys(final_version),"EventData","EventModifiedAt","EventModifiedBy");
         keys.push("EventData");
 
-        var names = ["Parameter", "Current version", "New version"];
+        var names = ["Parameter", "Actual 'Final' version", "New version"];
         var version_list = [final_version, this_version];
 
         var table = $("<table/>").addClass("w-100 table table-sm table-striped table-bordered border-secondary").attr("id","event_version_"+event_changelog_index+"_table");
@@ -377,8 +363,7 @@ window.event_changelog_operate_events = {
             if(!isObject(_new)) _new = parse_val(_new);
 
             var is_changed = !isEqual(_old,_new);
-            console.log(_old);
-            console.log(_new);
+            // console.log(_old + " -> " + _new + " ==> " + is_changed)
             
 
             $.each(version_list,function(_index,version){
@@ -401,9 +386,13 @@ window.event_changelog_operate_events = {
                     }
                 }    
             })
-            console.log(is_changed);
+            
             if(is_changed){
-                row.css({'color':'red'});
+                // row.css({'color':'red'});
+                // row.children().css({'color':'red'});
+
+                row.addClass('bg-danger bg-gradient');
+                row.children().addClass('bg-danger bg-gradient');
                 change_count+=1;
             }
 
@@ -416,51 +405,52 @@ window.event_changelog_operate_events = {
             var message = "You are going to revert event [EventIndex = '"+event_index+"'] to its '" + this_version["EventModifiedAt"] +"' status.<br/><br/>";
             message+= "Please confirm the planned changes!<br/><br/>";
             message+=$(table).prop("outerHTML");
+
+            bootbox.confirm({
+                size:'large',
+                message: message +'<br/>Do you want to proceed?',
+                buttons: {
+                confirm: {
+                label: 'Yes',
+                className: 'btn-outline-danger'
+                },
+                cancel: {
+                label: 'No',
+                className: 'btn-outline-success'
+                }
+                },
+                callback: function (result) {
+                    if(result){
+                        var event_info = versions.this_status;
+    
+                        delete event_info.EventChangeLogIndex;
+                        delete event_info.EventModifiedAt;
+                        delete event_info.EventModifiedBy;
+    
+                        delete event_info.EventIndex;
+                        
+                        var formatted_event_info = {};
+                        $.each(event_info,function(key,value){
+                            value = nullify_obj(value);
+                            formatted_event_info[key] = parse_val(value);
+                        })
+    
+    
+                        eventlog_update_ajax(event_index,formatted_event_info,function(){
+                            $("#"+event_changelog_table_id).bootstrapTable("refresh");
+    
+                        })
+    
+                    }
+                }
+                });
         }
         else{
-            alert("This the selected version is identical with the current version.");
-            return;
+            bootbox.alert('The selected version is identical with the final version.');
         }
 
 
-        bootbox.confirm({
-            size:'large',
-            message: message +'<br/>Do you want to proceed?',
-            buttons: {
-            confirm: {
-            label: 'Yes',
-            className: 'btn-outline-danger'
-            },
-            cancel: {
-            label: 'No',
-            className: 'btn-outline-success'
-            }
-            },
-            callback: function (result) {
-                if(result){
-                    var event_info = versions.this_status;
-
-                    delete event_info.EventChangeLogIndex;
-                    delete event_info.EventModifiedAt;
-                    delete event_info.EventModifiedBy;
-
-                    delete event_info.EventIndex;
-                    
-                    var formatted_event_info = {};
-                    $.each(event_info,function(key,value){
-                        value = nullify_obj(value);
-                        formatted_event_info[key] = parse_val(value);
-                    })
-
-
-                    eventlog_update_ajax(event_index,formatted_event_info,function(){
-                        $("#"+event_changelog_table_id).bootstrapTable("refresh");
-
-                    })
-
-                }
-            }
-            });
+        
     },
 }
 
@@ -474,6 +464,16 @@ function event_changelog_old_event_data_formatter(value,row){
 }
 
 function event_changelog_old_event_info_formatter(value,row){
+    var event_index = row["EventIndex"];
+    if(event_changelog_status_history_lookup.hasOwnProperty(event_index)){
+        var event_changelog_index = row["EventChangeLogIndex"];
+        var versions = event_changelog_get_versions(event_index,event_changelog_index);
+
+        delete versions.this_status.EventData;
+        delete versions.this_status.EventChangeLogIndex;
+
+        return jsonFormatter(event_changelog_event_log_alike_formatter(versions.this_status),null);
+    }
     var event_info = JSON.parse(row["EventData"]);
     delete event_info["EventData"];
 
@@ -495,17 +495,18 @@ function event_changelog_last_event_data_formatter(value,row){
 
 function event_changelog_last_event_info_formatter(value,row){
     var event_index = row["EventIndex"];
+
     if(event_changelog_final_status_lookup.hasOwnProperty(event_index)){
         var final_info = {... event_changelog_final_status_lookup[event_index]};
         delete final_info["EventData"];
 
-        var final_data_string = jsonFormatter(final_info,null);
+        var final_data_string = jsonFormatter(event_changelog_event_log_alike_formatter(final_info),null);
         return final_data_string;
     }
     return;
 }
 
-function event_changelog_old_event_modified_at_formatter(value,row){
+function event_changelog_version_timestamp_formatter(value,row){
     // timestamp of an entry in event_change_log is the dateteime when the change occured - not the timestamp of the old version
 
     var event_info = JSON.parse(row["EventData"]);
@@ -513,7 +514,7 @@ function event_changelog_old_event_modified_at_formatter(value,row){
 }
 
 
-function event_changelog_last_detail_view_formatter(index,row){
+function event_changelog_detail_view_formatter(index,row){
     var event_index = row["EventIndex"];
     var event_changelog_index = row["EventChangeLogIndex"];
 
@@ -718,14 +719,13 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 
     table.bootstrapTable({
             columns : [
-                {field : 'state', checkbox: true, align:'center', forceHide:true},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.event_changelog_operate_events, formatter: event_changelog_operate_formatter, forceHide:true},
-                {title: '#', field : 'Event_changelogIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
-                {title: 'Timestamp', field : 'OldEventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "event_changelog_old_event_modified_at_formatter", visible:true},
+                {title: '#', field : 'EventChangeLogIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
+                {title: 'Version', field : 'OldEventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "event_changelog_version_timestamp_formatter", visible:true},
                 
                 // timestamp of an entry in event_change_log is the dateteime when the change occured - not the timestamp of the old version
-                {title: 'Next Timestamp', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: false, formatter: "datetimeFormatter",visible:false},
+                {title: 'Changed @', field : 'EventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: false, formatter: "datetimeFormatter",visible:false},
                 
                 {title: 'EventIndex', field : 'EventIndex', align:'center', sortable:true, searchable:false, visible:true, forceExport: true},
                 {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "event_changelog_subjectFormatter"},
@@ -737,7 +737,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 
                 {title: 'ModifiedBy', field : 'EventModifiedBy', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "userFormatter",visible:false},
                 
-                // {title: 'Old timestamp', field : 'OldEventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "event_changelog_old_event_modified_at_formatter", visible:false},
+                // {title: 'Old timestamp', field : 'OldEventModifiedAt', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "event_changelog_version_timestamp_formatter", visible:false},
 
                 {title: 'Old Info', field : 'OldEventInfo', align:'center', sortable:false, searchable:false, forceExport: true, formatter: "event_changelog_old_event_info_formatter", visible:false},
                 {title: 'Last Info', field : 'LastEventInfo', align:'center', sortable:false, searchable:false, forceExport: true, formatter: "event_changelog_last_event_info_formatter", visible:false},
@@ -747,9 +747,8 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
               ],
 
             pagination:true,
-            checkboxHeader:true,
             smartDisplay:true,
-            detailFormatter: event_changelog_last_detail_view_formatter,
+            detailFormatter: event_changelog_detail_view_formatter,
 
             idField:"Event_changelogIndex",
 
