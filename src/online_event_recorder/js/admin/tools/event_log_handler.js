@@ -97,7 +97,7 @@ function eventlog_operate_formatter(value, row, index) {
     edit_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit event");
     container.append(edit_btn);
 
-    if(row["EventStatus"]!=deleted_status){
+    if(row["EventStatus"]!=event_deleted_status){
         var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
         btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
         container.append(btn_remove);
@@ -125,7 +125,7 @@ window.eventlog_operate_events = {
     },
     'click .remove': function (e, value, row, index) {
         eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
-        event_info = {"EventStatus":deleted_status},
+        event_info = {"EventStatus":event_deleted_status},
         function(){
             $('#'+eventlog_table_id).bootstrapTable('refresh');
             $('#'+eventlog_table_id).bootstrapTable('resetView');
@@ -133,7 +133,7 @@ window.eventlog_operate_events = {
     },
     'click .restore': function (e, value, row, index) {
         eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
-        event_info = {"EventStatus":planned_status},
+        event_info = {"EventStatus":event_planned_status},
         function(){
             $('#'+eventlog_table_id).bootstrapTable('refresh');
             $('#'+eventlog_table_id).bootstrapTable('resetView');
@@ -355,8 +355,8 @@ function create_eventlog_table(container, table_id, simplify = false){
                     else{
                         table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(row,filters){
-                            var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-                            return eventlog_status_filter(row,filters,deleted_status);
+                            var event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+                            return eventlog_status_filter(row,filters,event_deleted_status);
                         }}});
                         table.bootstrapTable("filterBy",{});
                     }
@@ -374,8 +374,8 @@ function create_eventlog_table(container, table_id, simplify = false){
             }
             else{
                 options["filterOptions"] = {'filterAlgorithm':function(row,filters){
-                    var deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-                    return eventlog_status_filter(row,filters,deleted_status);
+                    var event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+                    return eventlog_status_filter(row,filters,event_deleted_status);
                 }};
             }
 
@@ -527,7 +527,7 @@ function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
         {"FieldName":"EventTemplate","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
-        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":planned_status},
+        {"FieldName":"EventStatus","FieldLabel":"Status","FieldType":"select","FieldSource":"event_status", "FieldRequired":true, "FieldDefaultValue":event_planned_status},
         {"FieldName":"EventPlannedTime","FieldLabel":"Planned Time","FieldType":"input","FieldDataType":'datetime', "FieldRequired":false},
         {"FieldName":"EventLocation","FieldLabel":"Location","FieldType":"select","FieldSource":"location", "FieldRequired":false},
         {"FieldName":"EventComment","FieldLabel":"Comment","FieldType":"input","FieldDataType":'longtext', "FieldRequired":false},
@@ -1052,10 +1052,10 @@ function show_eventlog_batch_edit(container, table){
     btn_batch_duplicate.on("click",function(){
 
         var update_params = read_settings();
-        console.log(update_params);
+        // console.log(update_params);
 
         var message = 'You are going to duplicate the selected';
-        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> event';
+        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> events';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){
@@ -1108,10 +1108,10 @@ function show_eventlog_batch_edit(container, table){
     btn_batch_update.on("click",function(){
 
         var update_params = read_settings();
-        console.log(update_params);
+        // console.log(update_params);
 
         var message = 'You are going to update the selected';
-        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> event';
+        message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> events';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){

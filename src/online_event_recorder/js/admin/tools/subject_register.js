@@ -82,13 +82,7 @@ function subjectOperateFormatter(value, row, index) {
 
 window.subject_operate_events = {
     'click .edit': function (e, value, row, index) {
-        var modal_id = initSubjectModalEdit(subject_content,$("#"+subject_table_id),index);
-        var modal_edit = $("#"+modal_id);
-        if(modal_edit.length>0){
-            $(modal_edit[0]).modal('show');
-            // _content_name = "edit";
-            // $( document ).trigger( "_lock", [ "edit"] );
-        }
+        show_subject_modal_edit(subject_content,$("#"+subject_table_id),index);
     },
 }
 
@@ -227,6 +221,7 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter",forceExport: true},
                 {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true},
                 {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true},
+                {title: 'Comment', field : 'Comment', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
                 {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter"},
             ],
             pagination:true,
@@ -325,7 +320,7 @@ function subject_modal(container, modal_id, title){
     container.append(modal_root);
 }
 
-function initSubjectModalAdd(container, table){
+function show_subject_modal_add(container, table){
     var modal_id = "subject_modalAdd";
     var form_id = modal_id+"Form";
 
@@ -367,9 +362,11 @@ function initSubjectModalAdd(container, table){
         $(modal_body).find('form')[0].reset();
     })
     modal_body.append(form);
+
+    modal.modal('show');
 }
 
-function initSubjectModalEdit(container, table, index){
+function show_subject_modal_edit(container, table, index){
     var modal_id = "subject_modalEdit";
     var form_id = modal_id+"Form";
 
@@ -462,12 +459,20 @@ function initSubjectModalEdit(container, table, index){
         modal.modal('hide');
         form[0].reset();
     });
-    return modal_id;
+
+    modal.modal('show');
 }
 
-function initSubjectBatchModalEdit(container, table){
+function show_subject_batch_modal_edit(container, table){
     var modal_id = "subjectBatchModalEdit";
     var form_id = modal_id+"Form";
+
+    var selected =table.bootstrapTable("getSelections");
+
+    if(selected.length==0){
+        return
+    }
+
 
     container.find("#"+modal_id).remove();
     
@@ -479,13 +484,16 @@ function initSubjectBatchModalEdit(container, table){
     
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Alter Subjects");
-    submitForm.append(submitButton);
-
     subjectBatchFormInputs(form);
-    form.append(submitForm);
     modal_body.append(form);
+
+    var modal_body_btns = $("<div/>").addClass("row");
+    var btn_batch_duplicate = $("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_duplicate").attr("aria-label","Duplicate subjects with new parameters").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Duplicate subjects with new parameters");
+    var btn_batch_update =$("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_update").attr("aria-label","Update selected subjects").html($("<i/>").addClass("fa fa-arrows-spin me-2").attr("aria-hidden","true")).append("Update selected subjects");
+    modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_duplicate));
+    modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_update));
+    modal_body.append($("<div/>").append(modal_body_btns));
+
    
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["batch_edit"]);
@@ -496,57 +504,125 @@ function initSubjectBatchModalEdit(container, table){
         $(modal_body).find('form')[0].reset();
     })
 
-    form.on('submit',function(e){
-        e.preventDefault();
 
-        if(! form[0].checkValidity()){
-            form[0].reportValidity();
-            return;
+    function read_settings(){
+        var params = {};
+        $.each($(form).serializeArray(), function(i, field) {
+            // console.log(field);
+            var parsed_val = parse_val(field.value);
+            if(parsed_val!=null)
+            params[field.name] = parsed_val;
+            
+        });
+        return params;
+    }
+
+    btn_batch_duplicate.on("click",function(){
+        
+        var update_params = read_settings();
+        // console.log(update_params);
+
+        var message = 'You are going to duplicate the selected';
+        message += selected.length == 1 ? ' subject': ' <b>'+ selected.length +'</b> subjects';
+        if(Object.entries(update_params).length>0){
+            message+=', with the following parameters updated:<br/>';
+            $.each(update_params,function(key,value){
+                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+            });
+        }
+        else{
+            message+=".";
         }
 
-        var values = {};
+        bootbox.confirm({
+            message: message + '<br/>Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    var subject_info_list = []
+                    $.each(selected,function(index,entry){
+                        var subject_info = {... entry};
+                        delete subject_info.SubjectIndex;
+                        delete subject_info.LastChange;
+                        delete subject_info.ModifiedBy;
+                        delete subject_info.state;
 
+                        $.each(update_params,function(key,value){
+                            subject_info[key]=value;
+                        });
 
-        form.find("input[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")] = _val;
-            };
-        });
-        form.find("textarea[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")] = _val;
-            };
+                        subject_info_list.push(subject_info);
+                    })
+                    subject_insert_ajax(subject_info_list,function(){
+                        table.bootstrapTable("refresh");
+                        modal.modal("hide");
+                    });
+                }
+            }
+            });
+    })
 
-        });
-        form.find("select[name]").each(function(){
-            let _val =  $(this).val();
-            if(!(_val==""||_val==null)){
-                values[$(this).attr("name")] = _val;
-            };
-        });
+    btn_batch_update.on("click",function(){
 
-        var selection =  table.bootstrapTable('getSelections');
+        var update_params = read_settings();
+        // console.log(update_params);
 
+        var message = 'You are going to update the selected';
+        message += selected.length == 1 ? ' subject': ' <b>'+ selected.length +'</b> subjects';
+        if(Object.entries(update_params).length>0){
+            message+=', with the following parameters updated:<br/>';
+            $.each(update_params,function(key,value){
+                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+            });
+        }
+        else{
+            message+=".";
+        }
 
-        var ajax_list = [];
-        $.each(selection, function(index,entry){
-            var ajax = subject_update_ajax(entry["SubjectIndex"],values,function(){},true);
-            ajax_list.push(ajax);
-        })
+        bootbox.confirm({
+            message: message + '<br/>Do you want to proceed?',
+            buttons: {
+            confirm: {
+            label: 'Yes',
+            className: 'btn-outline-danger'
+            },
+            cancel: {
+            label: 'No',
+            className: 'btn-outline-success'
+            }
+            },
+            callback: function (result) {
+                if(result){
+                    // bundle multiple update together
+                    var ajax_list = [];
+                    $.each(selected, function(index,entry){
+                        var ajax = subject_update_ajax(entry["SubjectIndex"],update_params,function(){},true);
+                        ajax_list.push(ajax);
+                    })
+            
+                    $.when.apply(this,ajax_list).then(function(){
+                        // console.log("DONE!");
+                        table.bootstrapTable("refresh");
+                        modal.modal("hide");
+                    })
+                }
+            }
+            });
+    })
 
-        $.when.apply(this,ajax_list).then(function(){
-            // console.log("DONE!");
-            table.bootstrapTable("refresh");
-            modal.modal("hide");
-        })
-    });
-
-    return modal_id;
+    modal.modal('show');
 }
 
-function initSubjectModalImport(container,table){
+function show_subject_modal_import(container,table){
     var modal_id = "subject_modalImport";
     var form_id = modal_id+"Form";
 
@@ -726,6 +802,8 @@ function initSubjectModalImport(container,table){
 
 
     });
+
+    modal.modal('show');
 }
 
 function subjects_table_events(){
@@ -753,9 +831,9 @@ function show_subject_register(container){
     subject_content = $("<div/>").attr("id","subjectManagerModalContainer");
     container.append(subject_content);
 
-    initSubjectModalAdd(subject_content, table);
+
     toolbar.find("#toolbar_add").on("click", function(){
-        $('#subject_modalAdd').modal('show');
+        show_subject_modal_add(subject_content, table);
         // $(document).trigger("_lock",["add"]);
     });
 
@@ -768,6 +846,8 @@ function show_subject_register(container){
             var _data = {... entry};
 
             delete _data["SubjectIndex"];
+            delete _data["LastChange"];
+            delete _data["ModifiedBy"];
             delete _data["state"];
 
             $.each(_data,function(key){
@@ -780,15 +860,15 @@ function show_subject_register(container){
         subject_insert_ajax(data,function(){table.bootstrapTable("refresh")});
     })
 
-    initSubjectBatchModalEdit(subject_content,table);
+
     toolbar.find("#toolbar_batch_edit").on("click", function(){
-        $('#subjectBatchModalEdit').modal('show');
+        show_subject_batch_modal_edit(subject_content, table);
         // $(document).trigger("_lock",["batch_edit"]);
     });
 
-    initSubjectModalImport(subject_content,table);
+    
     toolbar.find("#toolbar_import").on("click", function(){
-        $('#subject_modalImport').modal('show');
+        show_subject_modal_import(subject_content,table);
         // $(document).trigger("_lock",["import"]);
     });
 

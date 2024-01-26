@@ -186,8 +186,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script>
 		var available_def_tables = Object();
-		var deleted_status =  null;
-		var planned_status =  null;
+		var subject_deleted_status =  null;
+		var event_deleted_status =  null;
+		var event_planned_status =  null;
 
 		function show_table(def_name){
 			
@@ -389,8 +390,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							"studies":{"title":"Studies","func":initStudyDefinitionsTable},
 							};
 
-				deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-				planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
+				subject_deleted_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","deleted","StatusID");
+				subject_pending_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","pending","StatusID");
+				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
 				if (statusInUrl("def")){
 					show_table(statusFromUrl("def"));
