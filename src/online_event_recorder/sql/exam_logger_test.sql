@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 17. 17:17
+-- Létrehozás ideje: 2024. Jan 26. 18:02
 -- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
 -- PHP verzió: 8.2.13
 
@@ -206,8 +206,8 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
-(15, 'event_template_definitions', '2024-01-17 10:48:26', 'ebeb3b91'),
-(16, 'studies', '2024-01-16 10:23:12', 'd6aea30a');
+(15, 'event_template_definitions', '2024-01-17 10:48:26', '1c030179'),
+(16, 'studies', '2024-01-26 18:00:29', '7f1098c3');
 
 -- --------------------------------------------------------
 
@@ -218,7 +218,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 CREATE TABLE `event_change_log` (
   `EventChangeLogIndex` int NOT NULL,
   `EventIndex` int NOT NULL,
-  `EventName` varchar(127) NOT NULL,
+  `EventName` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `EventStudy` int NOT NULL,
   `EventSubject` int NOT NULL,
   `EventData` json DEFAULT NULL,
@@ -229,52 +229,12 @@ CREATE TABLE `event_change_log` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_template_definitions`
---
-
-CREATE TABLE `event_template_definitions` (
-  `EventTemplateID` int NOT NULL,
-  `EventName` varchar(32) NOT NULL,
-  `EventDesc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `EventType` int NOT NULL,
-  `EventFormJSON` json DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- A tábla adatainak kiíratása `event_template_definitions`
---
-
-INSERT INTO `event_template_definitions` (`EventTemplateID`, `EventName`, `EventDesc`, `EventType`, `EventFormJSON`) VALUES
-(1, 'vérvétel', '', 1, '[{\"FieldName\": \"bodypart\", \"FieldType\": \"select\", \"FieldLabel\": \"vervetel_helye\", \"FieldSource\": \"bodypart\", \"FieldRequired\": true}, {\"FieldName\": \"volume\", \"FieldType\": \"input\", \"FieldUnit\": \"ml\", \"FieldLabel\": \"terfogat\", \"FieldDataMax\": \"20\", \"FieldDataMin\": \"0\", \"FieldDataStep\": \"0.1\", \"FieldDataType\": \"range\", \"FieldRequired\": true}]'),
-(2, 'altatás kezdete', '', 2, '[{\"FieldName\": \"anest_start\", \"FieldType\": \"input\", \"FieldLabel\": \"anest_start\", \"FieldSource\": \"location\", \"FieldDataType\": \"datetime\", \"FieldRequired\": true}, {\"FieldName\": \"anest_start_loc\", \"FieldType\": \"select\", \"FieldLabel\": \"anest start location\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"canule_loc_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 1 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 1\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}, {\"FieldName\": \"canule_loc_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 2 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 2\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}]'),
-(3, 'altatás vége', '', 2, '[{\"FieldName\": \"asd\", \"FieldType\": \"input\", \"FieldLabel\": \"asasd\", \"FieldDataType\": \"date\", \"FieldRequired\": false}, {\"FieldName\": \"asd2\", \"FieldType\": \"select\", \"FieldLabel\": \"asasd\", \"FieldSource\": \"consumable\", \"FieldDataType\": \"date\", \"FieldRequired\": false, \"FieldDefaultValue\": \"heparin\"}]'),
-(4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]');
-
---
--- Eseményindítók `event_template_definitions`
---
-DELIMITER $$
-CREATE TRIGGER `event_template_definitions_insert` AFTER INSERT ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
-SET LastChange = NOW()
-WHERE TableName = "event_template_definitions"
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `event_template_definitions_update` AFTER UPDATE ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
-SET LastChange = NOW()
-WHERE TableName = "event_template_definitions"
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
 -- Tábla szerkezet ehhez a táblához `event_log`
 --
 
 CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
-  `EventTemplateID` int NOT NULL COMMENT 'event_template_definitions.EventTemplateID',
+  `EventTemplate` int NOT NULL COMMENT 'event_definitions.eventid',
   `EventName` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `EventStatus` int DEFAULT NULL COMMENT 'event_status.eventstatusid',
   `EventPlannedTime` timestamp NULL DEFAULT NULL,
@@ -503,8 +463,8 @@ CREATE TABLE `studies` (
 --
 
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
-(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 3),
-(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 0),
+(1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 7),
+(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 2),
 (3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 0);
 
 --
@@ -541,6 +501,7 @@ CREATE TABLE `subjects` (
   `Weight` double DEFAULT NULL,
   `Height` double DEFAULT NULL,
   `Location` int DEFAULT NULL,
+  `Comment` text,
   `LastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ModifiedBy` int NOT NULL,
   `Status` int DEFAULT NULL
@@ -576,13 +537,14 @@ DELIMITER ;
 --
 
 CREATE TABLE `subject_change_log` (
-  `SubjectLogIndex` int NOT NULL,
+  `SubjectChangeLogIndex` int NOT NULL,
   `SubjectIndex` int NOT NULL,
-  `CurrentSubjectID` varchar(32) DEFAULT NULL,
-  `CurrentSubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `CurrentSubjectGroup` varchar(32) DEFAULT NULL,
-  `CurrentStudyID` int NOT NULL,
-  `OldData` json DEFAULT NULL,
+  `NewSubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `NewSubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `NewSubjectGroup` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `NewStudyID` int NOT NULL,
+  `NewSubjectStatus` int DEFAULT NULL,
+  `SubjectData` json DEFAULT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ModifiedBy` int NOT NULL COMMENT 'user id of the original subject state (since the last is stored in the subjects table)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -744,7 +706,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-17 17:02:27', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-26 18:02:07', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -799,18 +761,11 @@ ALTER TABLE `event_change_log`
   ADD KEY `event_change_log_ibfk_1` (`EventIndex`);
 
 --
--- A tábla indexei `event_template_definitions`
---
-ALTER TABLE `event_template_definitions`
-  ADD PRIMARY KEY (`EventTemplateID`),
-  ADD KEY `EventType` (`EventType`);
-
---
 -- A tábla indexei `event_log`
 --
 ALTER TABLE `event_log`
   ADD PRIMARY KEY (`EventIndex`),
-  ADD KEY `event_log_ibfk_1` (`EventTemplateID`),
+  ADD KEY `event_log_ibfk_1` (`EventTemplate`),
   ADD KEY `EventLocation` (`EventLocation`),
   ADD KEY `EventModifiedBy` (`EventModifiedBy`),
   ADD KEY `event_log_ibfk_4` (`EventStudy`),
@@ -873,16 +828,18 @@ ALTER TABLE `subjects`
 -- A tábla indexei `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
-  ADD PRIMARY KEY (`SubjectLogIndex`),
-  ADD KEY `CurrentStudyID` (`CurrentStudyID`),
+  ADD PRIMARY KEY (`SubjectChangeLogIndex`),
+  ADD KEY `CurrentStudyID` (`NewStudyID`),
   ADD KEY `ModifiedBy` (`ModifiedBy`),
-  ADD KEY `subject_change_log_ibfk_3` (`SubjectIndex`);
+  ADD KEY `subject_change_log_ibfk_3` (`SubjectIndex`),
+  ADD KEY `NewSubjectStatus` (`NewSubjectStatus`);
 
 --
 -- A tábla indexei `subject_status_definitions`
 --
 ALTER TABLE `subject_status_definitions`
-  ADD PRIMARY KEY (`StatusID`);
+  ADD PRIMARY KEY (`StatusID`),
+  ADD UNIQUE KEY `StatusName` (`StatusName`);
 
 --
 -- A tábla indexei `unit_definitions`
@@ -947,12 +904,6 @@ ALTER TABLE `event_change_log`
   MODIFY `EventChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `event_template_definitions`
---
-ALTER TABLE `event_template_definitions`
-  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
 -- AUTO_INCREMENT a táblához `event_log`
 --
 ALTER TABLE `event_log`
@@ -1004,7 +955,7 @@ ALTER TABLE `subjects`
 -- AUTO_INCREMENT a táblához `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
-  MODIFY `SubjectLogIndex` int NOT NULL AUTO_INCREMENT;
+  MODIFY `SubjectChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT a táblához `subject_status_definitions`
@@ -1063,16 +1014,10 @@ ALTER TABLE `event_change_log`
   ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `event_template_definitions`
---
-ALTER TABLE `event_template_definitions`
-  ADD CONSTRAINT `event_template_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
---
 -- Megkötések a táblához `event_log`
 --
 ALTER TABLE `event_log`
-  ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventTemplateID`) REFERENCES `event_template_definitions` (`EventTemplateID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventTemplate`) REFERENCES `event_template_definitions` (`EventTemplateID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_2` FOREIGN KEY (`EventLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_3` FOREIGN KEY (`EventModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `event_log_ibfk_4` FOREIGN KEY (`EventStudy`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -1093,9 +1038,10 @@ ALTER TABLE `subjects`
 -- Megkötések a táblához `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
-  ADD CONSTRAINT `subject_change_log_ibfk_1` FOREIGN KEY (`CurrentStudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `subject_change_log_ibfk_1` FOREIGN KEY (`NewStudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `subject_change_log_ibfk_2` FOREIGN KEY (`ModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `subject_change_log_ibfk_3` FOREIGN KEY (`SubjectIndex`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `subject_change_log_ibfk_3` FOREIGN KEY (`SubjectIndex`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `subject_change_log_ibfk_4` FOREIGN KEY (`NewSubjectStatus`) REFERENCES `subject_status_definitions` (`StatusID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `unit_definitions`
