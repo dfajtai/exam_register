@@ -237,7 +237,7 @@ function subject_changelog_operate_formatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
 
-    var revert_btn = $("<button/>").addClass("btn btn-outline-primary btn-sm revert lockable me-1").append($("<i/>").addClass("fa fa-clock-rotate-left"))
+    var revert_btn = $("<button/>").addClass("btn btn-outline-dark btn-sm revert lockable me-1").append($("<i/>").addClass("fa fa-clock-rotate-left"))
     revert_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Revert event to this version.");
     container.append(revert_btn);
 
@@ -331,11 +331,11 @@ window.subject_changelog_operate_events = {
                 buttons: {
                 confirm: {
                 label: 'Yes',
-                className: 'btn-outline-danger'
+                className: 'btn-outline-dark'
                 },
                 cancel: {
                 label: 'No',
-                className: 'btn-outline-success'
+                className: 'btn-outline-dark'
                 }
                 },
                 callback: function (result) {

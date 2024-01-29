@@ -39,9 +39,9 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         }
         $.ajax({
         type: "GET",
-        url: 'php/retrieve_table.php',
+        url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({table_name: "subjects"}),
+        data: ({table_name: "subjects",where_not:{"Status":subject_deleted_status}}),
         success: function (result) {
             callback(result);
         }});
@@ -53,9 +53,9 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         }
         $.ajax({
         type: "GET",
-        url: 'php/retrieve_study_subjects.php',
+        url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({study_id: params.study_id}),
+        data: ({table_name: "subjects", where:{"StudyID":params.study_id}, where_not:{'Status':subject_deleted_status}}),
         success: function (result) {
             callback(result);
         }});
@@ -291,10 +291,11 @@ function subjectSelectWidget(container, study_id = null, callback = null){
     })
 
     reset_widget.on("click",function(){
-        
+        $(study_dropdown).val("all");
         if($(filter_switch).prop("checked")){
             $(filter_switch).prop("checked",false);
             $(filter_switch).trigger('change');
+
         }
         else{
             $(subject_input).val("");
@@ -329,7 +330,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         var subject_container = $("<div/>").attr("id","advancedSubjectSelector").addClass("mb-3 container");
 
         var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
-        var submitButton = $("<button/>").addClass("btn btn-primary").attr("type","submit").html("Choose selected subjects");
+        var submitButton = $("<button/>").addClass("btn btn-dark").attr("type","submit").html("Choose selected subjects");
         submitForm.append(submitButton);
 
         form.append(subject_container);

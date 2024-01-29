@@ -15,7 +15,7 @@ function showSelectActiveStudyForm(container){
 
     studySelect.append(study_select_dropdow);
     selectForm.append(studySelect)
-    selectForm.append($("<button/>").addClass("col-sm-3  btn btn-primary").attr("type","subbmit").html("Mark as Active Study"));
+    selectForm.append($("<button/>").addClass("col-sm-3  btn btn-dark").attr("type","subbmit").html("Mark as Active Study"));
     selectActiveStudyForm.append(selectForm);
 
     //TODO current study info (if availabel)

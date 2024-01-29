@@ -36,11 +36,11 @@ window.event_args_operate_events = {
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-danger'
+            className: 'btn-outline-dark'
             },
             cancel: {
             label: 'No',
-            className: 'btn-outline-success'
+            className: 'btn-outline-dark'
             }
             },
             callback: function (result) {
@@ -72,8 +72,8 @@ function eventOperateFormatter(value, row, index) {
     up_down_gorup.append(btn_down)
     container.append(up_down_gorup);
 
-    var btn_edit = $("<button/>").addClass("btn btn-outline-primary btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit"));
-    var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+    var btn_edit = $("<button/>").addClass("btn btn-outline-dark btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit"));
+    var btn_remove = $("<button/>").addClass("btn btn-outline-dark btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
     btn_edit.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit");
     btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove");
 
@@ -103,13 +103,13 @@ function create_event_args_table(container, table_id, height){
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
-    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-    // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-primary admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
+    // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-dark admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_event_args_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
     toolbar.append($("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
-    toolbar.append($("<button/>").attr("id","toolbar_preview_event_form").addClass("btn btn-outline-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
+    toolbar.append($("<button/>").attr("id","toolbar_preview_event_form").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
 
     table.attr("data-height",String(height));
 
@@ -384,8 +384,8 @@ function event_args_modal(container, modal_id, title){
     var modal_body = $("<div/>").addClass("modal-body");
 
     var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
-    modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
+    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);
     modal_content.append(modal_body);
@@ -461,7 +461,7 @@ function event_args_add_form(container,form_id, table){
     form.append(primaryProperties);
     form.append(additionalForm);
 
-    var submitButton = $("<button/>").addClass("btn btn-outline-primary col-md-12").attr("id","submitBtn").attr("type","submit").html("Add as new field");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark col-md-12").attr("id","submitBtn").attr("type","submit").html("Add as new field");
 
     form.append(submitButton);
 
@@ -670,7 +670,7 @@ function show_event_args_modal_edit_form(container, table, index){
     var modal_footer = modal.find(".modal-footer");
     // modal_footer.empty();
 
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-dark").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
 
     event_args_content_name = "edit";
     $( document ).trigger( "_lock", [ "edit"] );
@@ -704,7 +704,7 @@ function event_args_json_import(container,form_id, table){
     var textarea =$("<textarea/>").addClass("form-control col-md-12 mb-2").attr("placeholder","Paste your JSON").attr("rows",20).prop("required",true).attr("name","json_text");
     form.append(textarea);
 
-    form.append($("<button/>").addClass("btn btn-outline-primary col-md-12").html("Add JSON data to Fields"));
+    form.append($("<button/>").addClass("btn btn-outline-dark col-md-12").html("Add JSON data to Fields"));
 
 
     form.on("submit",function(e){
@@ -860,7 +860,7 @@ function event_args_uniqueness_warning(){
             buttons: {
                 ok: {
                     label: 'Accept',
-                    className: 'btn-outline-primary'
+                    className: 'btn-outline-dark'
                     },
                 },
             });
@@ -938,11 +938,11 @@ function show_event_args_editor(container){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-danger'
+            className: 'btn-outline-dark'
             },
             cancel: {
             label: 'No',
-            className: 'btn-outline-success'
+            className: 'btn-outline-dark'
             }
             },
             callback: function (result) {

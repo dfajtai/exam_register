@@ -85,6 +85,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/dynamic_form.js"></script>
 
 	<script defer src="js/common/subjectSelectWidget.js"></script>
+	<script defer src="js/common/status_filter_widget.js"></script>
 
 	<script defer src="js/admin/tools/event_args_editor.js"></script>
 	<script defer src="js/admin/tools/event_planner.js"></script>

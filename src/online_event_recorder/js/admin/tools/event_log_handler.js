@@ -93,22 +93,22 @@ function eventlog_operate_formatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
 
-    var edit_btn = $("<button/>").addClass("btn btn-outline-primary btn-sm edit lockable me-1").append($("<i/>").addClass("fa fa-edit"))
+    var edit_btn = $("<button/>").addClass("btn btn-outline-dark btn-sm edit lockable me-1").append($("<i/>").addClass("fa fa-edit"))
     edit_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit event");
     container.append(edit_btn);
 
     if(row["EventStatus"]!=event_deleted_status){
-        var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+        var btn_remove = $("<button/>").addClass("btn btn-outline-dark btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
         btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
         container.append(btn_remove);
     }
     else{
-        var btn_resotre = $("<button/>").addClass("btn btn-outline-success btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
+        var btn_resotre = $("<button/>").addClass("btn btn-outline-dark btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
         btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
         container.append(btn_resotre);
     }
 
-    // container.append($("<button/>").addClass("btn btn-outline-primary btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
+    // container.append($("<button/>").addClass("btn btn-outline-dark btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
 
     // if(_lock_list.length>0){
     //     container.find("button").addClass("disabled");
@@ -224,7 +224,7 @@ function eventlog_detail_view_formatter(index, row) {
     var event_params = getDefEntryFieldWhere('event_template_definitions','EventTemplateID', row['EventTemplate'],'EventFormJSON');
     showCustomArgs(detail_view_data_form,JSON.parse(event_params));
 
-    var update_data_btn = $("<button/>").addClass("btn btn-outline-primary my-2 w-100").attr("type","submit").html("Update event data");
+    var update_data_btn = $("<button/>").addClass("btn btn-outline-dark my-2 w-100").attr("type","submit").html("Update event data");
     detail_view_data_form.append(update_data_btn);
 
     detail_view_data_form.on('submit',function(e){
@@ -299,10 +299,10 @@ function create_eventlog_table(container, table_id, simplify = false){
 
             if(eventlog_visible_subjects_info.length>0){
                 $(toolbar).empty();
-                toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-success admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-primary admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-                // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
-                toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-primary admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
+                toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
+                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+                // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+                toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
 
                 var _switch_group = $("<div/>").addClass("form-check form-switch");
                 var show_deleted_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","showDeletedSwitch");
@@ -316,6 +316,8 @@ function create_eventlog_table(container, table_id, simplify = false){
                     // $(document).trigger("_lock",["add"]);
                     // eventlog_content_name = "add";
                 });
+
+                statusFilterWidget(toolbar,"event",[event_deleted_status]);
 
                 toolbar.find("#toolbar_duplicate").on("click",function(e){
                     var selected =table.bootstrapTable("getSelections");
@@ -583,7 +585,7 @@ function show_eventlog_modal_add(container, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Add event");
+    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
     eventlog_add_form_inputs(form, eventlog_visible_subjects_info );
@@ -725,9 +727,9 @@ function show_eventlog_modal_edit(container, table, index){
     var modal_body = modal.find(".modal-body");
 
     var modal_footer = modal.find(".modal-footer");
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-primary").attr("id","revert_form").attr("aria-label","Revert").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-danger").attr("id","clear_data").attr("aria-label","Remove data").html($("<i/>").addClass("fa fa-text-slash me-2").attr("aria-hidden","true")).append("Empty event data"));
-    modal_footer.prepend($("<button/>").addClass("btn btn-outline-success").attr("id","add_copy").attr("aria-label","Add as copy").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Add as copy"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-dark").attr("id","revert_form").attr("aria-label","Revert").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_data").attr("aria-label","Remove data").html($("<i/>").addClass("fa fa-text-slash me-2").attr("aria-hidden","true")).append("Empty event data"));
+    modal_footer.prepend($("<button/>").addClass("btn btn-outline-dark").attr("id","add_copy").attr("aria-label","Add as copy").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Add as copy"));
 
 
     modal_footer.find("#clear_form").html("Clear everything");
@@ -735,7 +737,7 @@ function show_eventlog_modal_edit(container, table, index){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-primary w-100").attr("type","submit").html("Update event");
+    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Update event");
     submitForm.append(submitButton);
 
 
@@ -1010,8 +1012,8 @@ function show_eventlog_batch_edit(container, table){
     modal_body.append(form);
     
     var modal_body_btns = $("<div/>").addClass("row");
-    var btn_batch_duplicate = $("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_duplicate").attr("aria-label","Duplicate events with new parameters").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Duplicate events with new parameters");
-    var btn_batch_update =$("<button/>").addClass("btn btn-outline-primary w-100").attr("id","batch_update").attr("aria-label","Update selected events").html($("<i/>").addClass("fa fa-arrows-spin me-2").attr("aria-hidden","true")).append("Update selected events");
+    var btn_batch_duplicate = $("<button/>").addClass("btn btn-outline-dark w-100").attr("id","batch_duplicate").attr("aria-label","Duplicate events with new parameters").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Duplicate events with new parameters");
+    var btn_batch_update =$("<button/>").addClass("btn btn-outline-dark w-100").attr("id","batch_update").attr("aria-label","Update selected events").html($("<i/>").addClass("fa fa-arrows-spin me-2").attr("aria-hidden","true")).append("Update selected events");
     modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_duplicate));
     modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_update));
     modal_body.append($("<div/>").append(modal_body_btns));
@@ -1071,11 +1073,11 @@ function show_eventlog_batch_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-danger'
+            className: 'btn-outline-dark'
             },
             cancel: {
             label: 'No',
-            className: 'btn-outline-success'
+            className: 'btn-outline-dark'
             }
             },
             callback: function (result) {
@@ -1127,11 +1129,11 @@ function show_eventlog_batch_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-danger'
+            className: 'btn-outline-dark'
             },
             cancel: {
             label: 'No',
-            className: 'btn-outline-success'
+            className: 'btn-outline-dark'
             }
             },
             callback: function (result) {
@@ -1174,9 +1176,9 @@ function eventlog_modal(container, modal_id, title){
     var modal_body = $("<div/>").addClass("modal-body");
 
     var modal_footer= $("<div/>").addClass("modal-footer");
-    // modal_footer.append($("<button/>").addClass("btn btn-success").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
-    modal_footer.append($("<button/>").addClass("btn btn-danger").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
-    modal_footer.append($("<button/>").addClass("btn btn-secondary").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
+    // modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
+    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);
     modal_content.append(modal_body);
