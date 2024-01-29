@@ -4,7 +4,7 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
     form_input_function(form);
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Add new");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Add new");
     submitForm.append(submitButton);
 
 
@@ -56,7 +56,7 @@ function modalInsert(data_name, container, modal_id, table_id,
 
     var modal_footer= $("<div/>").addClass("modal-footer");
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
-    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser").attr("aria-hidden","true")).append(" Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser").attr("aria-hidden","true")).append(" Clear"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);
@@ -125,7 +125,7 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
     form_input_function(form);
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Save changes");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Save changes");
     submitForm.append(submitButton);
 
     form.append(submitForm);
@@ -271,7 +271,7 @@ function modalUpdate(data_name, container, modal_id, table_id,
     var modal_body = $("<div/>").addClass("modal-body");
 
     var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-arrow-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-arrow-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);

@@ -98,12 +98,12 @@ function eventlog_operate_formatter(value, row, index) {
     container.append(edit_btn);
 
     if(row["EventStatus"]!=event_deleted_status){
-        var btn_remove = $("<button/>").addClass("btn btn-outline-dark btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+        var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
         btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
         container.append(btn_remove);
     }
     else{
-        var btn_resotre = $("<button/>").addClass("btn btn-outline-dark btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
+        var btn_resotre = $("<button/>").addClass("btn btn-outline-primary btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
         btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
         container.append(btn_resotre);
     }
@@ -276,10 +276,11 @@ function eventlog_detail_view_formatter(index, row) {
     return detail_view_content
 }
 
-function eventlog_status_filter(row, filters, hidden_status = null){
+function eventlog_status_filter(row, filters, visible_status = null){
     // console.log(filters);
-    if(hidden_status== null) return true;
-    if(row["EventStatus"]==hidden_status) return false;
+    if(visible_status == null) return true;
+    if(!isArray(visible_status)) return true;
+    if(!visible_status.includes(row["EventStatus"])) return false;
     return true;
 }
 
@@ -297,18 +298,28 @@ function create_eventlog_table(container, table_id, simplify = false){
 
             eventlog_visible_subjects_info = subject_info;
 
+            var options = {};
+
             if(eventlog_visible_subjects_info.length>0){
                 $(toolbar).empty();
                 toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-                // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+                // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
                 toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
 
-                var _switch_group = $("<div/>").addClass("form-check form-switch");
-                var show_deleted_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","showDeletedSwitch");
-                _switch_group.append(show_deleted_switch);
-                _switch_group.append($("<label/>").addClass("form-check-label").attr("for","showDeletedSwitch").html("Show deleted"));
-                toolbar.append($("<button/>").addClass("btn").append(_switch_group));
+                var status_filter = statusFilterWidget("event",[event_deleted_status],
+                    function(vals){
+                        options["filterOptions"] = {'filterAlgorithm':function(row,filters){
+                            return eventlog_status_filter(row,filters,vals);
+                        }};
+
+                        table.bootstrapTable("resetSearch");
+                        table.bootstrapTable("refreshOptions",options);
+                        table.bootstrapTable("filterBy",{});
+
+                    });
+                status_filter.addClass("admin-table-toolbar-btn");
+                toolbar.append(status_filter);
 
                 toolbar.find("#toolbar_add").on("click", function(){
                     show_eventlog_modal_add(eventlog_content, table);
@@ -317,8 +328,7 @@ function create_eventlog_table(container, table_id, simplify = false){
                     // eventlog_content_name = "add";
                 });
 
-                statusFilterWidget(toolbar,"event",[event_deleted_status]);
-
+                
                 toolbar.find("#toolbar_duplicate").on("click",function(e){
                     var selected =table.bootstrapTable("getSelections");
 
@@ -346,40 +356,12 @@ function create_eventlog_table(container, table_id, simplify = false){
 
                 });
 
-                show_deleted_switch.on("change",function(){
-                    var is_checked = $(this).prop("checked");
-                    console.log("filter changed");
-                    if(is_checked){
-                        table.bootstrapTable("resetSearch");
-                        table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(){return true}}});
-                        table.bootstrapTable("filterBy",{});
-                    }
-                    else{
-                        table.bootstrapTable("resetSearch");
-                        table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(row,filters){
-                            var event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-                            return eventlog_status_filter(row,filters,event_deleted_status);
-                        }}});
-                        table.bootstrapTable("filterBy",{});
-                    }
-                })
-                // toolbar.find("#showDeletedSwitch").trigger("change");   
             }
             else{
                 $(toolbar).empty();
             }
 
-            var show_deleted_switch_checked = $(show_deleted_switch).prop("checked");
-            var options = {};
-            if(show_deleted_switch_checked){
-                options["filterOptions"] = {'filterAlgorithm':function(){return true}};
-            }
-            else{
-                options["filterOptions"] = {'filterAlgorithm':function(row,filters){
-                    var event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-                    return eventlog_status_filter(row,filters,event_deleted_status);
-                }};
-            }
+            $(toolbar.find("#status_filter_widget").find("input")[0]).trigger("change");
 
             if(subject_indices=="all"){
                 eventlog_visible_subjects = getCol(subject_info,"SubjectIndex");
@@ -585,7 +567,7 @@ function show_eventlog_modal_add(container, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Add event");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
     eventlog_add_form_inputs(form, eventlog_visible_subjects_info );
@@ -737,7 +719,7 @@ function show_eventlog_modal_edit(container, table, index){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Update event");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Update event");
     submitForm.append(submitButton);
 
 
@@ -1073,7 +1055,7 @@ function show_eventlog_batch_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -1129,7 +1111,7 @@ function show_eventlog_batch_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -1177,7 +1159,7 @@ function eventlog_modal(container, modal_id, title){
 
     var modal_footer= $("<div/>").addClass("modal-footer");
     // modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
-    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);

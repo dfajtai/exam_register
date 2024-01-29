@@ -59,7 +59,7 @@ window.event_planner_operate_events = {
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -92,7 +92,7 @@ function eventPlannerOperateFormatter(value, row, index) {
     container.append(up_down_gorup);
 
     var btn_edit = $("<button/>").addClass("btn btn-outline-dark btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit"));
-    var btn_remove = $("<button/>").addClass("btn btn-outline-dark btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"))
+    var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"))
     btn_edit.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit");
     btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove");
     
@@ -184,8 +184,8 @@ function createBatchTable(container, table_id, height){
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
     toolbar.append($("<button/>").attr("id","toolbar_json_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
     toolbar.append($("<button/>").attr("id","toolbar_make_events").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-gears fa-solid me-2").attr("aria-hidden","true")).append("Make events"));
@@ -272,7 +272,7 @@ function eventPlannerModal(container, modal_id, title){
 
     var modal_footer= $("<div/>").addClass("modal-footer");
     // modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
-    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);
@@ -300,7 +300,7 @@ function show_event_planner_modal_add(container, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Add event");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Add event");
     submitForm.append(submitButton);
 
     eventPlannerInput(form);
@@ -367,7 +367,7 @@ function show_event_planner_modal_edit(container, table, index){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Alter event");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Alter event");
     submitForm.append(submitButton);
 
     eventPlannerInput(form);
@@ -472,7 +472,7 @@ function show_event_planner_modal_json_import(container, table){
     form.append(input_div);
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Import");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Import");
     submitForm.append(submitButton);
 
     form.append(submitForm);
@@ -528,7 +528,7 @@ function show_event_planner_modal_json_export(container, table){
 
 
     // var submitForm = $("<div/>").addClass("row text-center");
-    // var submitButton = $("<button/>").addClass("btn btn-dark").attr("type","submit").html("Import");
+    // var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Import");
     // submitForm.append(submitButton);
 
     // form.append(submitForm);
@@ -594,7 +594,7 @@ function show_event_planner_modal_make(container, table){
     var subject_selector_table_id = "subjectSelectorTable";
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
-    var submitButton = $("<button/>").addClass("btn btn-dark").attr("type","submit").html("Make events for selected subjects");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Make events for selected subjects");
     submitForm.append(submitButton);
 
 
@@ -644,7 +644,7 @@ function show_event_planner_modal_make(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -804,7 +804,7 @@ function show_event_planner(container){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',

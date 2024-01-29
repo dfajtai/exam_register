@@ -1,11 +1,11 @@
-function statusFilterWidget(container, status_type, unchecked = null, callback = null){
+function statusFilterWidget(status_type, unchecked = null, callback = null){
     var status_types = ["subject","event"];
 
     if(!status_types.includes(status_type)) return;
 
-    var statusFilter = $("<div/>").addClass("dropdown");
+    var statusFilter = $("<div/>").addClass("btn-group").attr("id","status_filter_widget");
 
-    var btn = $("<button/>").addClass("btn btn-dark dropdown-toggle").attr("type","button").attr("id","status_filter_btn").html("Filter by status");
+    var btn = $("<button/>").addClass("btn btn-outline-dark dropdown-toggle").attr("id","status_filter_btn").attr("type","button").html("Filter by status");
     btn.attr("data-bs-toggle","dropdown");    
     
     statusFilter.append(btn);
@@ -81,5 +81,5 @@ function statusFilterWidget(container, status_type, unchecked = null, callback =
         }
     })
 
-    container.append(statusFilter);
+    return statusFilter;
 }

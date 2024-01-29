@@ -330,7 +330,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         var subject_container = $("<div/>").attr("id","advancedSubjectSelector").addClass("mb-3 container");
 
         var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
-        var submitButton = $("<button/>").addClass("btn btn-dark").attr("type","submit").html("Choose selected subjects");
+        var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Choose selected subjects");
         submitForm.append(submitButton);
 
         form.append(subject_container);

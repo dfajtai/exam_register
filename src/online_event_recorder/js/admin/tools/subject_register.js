@@ -140,7 +140,7 @@ function createSubjectTable(container,table_id, simplify = false){
         }
     else{
         toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-        toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
+        toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
         toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
         toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import from CSV"));
         
@@ -307,7 +307,7 @@ function subject_modal(container, modal_id, title){
 
     var modal_footer= $("<div/>").addClass("modal-footer");
     // modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
-    modal_footer.append($("<button/>").addClass("btn btn-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser me-2").attr("aria-hidden","true")).append("Clear"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
     modal_content.append(modal_header);
@@ -335,7 +335,7 @@ function show_subject_modal_add(container, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Add Subject");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Add Subject");
     submitForm.append(submitButton);
 
     subjectFormInputs(form);
@@ -386,7 +386,7 @@ function show_subject_modal_edit(container, table, index){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Alter Subject");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Alter Subject");
     submitForm.append(submitButton);
 
     subjectFormInputs(form);
@@ -539,7 +539,7 @@ function show_subject_batch_modal_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -593,7 +593,7 @@ function show_subject_batch_modal_edit(container, table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
@@ -678,7 +678,7 @@ function show_subject_modal_import(container,table){
 
 
     var submitForm = $("<div/>");
-    var submitButton = $("<button/>").addClass("btn btn-dark w-100").attr("type","submit").html("Import Subjects");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","submit").html("Import Subjects");
     submitForm.append(submitButton);
 
     modal_footer.find("#clear_form").click(function(){
@@ -751,7 +751,7 @@ function show_subject_modal_import(container,table){
             buttons: {
             confirm: {
             label: 'Yes',
-            className: 'btn-outline-dark'
+            className: 'btn-outline-danger'
             },
             cancel: {
             label: 'No',
