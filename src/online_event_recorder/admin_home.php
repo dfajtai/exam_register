@@ -187,7 +187,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script>
 		var available_def_tables = Object();
+		
 		var subject_deleted_status =  null;
+		var subject_planned_status =  null;
 		var event_deleted_status =  null;
 		var event_planned_status =  null;
 
@@ -392,7 +394,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							};
 
 				subject_deleted_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","deleted","StatusID");
-				subject_pending_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","pending","StatusID");
+				subject_planned_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","planned","StatusID");
 				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 

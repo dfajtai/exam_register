@@ -5,6 +5,7 @@ var subject_content = {};
 
 
 function subject_retrieve_all_ajax(params) {
+    // console.log("get all subjects");
     $.ajax({
     type: "GET",
     url: 'php/retrieve_table.php',
@@ -16,11 +17,12 @@ function subject_retrieve_all_ajax(params) {
 }
 
 function subject_retrieve_ajax(params) {
+    // console.log("get study subjects");
     $.ajax({
     type: "GET",
-    url: 'php/retrieve_study_subjects.php',
+    url: 'php/retrieve_table_where.php',
     dataType: "json",
-    data: ({study_id: params.study_id}),
+    data: ({table_name:"subjects",where:{"StudyID": params.study_id}}),
     success: function (result) {
         params.success({"rows":result, "total":result.length})
     }});
@@ -48,7 +50,7 @@ function subject_insert_ajax(subject_info,callback = null) {
     });
 }
 
-function subject_update_ajax(key_info,params,callback,return_ajax = false) {
+function subject_update_ajax(subject_index,subject_info,callback,return_ajax = false) {
     if(callback === null){
         callback = function(){};
     }
@@ -56,7 +58,7 @@ function subject_update_ajax(key_info,params,callback,return_ajax = false) {
         type: "POST",
         url: 'php/update_subject.php',
         // dataType: "json",
-        data: ({subject_index:key_info, subject_info:params}),
+        data: ({subject_index:subject_index, subject_info:subject_info}),
         success: function(result){
             callback();
         }
@@ -69,12 +71,21 @@ function subject_update_ajax(key_info,params,callback,return_ajax = false) {
 function subjectOperateFormatter(value, row, index) {
     var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
-    container.append($("<button/>").addClass("btn btn-outline-dark btn-sm edit me-2 lockable").append($("<i/>").addClass("fa fa-edit")))
-    // container.append($("<button/>").addClass("btn btn-outline-dark btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))
 
-    // if(_lock_list.length>0){
-    //     container.find("button").addClass("disabled");
-    // }
+    var edit_btn = $("<button/>").addClass("btn btn-outline-dark btn-sm edit lockable me-1").append($("<i/>").addClass("fa fa-edit"))
+    edit_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit subject");
+    container.append(edit_btn);
+
+    if(row["Status"]!=subject_deleted_status){
+        var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+        btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
+        container.append(btn_remove);
+    }
+    else{
+        var btn_resotre = $("<button/>").addClass("btn btn-outline-primary btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
+        btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
+        container.append(btn_resotre);
+    }
 
     return container.prop("outerHTML");
   }
@@ -83,6 +94,22 @@ function subjectOperateFormatter(value, row, index) {
 window.subject_operate_events = {
     'click .edit': function (e, value, row, index) {
         show_subject_modal_edit(subject_content,$("#"+subject_table_id),index);
+    },
+    'click .remove': function (e, value, row, index) {
+        subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
+        subject_info = {"Status":subject_deleted_status},
+        function(){
+            $('#'+subject_table_id).bootstrapTable('refresh');
+            $('#'+subject_table_id).bootstrapTable('resetView');
+        });
+    },
+    'click .restore': function (e, value, row, index) {
+        subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
+        subject_info = {"Status":subject_planned_status},
+        function(){
+            $('#'+subject_table_id).bootstrapTable('refresh');
+            $('#'+subject_table_id).bootstrapTable('resetView');
+        });
     },
 }
 
@@ -124,10 +151,21 @@ function subject_register_subject_formatter(subject_entry){
     return res;
 }
 
+function subjects_status_filter(row, filters, visible_status = null){
+    // console.log(filters);
+    if(visible_status == null) return true;
+    if(!isArray(visible_status)) return true;
+    if(!visible_status.includes(row["Status"])) return false;
+    return true;
+}
+
 function createSubjectTable(container,table_id, simplify = false){
     var table = $("<table/>").attr("id",table_id);
   
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
+
+    var options = {};
+    var pre_selected = null;
 
     if(simplify){
         var toolbar_content = $("<div/>").addClass("input-group col-md-12");
@@ -140,13 +178,28 @@ function createSubjectTable(container,table_id, simplify = false){
         }
     else{
         toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-        toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-        toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
+        toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Duplicate selected subjects."));
+        toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Batch edit selected subjects."));
         toolbar.append($("<button/>").attr("id","toolbar_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-file-import me-2").attr("aria-hidden","true")).append("Import from CSV"));
         
+        var status_filter = statusFilterWidget("subject",[subject_deleted_status],
+            function(vals){
+                options["filterOptions"] = {'filterAlgorithm':function(row,filters){
+                    return subjects_status_filter(row,filters,vals);
+                }};
+
+                table.bootstrapTable("resetSearch");
+                table.bootstrapTable("refreshOptions",options);
+                table.bootstrapTable("filterBy",{});
+
+        });
+        status_filter.addClass("admin-table-toolbar-btn");
+        toolbar.append(status_filter);
+
         var study_selector = $("<div/>").addClass("row mt-3 mb-3");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
-        study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
+        study_dropdown.append($("<option/>").html("Select scope...").prop("disabled",true).prop('selected',true).attr("value",""));
+        study_dropdown.append($("<option/>").html("All").attr("value","all"));
         showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
     
         study_selector.append($("<label/>").attr("for","studySelect").addClass("col-form-label col-md-3").html("Filter by study: "));
@@ -222,7 +275,7 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true},
                 {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true},
                 {title: 'Comment', field : 'Comment', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
-                {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter"},
+                {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter", visible:false},
             ],
             pagination:true,
             checkboxHeader:true,
@@ -240,23 +293,31 @@ function createSubjectTable(container,table_id, simplify = false){
         var selected = $(this).val();
 
         if(selected == "all"){
-            table.bootstrapTable('uncheckAll');
-            table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
-            table.bootstrapTable('resetSearch');
+            options["ajax"] = subject_retrieve_all_ajax;
+        }
+        else{
+            options["ajax"] = function(params){
+                params.study_id = selected;
+                subject_retrieve_ajax(params);
+            } 
+        }
+
+        if(pre_selected==null){
+            $(toolbar.find("#status_filter_widget").find("input")[0]).trigger("change");
         }
         else{
             table.bootstrapTable('uncheckAll');
-            table.bootstrapTable('refreshOptions', { ajax: function(params){
-                params.study_id = selected;
-                subject_retrieve_ajax(params);
-            } });
+            table.bootstrapTable('refreshOptions',options);
+            table.bootstrapTable("filterBy",{});
             table.bootstrapTable('resetSearch');
         }
+
+        pre_selected = selected;        
+
         subjects_table_events();
     })
-
     
-    table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
+    // table.bootstrapTable('refreshOptions', { ajax: subject_retrieve_all_ajax });
    
 }
 

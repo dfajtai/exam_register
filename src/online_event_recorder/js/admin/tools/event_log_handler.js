@@ -303,9 +303,8 @@ function create_eventlog_table(container, table_id, simplify = false){
             if(eventlog_visible_subjects_info.length>0){
                 $(toolbar).empty();
                 toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate Selected"));
-                // toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove Selected"));
-                toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit selected"));
+                toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Duplicate selected events."));
+                toolbar.append($("<button/>").attr("id","toolbar_batch_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Batch edit").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Batch edit selected events."));
 
                 var status_filter = statusFilterWidget("event",[event_deleted_status],
                     function(vals){
