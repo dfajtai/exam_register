@@ -749,7 +749,7 @@ function show_subject_modal_import(container,table){
     form.append(submitForm);
     modal_body.append(form);
 
-    table.bootstrapTable();
+    // table.bootstrapTable();
 
     // file_input_group.find("#uploadBtn").on("click",function(){
     file_input.on("change",function(){
