@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 30, 2024 at 03:42 PM
+-- Generation Time: Jan 30, 2024 at 04:07 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.2.15
 
@@ -195,10 +195,10 @@ CREATE TABLE `definition_tables` (
 
 INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum`) VALUES
 (1, 'asset_definitions', '2023-12-18 12:53:06', 'd929f6cb'),
-(2, 'event_status_definitions', '2023-11-23 11:37:03', 'e4c5b559'),
+(2, 'event_status_definitions', '2024-01-30 15:55:48', '500a08a7'),
 (3, 'location_definitions', '2023-12-04 13:54:31', '68c2bc19'),
 (5, 'bodypart_definitions', '2023-12-07 10:25:34', '184dfa16'),
-(6, 'subject_status_definitions', '2024-01-29 14:42:56', 'c4630d99'),
+(6, 'subject_status_definitions', '2024-01-30 15:55:22', 'b420f6b0'),
 (7, 'unit_definitions', '2024-01-05 14:53:53', 'f4099e9f'),
 (8, 'unit_type_definitions', '2024-01-04 15:43:01', 'c2835b14'),
 (9, 'side_definitions', '2023-11-23 11:37:03', '1f2c2d75'),
@@ -207,7 +207,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
 (15, 'event_template_definitions', '2024-01-17 10:48:26', '1c030179'),
-(16, 'studies', '2024-01-30 15:29:00', '7f1098c3');
+(16, 'studies', '2024-01-30 15:57:09', '7f1098c3');
 
 -- --------------------------------------------------------
 
@@ -264,11 +264,11 @@ CREATE TABLE `event_status_definitions` (
 --
 
 INSERT INTO `event_status_definitions` (`EventStatusID`, `EventStatusName`, `EventStatusDescription`) VALUES
+(-1, 'deleted', 'The event is hidden from the web application.'),
 (1, 'planned', 'The event has been planned.'),
 (2, 'inprogress', 'The event is in progress.'),
 (3, 'skipped', ''),
-(4, 'finished', ''),
-(5, 'deleted', 'The event is hidden from the web application.');
+(4, 'finished', '');
 
 --
 -- Triggers `event_status_definitions`
@@ -568,11 +568,11 @@ CREATE TABLE `subject_status_definitions` (
 --
 
 INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
+(-1, 'deleted', NULL),
 (1, 'pending', 'The subject has not been delivered yet.'),
 (2, 'alive', 'The subject is alive.'),
 (6, 'terminated', NULL),
 (7, 'dead', NULL),
-(8, 'deleted', NULL),
 (9, 'planned', NULL);
 
 --
@@ -709,7 +709,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 15:30:02', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 15:57:50', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexes for dumped tables
