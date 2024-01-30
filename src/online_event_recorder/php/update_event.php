@@ -21,7 +21,9 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
     // var_error_log($new_event_info);
 
     $updated_data = null;
+    $update_data = false;
     if(array_key_exists('EventData',$new_event_info)){
+        $update_data = true;
         $updated_data = $new_event_info["EventData"];
         unset($new_event_info["EventData"]); 
 
@@ -58,8 +60,9 @@ if(isset($_POST['event_index']) && isset($_POST['event_info']) && isset($_SESSIO
 
 
     if($has_change){
-        $new_event_info["EventData"] = json_encode($updated_data,JSON_NUMERIC_CHECK);
-
+        if($update_data){
+            $new_event_info["EventData"] = json_encode($updated_data,JSON_NUMERIC_CHECK);
+        }
         // var_error_log($new_event_inf o);
     
         if(!array_key_exists('EventModifiedAt',$new_event_info)){

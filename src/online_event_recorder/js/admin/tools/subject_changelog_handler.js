@@ -76,6 +76,7 @@ function subject_changelog_entry_to_subject_format(entry){
         "Height": data_tag["Height"],
         "Location": data_tag["Location"],
         "Status": data_tag["Status"],
+        "Comment": data_tag["Comment"],
 
         // auxillary
         "ModifiedBy": data_tag["ModifiedBy"],

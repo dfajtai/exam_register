@@ -42,6 +42,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         url: 'php/retrieve_table_where.php',
         dataType: "json",
         data: ({table_name: "subjects",where_not:{"Status":subject_deleted_status}}),
+        // data: ({table_name: "subjects",where:{"Status[!]":subject_deleted_status}}),
         success: function (result) {
             callback(result);
         }});

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 30, 2024 at 09:46 AM
+-- Generation Time: Jan 30, 2024 at 03:42 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.2.15
 
@@ -207,7 +207,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
 (15, 'event_template_definitions', '2024-01-17 10:48:26', '1c030179'),
-(16, 'studies', '2024-01-29 15:19:58', '7f1098c3');
+(16, 'studies', '2024-01-30 15:29:00', '7f1098c3');
 
 -- --------------------------------------------------------
 
@@ -543,6 +543,7 @@ CREATE TABLE `subject_change_log` (
   `NewSubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `NewSubjectName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `NewSubjectGroup` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `NewSubjectBatch` varchar(32) DEFAULT NULL,
   `NewStudyID` int NOT NULL,
   `NewSubjectStatus` int DEFAULT NULL,
   `SubjectData` json DEFAULT NULL,
@@ -708,7 +709,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 09:44:24', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 15:30:02', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
 -- Indexes for dumped tables

@@ -316,7 +316,8 @@ function create_eventlog_table(container, table_id, simplify = false){
                         table.bootstrapTable("refreshOptions",options);
                         table.bootstrapTable("filterBy",{});
 
-                    });
+                });
+                
                 status_filter.addClass("admin-table-toolbar-btn");
                 toolbar.append(status_filter);
 
