@@ -113,39 +113,40 @@ window.subject_operate_events = {
     },
 }
 
+function subjects_format_value(value,col){
+    switch (col) {
+        case "StudyID":
+            return studyFormatter(value,null);
+            break;
+        case "Sex":
+            return sexFormatter(value,null);
+            break;            
+        case "Location":
+            return locationFormatter(value,null);
+            break;
+        case "Status":
+            return subjectStatusFormatter(value,null);
+            break;            
+        case "ModifiedBy":
+            return userFormatter(value,null);
+            break;            
+    
+        default:
+            return value;
+            break;
+    }
+}
 
 function subject_register_subject_formatter(subject_entry){
     if(!isObject(subject_entry)){
         return subject_entry;
     }
 
-    function format_value(value,col){
-        switch (col) {
-            case "StudyID":
-                return studyFormatter(value,null);
-                break;
-            case "Sex":
-                return sexFormatter(value,null);
-                break;            
-            case "Location":
-                return locationFormatter(value,null);
-                break;
-            case "Status":
-                return subjectStatusFormatter(value,null);
-                break;            
-            case "ModifiedBy":
-                return userFormatter(value,null);
-                break;            
-        
-            default:
-                return value;
-                break;
-        }
-    }
+
 
     var res  = {};
     $.each(subject_entry,function(key,value){
-        res[key] = format_value(value,key);
+        res[key] = subjects_format_value(value,key);
     })
 
     return res;
@@ -591,7 +592,7 @@ function show_subject_batch_modal_edit(container, table){
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+                message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
             });
         }
         else{
@@ -645,7 +646,7 @@ function show_subject_batch_modal_edit(container, table){
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+                message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
             });
         }
         else{

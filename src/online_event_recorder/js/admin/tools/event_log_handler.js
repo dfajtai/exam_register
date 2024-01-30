@@ -148,41 +148,41 @@ function eventlog_query_params(params){
 }
 
 
+function eventlog_format_value(value,col){
+    switch (col) {
+        case "EventStudy":
+            return studyFormatter(value,null);
+            break;
+        case "EventSubject":
+            return eventlog_subjectFormatter(value,null);
+            break;
+        case "EventModifiedBy":
+            return userFormatter(value,null);
+            break;
+        case "EventTemplate":
+            return eventFormatter(value,null);
+            break;
+        case "EventLocation":
+            return locationFormatter(value,null);
+            break;            
+        case "EventStatus":
+            return eventStatusFormatter(value,null);
+            break;         
+              
+        default:
+            return value;
+            break;
+    }
+}
+
 function event_log_row_formatter(row){
     if(!isObject(row)){
         return row;
     }
 
-    function format_value(value,col){
-        switch (col) {
-            case "EventStudy":
-                return studyFormatter(value,null);
-                break;
-            case "EventSubject":
-                return eventlog_subjectFormatter(value,null);
-                break;
-            case "EventModifiedBy":
-                return userFormatter(value,null);
-                break;
-            case "EventTemplate":
-                return eventFormatter(value,null);
-                break;
-            case "EventLocation":
-                return locationFormatter(value,null);
-                break;            
-            case "EventStatus":
-                return eventStatusFormatter(value,null);
-                break;         
-                  
-            default:
-                return value;
-                break;
-        }
-    }
-
     var res  = {};
     $.each(row,function(key,value){
-        res[key] = format_value(value,key);
+        res[key] = eventlog_format_value(value,key);
     })
 
     return res;
@@ -1003,6 +1003,7 @@ function show_eventlog_batch_edit(container, table){
     function read_settings(){
         var remove_data = remove_data_switch.prop("checked");
         var event_params = {};
+
         $.each($(form).serializeArray(), function(i, field) {
             // console.log(field);
 
@@ -1022,8 +1023,7 @@ function show_eventlog_batch_edit(container, table){
             // except null values are skipped
             var parsed_val = parse_val(field.value);
             if(parsed_val!=null)
-                event_params[field.name] = parsed_val;
-            
+                event_params[field.name] = field.value;
         });
         
         if(remove_data){ 
@@ -1043,7 +1043,7 @@ function show_eventlog_batch_edit(container, table){
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+                message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
             });
         }
         else{
@@ -1099,7 +1099,7 @@ function show_eventlog_batch_edit(container, table){
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
             $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ value+"<br/>"; 
+                message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
             });
         }
         else{
