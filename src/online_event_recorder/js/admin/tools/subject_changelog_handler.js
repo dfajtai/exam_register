@@ -68,6 +68,7 @@ function subject_changelog_entry_to_subject_format(entry){
         "StudyID": data_tag["StudyID"],
         "Name": data_tag["Name"],
         "Group": data_tag["Group"],
+        "Batch": data_tag["Batch"],
         "Age": data_tag["Age"],
         "Sex": data_tag["Sex"],
         "Container": data_tag["Container"],
@@ -581,6 +582,7 @@ function create_subject_changelog_table(container, table_id, simplify = false, s
                 {title: 'ID', field : 'NewSubjectID', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Name', field : 'NewSubjectName', align:'center', sortable:true, searchable:true,forceExport: true, },
                 {title: 'Group', field : 'NewSubjectGroup', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Batch', field : 'NewSubjectBatch', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Study', field : 'NewStudyID', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
                 {title: 'Status', field : 'NewSubjectStatus', align:'center', sortable:true, searchable:true, visible:true, forceExport: true, formatter:"subjectStatusFormatter"},
 

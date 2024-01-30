@@ -267,6 +267,7 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'ID', field : 'SubjectID', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Name', field : 'Name', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Group', field : 'Group', align:'center', sortable:true, searchable:true,forceExport: true},
+                {title: 'Batch', field : 'Batch', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Box', field : 'Container', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Location', field : 'Location', align:'center', sortable:true, searchable:true, formatter: "locationFormatter",forceExport: true},
                 {title: 'Status', field : 'Status', align:'center', sortable:true, searchable:true, formatter: "subjectStatusFormatter",forceExport: true},
@@ -327,6 +328,7 @@ function subjectFormInputs(container){
     {"FieldName":"StudyID","FieldLabel":"Study","FieldType":"select","FieldSource":"study","FieldRequired":true},
     {"FieldName":"Name","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":false},
     {"FieldName":"Group","FieldLabel":"Group","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+    {"FieldName":"Batch","FieldLabel":"Batch","FieldDataType":"text","FieldType":"input","FieldRequired":false},
     {"FieldName":"Age","FieldLabel":"Age","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"1","FieldUnit":"year","FieldRequired":false},
     {"FieldName":"Sex","FieldLabel":"Sex","FieldType":"select","FieldSource":"sex","FieldRequired":false},
     {"FieldName":"Container","FieldLabel":"Box","FieldType":"input","FieldDataType":"range", "FieldDataStep":"1","FieldDataMin":"1","FieldDataMax":"30","FieldRequired":false},
@@ -345,6 +347,7 @@ function subjectBatchFormInputs(container){
     var params =  [
     {"FieldName":"StudyID","FieldLabel":"Study","FieldType":"select","FieldSource":"study","FieldRequired":false},
     {"FieldName":"Group","FieldLabel":"Group","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+    {"FieldName":"Batch","FieldLabel":"Batch","FieldDataType":"text","FieldType":"input","FieldRequired":false},
     {"FieldName":"Location","FieldLabel":"Location","FieldType":"select","FieldSource":"location"},
     {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status"},
     {"FieldName":"Sex","FieldLabel":"Sex","FieldType":"select","FieldSource":"sex","FieldRequired":false},
@@ -726,7 +729,7 @@ function show_subject_modal_import(container,table){
     var instructions_group = $("<div/>").addClass("mb-3");
     instructions_group.append($("<label/>").attr("for","instruction_textarea").addClass("form-label").html("Instructions"));
     var instructions = $("<textarea/>").attr("rows",5).prop("disabled",true).attr("id","instruction_textarea").addClass("form-control");
-    $(instructions).val("Import a specific CSV table from your local drive. Subjects will be added to the selected study.\n\nAccepted columns: \n\tID, Name, Group, Container, Location, Status, Age, Sex, Weight, Height\n(Unknown column names or values will be ignored.)");
+    $(instructions).val("Import a specific CSV table from your local drive. Subjects will be added to the selected study.\n\nAccepted columns: \n\tID, Name, Group, Batch, Container, Location, Status, Age, Sex, Weight, Height\n(Unknown column names or values will be ignored.)");
     instructions_group.append(instructions);
     form.append($("<div/>").addClass("row").append(instructions_group));
 
@@ -830,7 +833,7 @@ function show_subject_modal_import(container,table){
                         validated_element["StudyID"] = selected_study;
                         validated_element["SubjectID"] = element["ID"];
                         
-                        var safe_args = ["Name","Group","Container","Age","Weight","Height"];
+                        var safe_args = ["Name","Group","Batch","Container","Age","Weight","Height"];
                         $.each(safe_args,function(index,value){
                             if(element.hasOwnProperty(value))
                                 validated_element[value] = element[value];

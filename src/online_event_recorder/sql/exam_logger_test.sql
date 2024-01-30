@@ -2,10 +2,10 @@
 -- version 5.1.1deb5ubuntu1
 -- https://www.phpmyadmin.net/
 --
--- Gép: localhost:3306
--- Létrehozás ideje: 2024. Jan 26. 18:02
--- Kiszolgáló verziója: 8.0.35-0ubuntu0.22.04.1
--- PHP verzió: 8.2.13
+-- Host: localhost:3306
+-- Generation Time: Jan 30, 2024 at 09:46 AM
+-- Server version: 8.0.35-0ubuntu0.22.04.1
+-- PHP Version: 8.2.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Adatbázis: `exam_logger_test`
+-- Database: `exam_logger_test`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `asset_definitions`
+-- Table structure for table `asset_definitions`
 --
 
 CREATE TABLE `asset_definitions` (
@@ -36,7 +36,7 @@ CREATE TABLE `asset_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `asset_definitions`
+-- Dumping data for table `asset_definitions`
 --
 
 INSERT INTO `asset_definitions` (`AssetID`, `AssetName`, `AssetDesc`, `AssetLocation`, `AssetOwner`) VALUES
@@ -45,7 +45,7 @@ INSERT INTO `asset_definitions` (`AssetID`, `AssetName`, `AssetDesc`, `AssetLoca
 (3, 'asdasd23', '', 1, 'Medicoups');
 
 --
--- Eseményindítók `asset_definitions`
+-- Triggers `asset_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `asset_definitions_insert` AFTER INSERT ON `asset_definitions` FOR EACH ROW UPDATE definition_tables
@@ -63,7 +63,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `bodypart_definitions`
+-- Table structure for table `bodypart_definitions`
 --
 
 CREATE TABLE `bodypart_definitions` (
@@ -74,7 +74,7 @@ CREATE TABLE `bodypart_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `bodypart_definitions`
+-- Dumping data for table `bodypart_definitions`
 --
 
 INSERT INTO `bodypart_definitions` (`BodypartID`, `BodypartName`, `BodypartDesc`, `BodypartSide`) VALUES
@@ -83,7 +83,7 @@ INSERT INTO `bodypart_definitions` (`BodypartID`, `BodypartName`, `BodypartDesc`
 (3, 'RIA', '', 2);
 
 --
--- Eseményindítók `bodypart_definitions`
+-- Triggers `bodypart_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `bodypart_definitions_insert` AFTER INSERT ON `bodypart_definitions` FOR EACH ROW UPDATE definition_tables
@@ -101,7 +101,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `consumable_definitions`
+-- Table structure for table `consumable_definitions`
 --
 
 CREATE TABLE `consumable_definitions` (
@@ -113,7 +113,7 @@ CREATE TABLE `consumable_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `consumable_definitions`
+-- Dumping data for table `consumable_definitions`
 --
 
 INSERT INTO `consumable_definitions` (`ConsumableID`, `ConsumableType`, `ConsumableName`, `ConsumableDesc`, `ConsumableUnitType`) VALUES
@@ -121,7 +121,7 @@ INSERT INTO `consumable_definitions` (`ConsumableID`, `ConsumableType`, `Consuma
 (4, 4, 'heparin', '', 1);
 
 --
--- Eseményindítók `consumable_definitions`
+-- Triggers `consumable_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `consumable_definitions_insert` AFTER INSERT ON `consumable_definitions` FOR EACH ROW UPDATE definition_tables
@@ -139,7 +139,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `consumable_type_definitions`
+-- Table structure for table `consumable_type_definitions`
 --
 
 CREATE TABLE `consumable_type_definitions` (
@@ -149,7 +149,7 @@ CREATE TABLE `consumable_type_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `consumable_type_definitions`
+-- Dumping data for table `consumable_type_definitions`
 --
 
 INSERT INTO `consumable_type_definitions` (`ConsumableTypeID`, `ConsumableTypeName`, `ConsumableTypeDesc`) VALUES
@@ -161,7 +161,7 @@ INSERT INTO `consumable_type_definitions` (`ConsumableTypeID`, `ConsumableTypeNa
 (6, 'food', NULL);
 
 --
--- Eseményindítók `consumable_type_definitions`
+-- Triggers `consumable_type_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `consumable_type_definitions_insert` AFTER INSERT ON `consumable_type_definitions` FOR EACH ROW UPDATE definition_tables
@@ -179,7 +179,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `definition_tables`
+-- Table structure for table `definition_tables`
 --
 
 CREATE TABLE `definition_tables` (
@@ -190,7 +190,7 @@ CREATE TABLE `definition_tables` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `definition_tables`
+-- Dumping data for table `definition_tables`
 --
 
 INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum`) VALUES
@@ -198,7 +198,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (2, 'event_status_definitions', '2023-11-23 11:37:03', 'e4c5b559'),
 (3, 'location_definitions', '2023-12-04 13:54:31', '68c2bc19'),
 (5, 'bodypart_definitions', '2023-12-07 10:25:34', '184dfa16'),
-(6, 'subject_status_definitions', '2023-11-23 11:37:03', '5ae4c226'),
+(6, 'subject_status_definitions', '2024-01-29 14:42:56', 'c4630d99'),
 (7, 'unit_definitions', '2024-01-05 14:53:53', 'f4099e9f'),
 (8, 'unit_type_definitions', '2024-01-04 15:43:01', 'c2835b14'),
 (9, 'side_definitions', '2023-11-23 11:37:03', '1f2c2d75'),
@@ -207,12 +207,12 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
 (15, 'event_template_definitions', '2024-01-17 10:48:26', '1c030179'),
-(16, 'studies', '2024-01-26 18:00:29', '7f1098c3');
+(16, 'studies', '2024-01-29 15:19:58', '7f1098c3');
 
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_change_log`
+-- Table structure for table `event_change_log`
 --
 
 CREATE TABLE `event_change_log` (
@@ -229,7 +229,7 @@ CREATE TABLE `event_change_log` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_log`
+-- Table structure for table `event_log`
 --
 
 CREATE TABLE `event_log` (
@@ -250,7 +250,7 @@ CREATE TABLE `event_log` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_status_definitions`
+-- Table structure for table `event_status_definitions`
 --
 
 CREATE TABLE `event_status_definitions` (
@@ -260,7 +260,7 @@ CREATE TABLE `event_status_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `event_status_definitions`
+-- Dumping data for table `event_status_definitions`
 --
 
 INSERT INTO `event_status_definitions` (`EventStatusID`, `EventStatusName`, `EventStatusDescription`) VALUES
@@ -271,7 +271,7 @@ INSERT INTO `event_status_definitions` (`EventStatusID`, `EventStatusName`, `Eve
 (5, 'deleted', 'The event is hidden from the web application.');
 
 --
--- Eseményindítók `event_status_definitions`
+-- Triggers `event_status_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `event_status_definitions_insert` AFTER INSERT ON `event_status_definitions` FOR EACH ROW UPDATE definition_tables
@@ -289,7 +289,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `event_type_definitions`
+-- Table structure for table `event_type_definitions`
 --
 
 CREATE TABLE `event_type_definitions` (
@@ -299,7 +299,7 @@ CREATE TABLE `event_type_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `event_type_definitions`
+-- Dumping data for table `event_type_definitions`
 --
 
 INSERT INTO `event_type_definitions` (`EventTypeID`, `EventTypeName`, `EventTypeDesc`) VALUES
@@ -309,7 +309,7 @@ INSERT INTO `event_type_definitions` (`EventTypeID`, `EventTypeName`, `EventType
 (5, 'care', 'feeding, cleaning, brooming');
 
 --
--- Eseményindítók `event_type_definitions`
+-- Triggers `event_type_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `event_type_definitions_insert` AFTER INSERT ON `event_type_definitions` FOR EACH ROW UPDATE definition_tables
@@ -327,7 +327,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `location_definitions`
+-- Table structure for table `location_definitions`
 --
 
 CREATE TABLE `location_definitions` (
@@ -337,7 +337,7 @@ CREATE TABLE `location_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `location_definitions`
+-- Dumping data for table `location_definitions`
 --
 
 INSERT INTO `location_definitions` (`LocationID`, `LocationName`, `LocationDesc`) VALUES
@@ -350,7 +350,7 @@ INSERT INTO `location_definitions` (`LocationID`, `LocationName`, `LocationDesc`
 (7, 'elokeszito', '');
 
 --
--- Eseményindítók `location_definitions`
+-- Triggers `location_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `location_definitions_insert` AFTER INSERT ON `location_definitions` FOR EACH ROW UPDATE definition_tables
@@ -368,7 +368,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `sex_definitions`
+-- Table structure for table `sex_definitions`
 --
 
 CREATE TABLE `sex_definitions` (
@@ -378,7 +378,7 @@ CREATE TABLE `sex_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `sex_definitions`
+-- Dumping data for table `sex_definitions`
 --
 
 INSERT INTO `sex_definitions` (`SexID`, `SexName`, `SexDesc`) VALUES
@@ -388,7 +388,7 @@ INSERT INTO `sex_definitions` (`SexID`, `SexName`, `SexDesc`) VALUES
 (4, 'castrated', NULL);
 
 --
--- Eseményindítók `sex_definitions`
+-- Triggers `sex_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `sex_definitions_insert` AFTER INSERT ON `sex_definitions` FOR EACH ROW UPDATE definition_tables
@@ -406,7 +406,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `side_definitions`
+-- Table structure for table `side_definitions`
 --
 
 CREATE TABLE `side_definitions` (
@@ -416,7 +416,7 @@ CREATE TABLE `side_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `side_definitions`
+-- Dumping data for table `side_definitions`
 --
 
 INSERT INTO `side_definitions` (`SideID`, `SideName`, `SideShortName`) VALUES
@@ -426,7 +426,7 @@ INSERT INTO `side_definitions` (`SideID`, `SideName`, `SideShortName`) VALUES
 (4, 'no_side', 'NA');
 
 --
--- Eseményindítók `side_definitions`
+-- Triggers `side_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `side_definitions_insert` AFTER INSERT ON `side_definitions` FOR EACH ROW UPDATE definition_tables
@@ -444,7 +444,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `studies`
+-- Table structure for table `studies`
 --
 
 CREATE TABLE `studies` (
@@ -459,7 +459,7 @@ CREATE TABLE `studies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `studies`
+-- Dumping data for table `studies`
 --
 
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
@@ -468,7 +468,7 @@ INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `Stu
 (3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 0);
 
 --
--- Eseményindítók `studies`
+-- Triggers `studies`
 --
 DELIMITER $$
 CREATE TRIGGER `study_def_insert` AFTER INSERT ON `studies` FOR EACH ROW UPDATE definition_tables
@@ -486,7 +486,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `subjects`
+-- Table structure for table `subjects`
 --
 
 CREATE TABLE `subjects` (
@@ -495,6 +495,7 @@ CREATE TABLE `subjects` (
   `StudyID` int NOT NULL,
   `Name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `Group` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Batch` varchar(32) DEFAULT NULL COMMENT 'Day, ... ',
   `Age` int DEFAULT NULL,
   `Sex` int DEFAULT NULL,
   `Container` int DEFAULT NULL,
@@ -508,7 +509,7 @@ CREATE TABLE `subjects` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Eseményindítók `subjects`
+-- Triggers `subjects`
 --
 DELIMITER $$
 CREATE TRIGGER `alter subject` AFTER UPDATE ON `subjects` FOR EACH ROW BEGIN
@@ -533,7 +534,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `subject_change_log`
+-- Table structure for table `subject_change_log`
 --
 
 CREATE TABLE `subject_change_log` (
@@ -552,7 +553,7 @@ CREATE TABLE `subject_change_log` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `subject_status_definitions`
+-- Table structure for table `subject_status_definitions`
 --
 
 CREATE TABLE `subject_status_definitions` (
@@ -562,7 +563,7 @@ CREATE TABLE `subject_status_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `subject_status_definitions`
+-- Dumping data for table `subject_status_definitions`
 --
 
 INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescription`) VALUES
@@ -570,10 +571,11 @@ INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescr
 (2, 'alive', 'The subject is alive.'),
 (6, 'terminated', NULL),
 (7, 'dead', NULL),
-(8, 'deleted', NULL);
+(8, 'deleted', NULL),
+(9, 'planned', NULL);
 
 --
--- Eseményindítók `subject_status_definitions`
+-- Triggers `subject_status_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `subject_status_definitions_insert` AFTER INSERT ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
@@ -591,7 +593,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `unit_definitions`
+-- Table structure for table `unit_definitions`
 --
 
 CREATE TABLE `unit_definitions` (
@@ -604,7 +606,7 @@ CREATE TABLE `unit_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `unit_definitions`
+-- Dumping data for table `unit_definitions`
 --
 
 INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `UnitAmount`, `UnitDesc`) VALUES
@@ -623,7 +625,7 @@ INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `U
 (19, 8, 'celsius', '˚C', 1, '');
 
 --
--- Eseményindítók `unit_definitions`
+-- Triggers `unit_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `unit_def_insert` AFTER INSERT ON `unit_definitions` FOR EACH ROW UPDATE definition_tables
@@ -641,7 +643,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `unit_type_definitions`
+-- Table structure for table `unit_type_definitions`
 --
 
 CREATE TABLE `unit_type_definitions` (
@@ -651,7 +653,7 @@ CREATE TABLE `unit_type_definitions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `unit_type_definitions`
+-- Dumping data for table `unit_type_definitions`
 --
 
 INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc`) VALUES
@@ -666,7 +668,7 @@ INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc
 (8, 'temperature', 'Temperature in °C, °F or K.');
 
 --
--- Eseményindítók `unit_type_definitions`
+-- Triggers `unit_type_definitions`
 --
 DELIMITER $$
 CREATE TRIGGER `unit_type_def_insert` AFTER INSERT ON `unit_type_definitions` FOR EACH ROW UPDATE definition_tables
@@ -684,7 +686,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -702,25 +704,25 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- A tábla adatainak kiíratása `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-26 18:02:07', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 09:44:24', 0, '2023-11-16 11:21:08', 1, 1);
 
 --
--- Indexek a kiírt táblákhoz
+-- Indexes for dumped tables
 --
 
 --
--- A tábla indexei `asset_definitions`
+-- Indexes for table `asset_definitions`
 --
 ALTER TABLE `asset_definitions`
   ADD PRIMARY KEY (`AssetID`),
   ADD KEY `AssetLocation` (`AssetLocation`);
 
 --
--- A tábla indexei `bodypart_definitions`
+-- Indexes for table `bodypart_definitions`
 --
 ALTER TABLE `bodypart_definitions`
   ADD PRIMARY KEY (`BodypartID`),
@@ -728,7 +730,7 @@ ALTER TABLE `bodypart_definitions`
   ADD KEY `BodypartSide` (`BodypartSide`);
 
 --
--- A tábla indexei `consumable_definitions`
+-- Indexes for table `consumable_definitions`
 --
 ALTER TABLE `consumable_definitions`
   ADD PRIMARY KEY (`ConsumableID`),
@@ -737,21 +739,21 @@ ALTER TABLE `consumable_definitions`
   ADD KEY `ConsumableType` (`ConsumableType`);
 
 --
--- A tábla indexei `consumable_type_definitions`
+-- Indexes for table `consumable_type_definitions`
 --
 ALTER TABLE `consumable_type_definitions`
   ADD PRIMARY KEY (`ConsumableTypeID`),
   ADD UNIQUE KEY `ConsumableTypeName` (`ConsumableTypeName`);
 
 --
--- A tábla indexei `definition_tables`
+-- Indexes for table `definition_tables`
 --
 ALTER TABLE `definition_tables`
   ADD PRIMARY KEY (`TableID`),
   ADD UNIQUE KEY `TableName` (`TableName`);
 
 --
--- A tábla indexei `event_change_log`
+-- Indexes for table `event_change_log`
 --
 ALTER TABLE `event_change_log`
   ADD PRIMARY KEY (`EventChangeLogIndex`),
@@ -761,7 +763,7 @@ ALTER TABLE `event_change_log`
   ADD KEY `event_change_log_ibfk_1` (`EventIndex`);
 
 --
--- A tábla indexei `event_log`
+-- Indexes for table `event_log`
 --
 ALTER TABLE `event_log`
   ADD PRIMARY KEY (`EventIndex`),
@@ -773,48 +775,48 @@ ALTER TABLE `event_log`
   ADD KEY `event_log_ibfk_6` (`EventSubject`);
 
 --
--- A tábla indexei `event_status_definitions`
+-- Indexes for table `event_status_definitions`
 --
 ALTER TABLE `event_status_definitions`
   ADD PRIMARY KEY (`EventStatusID`),
   ADD UNIQUE KEY `EventStatusName` (`EventStatusName`);
 
 --
--- A tábla indexei `event_type_definitions`
+-- Indexes for table `event_type_definitions`
 --
 ALTER TABLE `event_type_definitions`
   ADD PRIMARY KEY (`EventTypeID`),
   ADD UNIQUE KEY `EventTypeName` (`EventTypeName`);
 
 --
--- A tábla indexei `location_definitions`
+-- Indexes for table `location_definitions`
 --
 ALTER TABLE `location_definitions`
   ADD PRIMARY KEY (`LocationID`),
   ADD UNIQUE KEY `LocationName` (`LocationName`);
 
 --
--- A tábla indexei `sex_definitions`
+-- Indexes for table `sex_definitions`
 --
 ALTER TABLE `sex_definitions`
   ADD PRIMARY KEY (`SexID`),
   ADD UNIQUE KEY `SexName` (`SexName`);
 
 --
--- A tábla indexei `side_definitions`
+-- Indexes for table `side_definitions`
 --
 ALTER TABLE `side_definitions`
   ADD PRIMARY KEY (`SideID`),
   ADD UNIQUE KEY `SideShortName` (`SideShortName`);
 
 --
--- A tábla indexei `studies`
+-- Indexes for table `studies`
 --
 ALTER TABLE `studies`
   ADD PRIMARY KEY (`StudyID`);
 
 --
--- A tábla indexei `subjects`
+-- Indexes for table `subjects`
 --
 ALTER TABLE `subjects`
   ADD PRIMARY KEY (`SubjectIndex`),
@@ -825,7 +827,7 @@ ALTER TABLE `subjects`
   ADD KEY `ModifiedBy` (`ModifiedBy`);
 
 --
--- A tábla indexei `subject_change_log`
+-- Indexes for table `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
   ADD PRIMARY KEY (`SubjectChangeLogIndex`),
@@ -835,27 +837,27 @@ ALTER TABLE `subject_change_log`
   ADD KEY `NewSubjectStatus` (`NewSubjectStatus`);
 
 --
--- A tábla indexei `subject_status_definitions`
+-- Indexes for table `subject_status_definitions`
 --
 ALTER TABLE `subject_status_definitions`
   ADD PRIMARY KEY (`StatusID`),
   ADD UNIQUE KEY `StatusName` (`StatusName`);
 
 --
--- A tábla indexei `unit_definitions`
+-- Indexes for table `unit_definitions`
 --
 ALTER TABLE `unit_definitions`
   ADD PRIMARY KEY (`UnitID`),
   ADD KEY `unit_definitions_ibfk_1` (`UnitType`);
 
 --
--- A tábla indexei `unit_type_definitions`
+-- Indexes for table `unit_type_definitions`
 --
 ALTER TABLE `unit_type_definitions`
   ADD PRIMARY KEY (`UnitTypeID`);
 
 --
--- A tábla indexei `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`UserID`),
@@ -864,148 +866,148 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `UserEmail` (`UserEmail`);
 
 --
--- A kiírt táblák AUTO_INCREMENT értéke
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT a táblához `asset_definitions`
+-- AUTO_INCREMENT for table `asset_definitions`
 --
 ALTER TABLE `asset_definitions`
   MODIFY `AssetID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT a táblához `bodypart_definitions`
+-- AUTO_INCREMENT for table `bodypart_definitions`
 --
 ALTER TABLE `bodypart_definitions`
   MODIFY `BodypartID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT a táblához `consumable_definitions`
+-- AUTO_INCREMENT for table `consumable_definitions`
 --
 ALTER TABLE `consumable_definitions`
   MODIFY `ConsumableID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT a táblához `consumable_type_definitions`
+-- AUTO_INCREMENT for table `consumable_type_definitions`
 --
 ALTER TABLE `consumable_type_definitions`
   MODIFY `ConsumableTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT a táblához `definition_tables`
+-- AUTO_INCREMENT for table `definition_tables`
 --
 ALTER TABLE `definition_tables`
   MODIFY `TableID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT a táblához `event_change_log`
+-- AUTO_INCREMENT for table `event_change_log`
 --
 ALTER TABLE `event_change_log`
   MODIFY `EventChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `event_log`
+-- AUTO_INCREMENT for table `event_log`
 --
 ALTER TABLE `event_log`
   MODIFY `EventIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `event_status_definitions`
+-- AUTO_INCREMENT for table `event_status_definitions`
 --
 ALTER TABLE `event_status_definitions`
   MODIFY `EventStatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT a táblához `event_type_definitions`
+-- AUTO_INCREMENT for table `event_type_definitions`
 --
 ALTER TABLE `event_type_definitions`
   MODIFY `EventTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT a táblához `location_definitions`
+-- AUTO_INCREMENT for table `location_definitions`
 --
 ALTER TABLE `location_definitions`
   MODIFY `LocationID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT a táblához `sex_definitions`
+-- AUTO_INCREMENT for table `sex_definitions`
 --
 ALTER TABLE `sex_definitions`
   MODIFY `SexID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT a táblához `side_definitions`
+-- AUTO_INCREMENT for table `side_definitions`
 --
 ALTER TABLE `side_definitions`
   MODIFY `SideID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT a táblához `studies`
+-- AUTO_INCREMENT for table `studies`
 --
 ALTER TABLE `studies`
   MODIFY `StudyID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT a táblához `subjects`
+-- AUTO_INCREMENT for table `subjects`
 --
 ALTER TABLE `subjects`
   MODIFY `SubjectIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `subject_change_log`
+-- AUTO_INCREMENT for table `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
   MODIFY `SubjectChangeLogIndex` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `subject_status_definitions`
+-- AUTO_INCREMENT for table `subject_status_definitions`
 --
 ALTER TABLE `subject_status_definitions`
-  MODIFY `StatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `StatusID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT a táblához `unit_definitions`
+-- AUTO_INCREMENT for table `unit_definitions`
 --
 ALTER TABLE `unit_definitions`
   MODIFY `UnitID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT a táblához `unit_type_definitions`
+-- AUTO_INCREMENT for table `unit_type_definitions`
 --
 ALTER TABLE `unit_type_definitions`
   MODIFY `UnitTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT a táblához `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- Megkötések a kiírt táblákhoz
+-- Constraints for dumped tables
 --
 
 --
--- Megkötések a táblához `asset_definitions`
+-- Constraints for table `asset_definitions`
 --
 ALTER TABLE `asset_definitions`
   ADD CONSTRAINT `asset_definitions_ibfk_1` FOREIGN KEY (`AssetLocation`) REFERENCES `location_definitions` (`LocationID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `bodypart_definitions`
+-- Constraints for table `bodypart_definitions`
 --
 ALTER TABLE `bodypart_definitions`
   ADD CONSTRAINT `bodypart_definitions_ibfk_1` FOREIGN KEY (`BodypartSide`) REFERENCES `side_definitions` (`SideID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `consumable_definitions`
+-- Constraints for table `consumable_definitions`
 --
 ALTER TABLE `consumable_definitions`
   ADD CONSTRAINT `consumable_definitions_ibfk_1` FOREIGN KEY (`ConsumableUnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `consumable_definitions_ibfk_2` FOREIGN KEY (`ConsumableType`) REFERENCES `consumable_type_definitions` (`ConsumableTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `event_change_log`
+-- Constraints for table `event_change_log`
 --
 ALTER TABLE `event_change_log`
   ADD CONSTRAINT `event_change_log_ibfk_1` FOREIGN KEY (`EventIndex`) REFERENCES `event_log` (`EventIndex`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1014,7 +1016,7 @@ ALTER TABLE `event_change_log`
   ADD CONSTRAINT `event_change_log_ibfk_4` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `event_log`
+-- Constraints for table `event_log`
 --
 ALTER TABLE `event_log`
   ADD CONSTRAINT `event_log_ibfk_1` FOREIGN KEY (`EventTemplate`) REFERENCES `event_template_definitions` (`EventTemplateID`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -1025,7 +1027,7 @@ ALTER TABLE `event_log`
   ADD CONSTRAINT `event_log_ibfk_6` FOREIGN KEY (`EventSubject`) REFERENCES `subjects` (`SubjectIndex`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `subjects`
+-- Constraints for table `subjects`
 --
 ALTER TABLE `subjects`
   ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`Status`) REFERENCES `subject_status_definitions` (`StatusID`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -1035,7 +1037,7 @@ ALTER TABLE `subjects`
   ADD CONSTRAINT `subjects_ibfk_5` FOREIGN KEY (`ModifiedBy`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `subject_change_log`
+-- Constraints for table `subject_change_log`
 --
 ALTER TABLE `subject_change_log`
   ADD CONSTRAINT `subject_change_log_ibfk_1` FOREIGN KEY (`NewStudyID`) REFERENCES `studies` (`StudyID`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -1044,7 +1046,7 @@ ALTER TABLE `subject_change_log`
   ADD CONSTRAINT `subject_change_log_ibfk_4` FOREIGN KEY (`NewSubjectStatus`) REFERENCES `subject_status_definitions` (`StatusID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Megkötések a táblához `unit_definitions`
+-- Constraints for table `unit_definitions`
 --
 ALTER TABLE `unit_definitions`
   ADD CONSTRAINT `unit_definitions_ibfk_1` FOREIGN KEY (`UnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
