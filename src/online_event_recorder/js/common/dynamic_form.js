@@ -292,7 +292,56 @@ function dynamicAssetSelect(container, name, label){
 
     container.append(_label);
     container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
+}
 
+function dynamicConsumableTypeSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_dropdow.append($("<option/>").html("Choose consumable type...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_dropdow,"consumable_type_definitions","ConsumableTypeID","ConsumableTypeName","ConsumableTypeName");
+
+    container.append(_label);
+    container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
+}
+
+function dynamicEventTypeSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_dropdow.append($("<option/>").html("Choose event type...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_dropdow,"event_type_definitions","EventTypeID","EventTypeName","EventTypeName");
+
+    container.append(_label);
+    container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
+}
+
+function dynamicSideSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_dropdow.append($("<option/>").html("Choose side...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_dropdow,"side_definitions","SideID","SideName","SideName");
+
+    container.append(_label);
+    container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
+}
+
+function dynamicUnitSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_dropdow.append($("<option/>").html("Choose unit...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_dropdow,"unit_definitions","UnitID","UnitUnit","UnitUnit");
+
+    container.append(_label);
+    container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
+}
+
+function dynamicUnitTypeSelect(container, name, label){
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
+    _select_dropdow.append($("<option/>").html("Choose UnitType...").prop('selected',true).attr("value",""));
+    showAllDefs(_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName","UnitTypeName");
+
+    container.append(_label);
+    container.append($("<div/>").addClass("col-md-9").append(_select_dropdow));
 }
 
 function dynamicStudySelect(container, name, label){
@@ -340,7 +389,8 @@ function dynamicSubjectStatusSelect(container, name, label){
 }
 
 function addDynamicSelectField(container, name, label, required, data_source_name, default_value){
-    var legit_data_source_names = ["location","bodypart","consumable","asset","sex","subject_status","event","event_status","study"];
+    var legit_data_source_names = ["location","bodypart","consumable","asset","sex",
+    "subject_status","event","event_status","study","unit","unit_type","side","event_type","consumable_type"];
     if(!legit_data_source_names.includes(data_source_name))
         throw new Error('Custom "select" field "'+ name + '" has invalid data source "'+ data_source_name +'".');
 
@@ -349,9 +399,18 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
     switch (data_source_name){
         case 'location': dynamicLocationSelect(container,name,label); break;
         case 'bodypart':  dynamicBodypartSelect(container,name,label); break;
+
         case 'consumable':  dynamicConsumableSelect(container,name,label); break;
+        case 'consumable_type':  dynamicConsumableTypeSelect(container,name,label); break;
+
         case 'event':  dynamicEventSelect(container,name,label); break;
+        case 'event_type':  dynamicEventTypeSelect(container,name,label); break;
     
+        case 'side':  dynamicSideSelect(container,name,label); break;
+        case 'unit':  dynamicUnitSelect(container,name,label); break;
+        case 'unit_type':  dynamicUnitTypeSelect(container,name,label); break;
+
+
         case 'asset':  dynamicAssetSelect(container,name,label); break;
         case 'sex': dynamicSexSelect(container,name,label); break;
         case 'subject_status':  dynamicSubjectStatusSelect(container,name,label); break;

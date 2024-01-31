@@ -95,34 +95,13 @@ function initBodypartDefinitionsTable(container,tableId){
 }
 
 function bodypartDefinitionInputs(container){
+    var params =  [
+        {"FieldName":"BodypartName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"BodypartDesc","FieldLabel":"Description","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+        {"FieldName":"BodypartSide","FieldLabel":"Side","FieldType":"select","FieldSource":"side","FieldRequired":true},
+        ]
+    
+    showCustomArgs(container,params);
 
 
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","BodypartName").prop('required',true));
-    nameForm.append(nameInput);
-
-    var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","BodypartDesc").prop('required',false));
-    descForm.append(descInput);
-
-    var sideForm = $("<div/>").addClass("row mb-3");
-    sideForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Side"));
-    var sideSelect = $("<div/>").addClass("col-sm-9");
-
-    var side_select_dropdow = $("<select/>").addClass("form-select required").attr("side","text").attr("id","side").attr("name","BodypartSide").prop('required',true);
-    side_select_dropdow.append($("<option/>").html("Choose Side...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-    $.each(defs.side_definitions,function(key,entry){
-        side_select_dropdow.append($("<option/>").html("&lt;"+entry.SideShortName+"&gt; " +  entry.SideName).attr("value",entry.SideID))
-    });
-
-    sideSelect.append(side_select_dropdow);
-    sideForm.append(sideSelect);
-
-    container.append(nameForm);
-    container.append(descForm);
-    container.append(sideForm);
 }

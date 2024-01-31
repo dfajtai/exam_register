@@ -138,40 +138,13 @@ function initEventDefinitionsTable(container,tableId){
 }
 
 function eventDefinitionInputs(container){
-    var typeForm = $("<div/>").addClass("row mb-3");
-    typeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Type"));
-    var typeSelect = $("<div/>").addClass("col-sm-9");
+    var params =  [
+        {"FieldName":"EventName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"EventType","FieldLabel":"Type","FieldType":"select","FieldSource":"event_type","FieldRequired":true},
+        {"FieldName":"EventDesc","FieldLabel":"Description","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+        {"FieldName":"EventFormJSON","FieldLabel":"Event form params","FieldDataType":"longtext","FieldType":"input","FieldRequired":false},
+        ]
+    
+    showCustomArgs(container,params);
 
-    var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","EventType").prop('required',true);
-    type_select_dropdow.append($("<option/>").html("Choose EventType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-    $.each(defs.event_type_definitions,function(key,entry){
-        type_select_dropdow.append($("<option/>").html(entry.EventTypeName).attr("value",entry.EventTypeID))
-    });
-
-    typeSelect.append(type_select_dropdow);
-    typeForm.append(typeSelect);
-
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","EventName").prop('required',true));
-    nameForm.append(nameInput);
-
-    var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","EventDesc"));
-    descForm.append(descInput);
-
-    var eventParamsForm = $("<div/>").addClass("row mb-3");
-    eventParamsForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Event form params"));
-    var eventParamsInput = $("<div/>").addClass("col-sm-9");
-    eventParamsInput.append($("<textarea/>").addClass("form-control").attr("type","text").attr("id","params").attr("name","EventFormJSON").attr("rows",10));
-    eventParamsForm.append(eventParamsInput);
-
-
-    container.append(nameForm);
-    container.append(typeForm);
-    container.append(descForm);
-    container.append(eventParamsForm);
 }

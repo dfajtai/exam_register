@@ -70,18 +70,11 @@ function initLocationDefinitionsTable(container,tableId){
 }
 
 function locationDefinitionInputs(container){
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","LocationName").prop('required',true));
-    nameForm.append(nameInput);
+    var params =  [
+        {"FieldName":"LocationName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"LocationDesc","FieldLabel":"Description","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+        ]
+    
+    showCustomArgs(container,params);
 
-    var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","LocationDesc").prop('required',false));
-    descForm.append(descInput);
-
-    container.append(nameForm);
-    container.append(descForm);
 }

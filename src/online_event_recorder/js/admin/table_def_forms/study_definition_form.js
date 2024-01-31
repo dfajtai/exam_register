@@ -91,51 +91,23 @@ function initStudyDefinitionsTable(container,tableId){
 
     modalInsert("Study", container, "study_modal_add_new", tableId, studyDefinitionInputs, study_definition_insert_ajax);
     modalUpdate("Study", container, "study_modal_edit_selected", tableId, studyDefinitionInputs, study_definition_update_ajax,"StudyID");
-
+    
+    container.find("#study_modal_add_new").find(".modal-dialog").addClass("modal-xl");
+    container.find("#study_modal_edit_selected").find(".modal-dialog").addClass("modal-xl");
 }
 
 function studyDefinitionInputs(container){
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","StudyName").prop('required',true));
-    nameForm.append(nameInput);
+    var params =  [
+        {"FieldName":"StudyName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"StudyDesc","FieldLabel":"Description","FieldDataType":"longtext","FieldType":"input","FieldRequired":false},
+        {"FieldName":"StudySpecies","FieldLabel":"Species","FieldDataType":"text","FieldType":"input","FieldRequired":true},
 
-    var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<textarea/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","StudyDesc"));
-    descForm.append(descInput);
+        {"FieldName":"StudyStart","FieldLabel":"Start","FieldDataType":"date","FieldType":"input","FieldRequired":true},
+        {"FieldName":"StudyEnd","FieldLabel":"End","FieldDataType":"date","FieldType":"input","FieldRequired":true},
+        {"FieldName":"StudyNMax","FieldLabel":"Max. number of subjects","FieldDataType":"numeric","FieldDataStep":"1","FieldType":"input","FieldRequired":true},
+        ]
+    
+    showCustomArgs(container,params);
 
-    var speciesForm = $("<div/>").addClass("row mb-3");
-    speciesForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Species"));
-    var speciesInput = $("<div/>").addClass("col-sm-9");
-    speciesInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","species").attr("name","StudySpecies").prop('required',true));
-    speciesForm.append(speciesInput);
-
-    var startForm = $("<div/>").addClass("row mb-3");
-    startForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Start"));
-    var startInput = $("<div/>").addClass("col-sm-9");
-    startInput.append($("<input/>").addClass("form-control").attr("type","date").attr("id","start").attr("name","StudyStart").prop('required',true));
-    startForm.append(startInput);
-
-    var endForm = $("<div/>").addClass("row mb-3");
-    endForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("End"));
-    var endInput = $("<div/>").addClass("col-sm-9");
-    endInput.append($("<input/>").addClass("form-control").attr("type","date").attr("id","end").attr("name","StudyEnd").prop('required',true));
-    endForm.append(endInput);
-
-    var nForm = $("<div/>").addClass("row mb-3");
-    nForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Max. number of subjects"));
-    var nInput = $("<div/>").addClass("col-sm-9");
-    nInput.append($("<input/>").addClass("form-control").attr("type","number").attr("step","1").attr("id","n").attr("name","StudyNMax").prop('required',true));
-    nForm.append(nInput);
-
-    container.append(nameForm);
-    container.append(descForm);
-    container.append(speciesForm);
-    container.append(startForm);
-    container.append(endForm);
-    container.append(nForm);
 
 }

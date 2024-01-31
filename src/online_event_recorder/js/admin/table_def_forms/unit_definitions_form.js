@@ -96,47 +96,13 @@ function initUnitDefinitionsTable(container,tableId){
 }
 
 function unitDefinitionInputs(container){
-    var typeForm = $("<div/>").addClass("row mb-3");
-    typeForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Type"));
-    var typeSelect = $("<div/>").addClass("col-sm-9");
-
-    var type_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","UnitType").prop('required',true);
-    type_select_dropdow.append($("<option/>").html("Choose UnitType...").prop('selected',true).attr("disabled","disabled").attr("value",""));
-    $.each(defs.unit_type_definitions,function(key,entry){
-        type_select_dropdow.append($("<option/>").html(entry.UnitTypeName).attr("value",entry.UnitTypeID))
-    });
-
-    typeSelect.append(type_select_dropdow);
-    typeForm.append(typeSelect);
-
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Name"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","UnitName").prop('required',true));
-    nameForm.append(nameInput);
-
-    var unitForm = $("<div/>").addClass("row mb-3");
-    unitForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Unit"));
-    var unitInput = $("<div/>").addClass("col-sm-9");
-    unitInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","unit").attr("name","UnitUnit").prop('required',true));
-    unitForm.append(unitInput);
-
-    var amountForm = $("<div/>").addClass("row mb-3");
-    amountForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Amount"));
-    var amountInput = $("<div/>").addClass("col-sm-9");
-    amountInput.append($("<input/>").addClass("form-control").attr("type","number").attr("step","0.01").attr("id","amount").attr("name","UnitAmount").prop('required',true));
-    amountForm.append(amountInput);
-
-    var descForm = $("<div/>").addClass("row mb-3");
-    descForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Description"));
-    var descInput = $("<div/>").addClass("col-sm-9");
-    descInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","desc").attr("name","UnitDesc").prop('required',false));
-    descForm.append(descInput);
-
-
-    container.append(typeForm);
-    container.append(nameForm);
-    container.append(unitForm);
-    container.append(amountForm);
-    container.append(descForm);
+    var params =  [
+        {"FieldName":"UnitType","FieldLabel":"Type","FieldType":"select","FieldSource":"unit_type","FieldRequired":true},
+        {"FieldName":"UnitName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"UnitUnit","FieldLabel":"Unit","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"UnitAmount","FieldLabel":"Amount","FieldDataType":"numeric","FieldDataStep":"0.1", "FieldType":"input","FieldRequired":false},
+        {"FieldName":"UnitDesc","FieldLabel":"Description","FieldDataType":"text","FieldType":"input","FieldRequired":false},
+        ]
+    
+    showCustomArgs(container,params);
 }

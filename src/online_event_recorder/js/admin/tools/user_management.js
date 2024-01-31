@@ -91,37 +91,26 @@ function initUsersDefinitionsTable(container,tableId){
 
     // modalInsert("Users", container,"users_modal_add_new",tableId, usersDefinitionInputs, users_definition_insert_ajax);
     removeModalInsert(tableId);
+
     modalUpdate("Users", container,"users_modal_edit_selected",tableId, usersDefinitionInputs, users_definition_update_ajax,"UserID");
+
+    container.find("#users_modal_edit_selected").find(".modal-dialog").addClass("modal-lg");
 
 }
 
 function usersDefinitionInputs(container){
-    var fullnameForm = $("<div/>").addClass("row mb-3");
-    fullnameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Full Name"));
-    var fullnameInput = $("<div/>").addClass("col-sm-9");
-    fullnameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","fname").attr("name","UserFullName").prop('required',true));
-    fullnameForm.append(fullnameInput);
+    var params =  [
+        {"FieldName":"UserFullName","FieldLabel":"FullName","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"UserName","FieldLabel":"Username","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        {"FieldName":"UserEmail","FieldLabel":"Email addres","FieldDataType":"text","FieldType":"input","FieldRequired":true},
+        ]
+    
+    showCustomArgs(container,params);    
 
-    var nameForm = $("<div/>").addClass("row mb-3");
-    nameForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Username"));
-    var nameInput = $("<div/>").addClass("col-sm-9");
-    nameInput.append($("<input/>").addClass("form-control").attr("type","text").attr("id","uname").attr("name","UserName").prop('required',true));
-    nameForm.append(nameInput);
-
-    var emailForm = $("<div/>").addClass("row mb-3");
-    emailForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Email"));
-    var emailInput = $("<div/>").addClass("col-sm-9");
-    emailInput.append($("<input/>").addClass("form-control").attr("type","email").attr("id","email").attr("name","UserEmail").prop('required',true));
-    emailForm.append(emailInput);
-
-
-    container.append(nameForm);
-    container.append(fullnameForm);
-    container.append(emailForm);
 
     var activatedForm = $("<div/>").addClass("row mb-3");
-    activatedForm.append($("<label/>").addClass("col-sm-4 col-form-label").html("Acivate/Disactivate"));
-    var activatedSelect = $("<div/>").addClass("col-sm-8");
+    activatedForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Acivate/Disactivate"));
+    var activatedSelect = $("<div/>").addClass("col-sm-9");
     var activated_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","IsActivated").prop('required',true);
     activated_select_dropdow.append($("<option/>").html("Choose operation...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     activated_select_dropdow.append($("<option/>").html("Activate account").attr("value",1));
@@ -130,8 +119,8 @@ function usersDefinitionInputs(container){
     activatedForm.append(activatedSelect);
 
     var resetForm = $("<div/>").addClass("row mb-3");
-    resetForm.append($("<label/>").addClass("col-sm-4 col-form-label").html("Password reset"));
-    var resetSelect = $("<div/>").addClass("col-sm-8");
+    resetForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Password reset"));
+    var resetSelect = $("<div/>").addClass("col-sm-9");
     var reset_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","type").attr("name","CanResetPassword").prop('required',true);
     reset_select_dropdow.append($("<option/>").html("Choose operation...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     reset_select_dropdow.append($("<option/>").html("Allow password reset").attr("value",1));
