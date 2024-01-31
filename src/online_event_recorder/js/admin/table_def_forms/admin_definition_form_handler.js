@@ -14,12 +14,16 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
         e.preventDefault();
         var values = {};
         $.each($(this).serializeArray(), function(i, field) {
-            if(field.name.includes("JSON")){
-                values[field.name]= field.value;
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                entry = entries[0];
+                var data_val = $(entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[field.name] = field.value;
+                values[field.name] = parse_val(field.value==""?null:field.value);
             }
+            
         });
         
         insert_ajax(values,function(){table.bootstrapTable('refresh')});
@@ -220,21 +224,17 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
         var key_info = {key:key_name,value:selection[key_name]}
 
         var values = {};
-        form.find("input[name]").each(function(){
-            values[$(this).attr("name") ] = $(this).val();
-        });
-        form.find("textarea[name]").each(function(){
-            var name = $(this).attr("name");
-            if(name.includes("JSON")){
-                values[name] = $(this).val();
+        $.each($(this).serializeArray(), function(i, field) {
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                entry = entries[0];
+                var data_val = $(entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[name] = $(this).val();
+                values[field.name] = parse_val(field.value==""?null:field.value);
             }
-
-        });
-        form.find("select[name]").each(function(){
-            values[$(this).attr("name") ] = $(this).val();
+            
         });
 
         update_ajax(key_info,values,function(){table.bootstrapTable('refresh')});

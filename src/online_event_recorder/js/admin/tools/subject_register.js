@@ -142,8 +142,6 @@ function subject_register_subject_formatter(subject_entry){
         return subject_entry;
     }
 
-
-
     var res  = {};
     $.each(subject_entry,function(key,value){
         res[key] = subjects_format_value(value,key);
@@ -337,7 +335,7 @@ function subjectFormInputs(container){
     {"FieldName":"Height","FieldLabel":"Height","FieldType":"input","FieldDataType":"numeric", "FieldDataStep":"0.01","FieldUnit":"cm","FieldRequired":false},
     {"FieldName":"Location","FieldLabel":"Location","FieldType":"select","FieldSource":"location"},
     {"FieldName":"Comment","FieldLabel":"Comment","FieldType":"input","FieldDataType":"longtext"},
-    {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status"}
+    {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status","FieldDefaultValue":subject_planned_status}
     ]
 
     showCustomArgs(container,params);    
@@ -415,7 +413,16 @@ function show_subject_modal_add(container, table){
         e.preventDefault();
         var values = {};
         $.each($(this).serializeArray(), function(i, field) {
-            values[field.name] = parse_val(field.value==""?null:field.value);
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                entry = entries[0];
+                var data_val = $(entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
+            }
+            else{
+                values[field.name] = parse_val(field.value==""?null:field.value);
+            }
+            
         });
 
         subject_insert_ajax(values,function(){table.bootstrapTable('refresh')});
@@ -517,7 +524,15 @@ function show_subject_modal_edit(container, table, index){
         var values = {};
 
         $.each($(this).serializeArray(), function(i, field) {
-            values[field.name] = parse_val(field.value==""?null:field.value);
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                entry = entries[0];
+                var data_val = $(entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
+            }
+            else{
+                values[field.name] = parse_val(field.value==""?null:field.value);
+            }
         });
 
         subject_update_ajax(entry["SubjectIndex"],values,function(){table.bootstrapTable('refresh')});
@@ -541,7 +556,7 @@ function show_subject_batch_modal_edit(container, table){
 
     container.find("#"+modal_id).remove();
     
-    subject_modal(container, modal_id, "Batch edit Subjects");
+    subject_modal(container, modal_id, "Batch edit selected subjects");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -591,9 +606,12 @@ function show_subject_batch_modal_edit(container, table){
         message += selected.length == 1 ? ' subject': ' <b>'+ selected.length +'</b> subjects';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
-            $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
-            });
+            // $.each(update_params,function(key,value){
+            //     message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
+            // });
+
+            var update_table = batch_update_formatter(update_params,subject_register_subject_formatter);
+            message+=$(update_table).prop("outerHTML");
         }
         else{
             message+=".";
@@ -645,9 +663,11 @@ function show_subject_batch_modal_edit(container, table){
         message += selected.length == 1 ? ' subject': ' <b>'+ selected.length +'</b> subjects';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
-            $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
-            });
+            // $.each(update_params,function(key,value){
+            //     message += "<i>"+key+"</i>: "+ subjects_format_value(value,key)+"<br/>"; 
+            // });
+            var update_table = batch_update_formatter(update_params,subject_register_subject_formatter);
+            message+=$(update_table).prop("outerHTML");
         }
         else{
             message+=".";

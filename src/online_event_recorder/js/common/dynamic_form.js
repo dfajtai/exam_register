@@ -153,7 +153,9 @@ function dynamicRangeInput(container,name,label,arg){
 
     var group_container = $("<div/>").addClass("input-group");
     
-    var _input = $("<input/>").addClass("form-control form-range w-50 mt-2 me-2").attr("type","range").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
+    var _input = $("<input/>").addClass("form-control form-range w-50 mt-2 me-2");
+    _input.attr("type","range").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
+    $(_input).attr("data-value","");
     if(arg.hasOwnProperty("FieldDataStep")) _input.attr("step",arg.FieldDataStep);
     if(arg.hasOwnProperty("FieldDataMin")) _input.attr("min",arg.FieldDataMin);
     if(arg.hasOwnProperty("FieldDataMax")) _input.attr("max",arg.FieldDataMax);
@@ -167,6 +169,7 @@ function dynamicRangeInput(container,name,label,arg){
 
     $(_input).on("change",function(){
         $(current).val($(this).val());
+        $(this).prop("data-value",$(this).val());
     })
 
     $(current).on("change",function(){
@@ -175,6 +178,7 @@ function dynamicRangeInput(container,name,label,arg){
 
     $(_input).on("input",function(){
         $(current).val($(this).val());
+        $(this).prop("data-value",$(this).val());
     })
 
     if(arg.hasOwnProperty("FieldUnit")){
@@ -201,8 +205,11 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
     else if(datatype=="numeric")  dynamicNumericInput(container,name,label,arg);
     else if(datatype=="range")  dynamicRangeInput(container,name,label,arg);
     
-    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark data-required");
-    if(default_value!=null) container.find("[name="+name+"]").val(default_value).trigger("change");
+    if(required) container.find("[name='"+name+"']").prop('required',true).addClass("border border-2 border-dark data-required");
+    if(default_value!=null) {
+        container.find("[name='"+name+"']").val(default_value).trigger("change");
+        console.log(name + " initialized with default value " + default_value);
+    }
 }
 
 
@@ -418,8 +425,8 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
         case 'study':  dynamicStudySelect(container,name,label); break;
     }
     
-    if(required) container.find("[name="+name+"]").prop('required',true).addClass("border border-2 border-dark data-required");
-    if(default_value!=null) container.find("[name="+name+"]").val(default_value).trigger("change");
+    if(required) container.find("[name='"+name+"']").prop('required',true).addClass("border border-2 border-dark data-required");
+    if(default_value!=null) container.find("[name='"+name+"']").val(default_value).trigger("change");
 }
 
 
@@ -461,11 +468,20 @@ function get_readable_value(container, field_name, field_value){
     // returns the val() of a field with the given name - or its 'data-readable' tag if it is exists
     var res = null;
 
-    var field_element = $(container).find("[name="+field_name+"]")[0];
+    var field_element = $(container).find("[name='"+field_name+"']")[0];
+
+    var data_value_element = $(field_element).find("[data-value]");
+
     // retrieve the 'readable' child element (with the selected value)
     var readable_element = $(field_element).find("[data-readable][value='"+field_value+"']");
     if(readable_element.length==0){
-        res = parse_val(field_value==""?null:field_value);
+        if(data_value_element.length>0){
+            var data_value = $(data_value_element[0]).prop("data-value");
+            res = parse_val(data_value==""?null:data_value);
+        }
+        else{
+            res = parse_val(field_value==""?null:field_value);
+        }
     }
     else{
         res = parse_val($(readable_element[0]).attr("data-readable"));

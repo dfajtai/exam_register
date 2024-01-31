@@ -10,7 +10,11 @@ function simpleFlatFormatter(index, row) {
     return html.join('')
 }
 
-function detail_as_table_formatter(index, row, row_data_formatter = null){
+function batch_update_formatter(updates, formatter_func){
+    return detail_as_table_formatter(null,updates,formatter_func,"Updated value");
+}
+
+function detail_as_table_formatter(index, row, row_data_formatter = null, value_col_head = "Current value"){
     if(row_data_formatter!= null){
         var data = row_data_formatter(row);
     }
@@ -20,7 +24,7 @@ function detail_as_table_formatter(index, row, row_data_formatter = null){
 
     var table = $("<table/>").addClass("w-100 table table-sm table-striped table-bordered border-secondary").attr("id","detail_view_table");
     
-    var names = ["Parameter","Current value"];
+    var names = ["Parameter",value_col_head];
     var keys = Object.keys(data);
     keys = _.without(keys,"state");
 

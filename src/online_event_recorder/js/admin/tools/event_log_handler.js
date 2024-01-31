@@ -175,7 +175,7 @@ function eventlog_format_value(value,col){
     }
 }
 
-function event_log_row_formatter(row){
+function eventlog_row_formatter(row){
     if(!isObject(row)){
         return row;
     }
@@ -193,7 +193,7 @@ function eventlog_detail_view_formatter(index, row) {
     
     var detail_info = $('<p/>').append($("<b/>").html("Event parameters<br/>"));
     var hidden_keys = ["state","EventData"]
-    $.each(event_log_row_formatter(row), function (key, value) {
+    $.each(eventlog_row_formatter(row), function (key, value) {
         if(!(hidden_keys.includes(key))){
             detail_info.append($("<b/>").html(key+": "));
             detail_info.append(value+"&emsp;");  
@@ -938,7 +938,7 @@ function show_eventlog_batch_edit(container, table){
 
     container.find("#"+modal_id).remove();
 
-    eventlog_modal(container, modal_id, "Edit selected events");
+    eventlog_modal(container, modal_id, "Batch edit selected events");
     
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -1042,9 +1042,12 @@ function show_eventlog_batch_edit(container, table){
         message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> events';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
-            $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
-            });
+            // $.each(update_params,function(key,value){
+            //     message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
+            // });
+
+            var update_table = batch_update_formatter(update_params,eventlog_row_formatter);
+            message+=$(update_table).prop("outerHTML");
         }
         else{
             message+=".";
@@ -1098,9 +1101,12 @@ function show_eventlog_batch_edit(container, table){
         message += selected.length == 1 ? ' event': ' <b>'+ selected.length +'</b> events';
         if(Object.entries(update_params).length>0){
             message+=', with the following parameters updated:<br/>';
-            $.each(update_params,function(key,value){
-                message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
-            });
+            // $.each(update_params,function(key,value){
+            //     message += "<i>"+key+"</i>: "+ eventlog_format_value(value,key)+"<br/>"; 
+            // });
+
+            var update_table = batch_update_formatter(update_params,eventlog_row_formatter);
+            message+=$(update_table).prop("outerHTML");
         }
         else{
             message+=".";
