@@ -140,7 +140,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         $.each(selected_subjects, function(index,subject){
             if(!subject.hasOwnProperty("Name")) return;
             if(!subject.hasOwnProperty("SubjectID")) return;
-            text_list.push(subject.Name + " ["+subject.SubjectID+"]");                                 
+            text_list.push((subject.Name==null?"":(subject.Name+" "))+ "["+subject.SubjectID+"]");                                 
         })
 
         if(text_list.length==0){
@@ -184,40 +184,40 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
         ajax(function(res){       
             $(filter_switch).prop("checked",false).trigger('change');
-            // $(filter_switch).trigger('change');
 
-
-            // if(res.length>0)
-            // {
-            //     $.each(res,function(index,subject_info){
-            //         if(subject_info["SubjectIndex"]== old_subject)
-            //             {   
-            //                 old_subject_info = {... subject_info};
-            //                 return;
-            //             }
-            //     });
-            //     // console.log(old_subject_info);
-            // }
             all_subject = res;
 
-            $(subject_input).flexdatalist({
-                minLength: 0,
-                selectionRequired:true,
-                toggleSelected:true,
-                searchIn:["Name","SubjectID"],
-                visibleProperties: ["Name","SubjectID"],
-                valueProperty: "SubjectIndex",
-                textProperty: '{Name} [{SubjectID}]',
-                searchContain: true,
-                data: res
-            })
+            var names = getColUnique(res,"Name");
+            if(names.length==1 && res.length!=names.length){
+                // no names set (name = null for every entry)
+                $(subject_input).flexdatalist({
+                    minLength: 0,
+                    selectionRequired:true,
+                    toggleSelected:true,
+                    searchIn:["SubjectID"],
+                    visibleProperties: ["SubjectID"],
+                    valueProperty: "SubjectIndex",
+                    textProperty: '[{SubjectID}]',
+                    searchContain: true,
+                    data: res
+                })
+            }
+            else{
+                $(subject_input).flexdatalist({
+                    minLength: 0,
+                    selectionRequired:true,
+                    toggleSelected:true,
+                    searchIn:["Name","SubjectID"],
+                    visibleProperties: ["Name","SubjectID"],
+                    valueProperty: "SubjectIndex",
+                    textProperty: '{Name} [{SubjectID}]',
+                    searchContain: true,
+                    data: res
+                })
+            }
 
-            // }).promise().done(function(){
-            //     if(old_subject_info){
-            //         let oldtext = old_subject_info.Name + " ["+old_subject_info.SubjectID+"]";
-            //         $(subject_input).trigger("keydown").val(oldtext);
-            //     }
-            // });
+
+
 
 
             $(subject_input).on('change:flexdatalist', function(event, set, options) {

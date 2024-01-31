@@ -79,10 +79,10 @@ function eventlog_update_ajax(event_index, event_info, callback = null, return_a
 
 
 function eventlog_subjectFormatter(value,row){
+    value = parse_val(value);
     if(value==null) return;
     var res = null;
     if(eventlog_visible_subjects.length==0) return res;
-
     if(eventlog_visible_subjects.includes(value)){
         return eventlog_subject_string_lookup[value];
     }
@@ -179,7 +179,6 @@ function eventlog_row_formatter(row){
     if(!isObject(row)){
         return row;
     }
-
     var res  = {};
     $.each(row,function(key,value){
         res[key] = eventlog_format_value(value,key);
@@ -950,8 +949,10 @@ function show_eventlog_batch_edit(container, table){
     
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    eventlog_subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
-    $(event_param_block.find("label")[0]).html("New subject");
+    if(eventlog_visible_subjects.length>1){
+        eventlog_subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
+        $(event_param_block.find("label")[0]).html("New subject");
+    }
 
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"New event name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
@@ -1024,6 +1025,8 @@ function show_eventlog_batch_edit(container, table){
             var parsed_val = parse_val(field.value);
             if(parsed_val!=null)
                 event_params[field.name] = field.value;
+
+            // console.log(event_params[field.name]);
         });
         
         if(remove_data){ 

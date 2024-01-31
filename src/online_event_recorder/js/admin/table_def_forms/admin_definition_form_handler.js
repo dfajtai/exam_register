@@ -16,8 +16,8 @@ function modalInsertForm(container, form_id, form_input_function, table, modal, 
         $.each($(this).serializeArray(), function(i, field) {
             var entries = $(form).find("[name='"+field.name+"'][data-value]");
             if(entries.length>0){
-                entry = entries[0];
-                var data_val = $(entry).prop("data-value");
+                var _entry = entries[0];
+                var data_val = $(_entry).prop("data-value");
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
@@ -227,8 +227,8 @@ function modalUpdateForm(container, form_id, form_input_function, table, modal, 
         $.each($(this).serializeArray(), function(i, field) {
             var entries = $(form).find("[name='"+field.name+"'][data-value]");
             if(entries.length>0){
-                entry = entries[0];
-                var data_val = $(entry).prop("data-value");
+                var _entry = entries[0];
+                var data_val = $(_entry).prop("data-value");
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
