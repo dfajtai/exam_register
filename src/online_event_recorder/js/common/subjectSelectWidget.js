@@ -215,9 +215,30 @@ function subjectSelectWidget(container, study_id = null, callback = null){
                     data: res
                 })
             }
+            
+            $(subject_input).on('shown:flexdatalist.results', function(event, results){
+                var name_elements = $("#subjectSelect-flexdatalist-results").find("li").find(".item-Name");
+                $.each(name_elements,function(index,element){
+                    var name_html = $(element).html().trim();
+                    if(name_html=="null"){
+                        $(element).html("<strong> ---- </strong>");
+                    }
+                    else{
+                        $(element).html("<strong>"+name_html+"</strong>");
+                    }
+                })
+                var id_elements = $("#subjectSelect-flexdatalist-results").find("li").find(".item-SubjectID");
+                $.each(id_elements,function(index,element){
+                    var id_html = $(element).html().trim();
+                    if(id_html=="null"){
+                        $(element).html("[<small> ---- </small>]");
+                    }
+                    else{
+                        $(element).html("[<small>"+id_html+"</small>]");
+                    }
+                })
 
-
-
+            })
 
 
             $(subject_input).on('change:flexdatalist', function(event, set, options) {
