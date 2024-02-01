@@ -472,7 +472,7 @@ function eventlog_subject_select_from_pool(container, subject_pool, subject_inde
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
     var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect").attr("name","EventSubject");
-    subject_select_dropdow.prop('required',true).addClass("data-required border border-2 border-dark").attr("data-name","EventSubject");
+    subject_select_dropdow.prop('required',true).addClass("data-required data-required-style").attr("data-name","EventSubject");
 
     $.each(subject_pool,function(index,entry){
         if(!entry.hasOwnProperty("SubjectIndex")) return;
@@ -965,7 +965,7 @@ function show_eventlog_batch_edit(container, table){
 
     showCustomArgs(event_param_block,event_params_config);
        
-    event_param_block.find('.data-required').prop("required",false).removeClass("border border-2 border-dark");
+    event_param_block.find('.data-required').prop("required",false).removeClass("data-required-style");
     event_param_block.find('[name="EventPlannedTime"]').val(null);
     
     var nullable_elements = $(event_param_block).find(":not(.data-required)[name]");

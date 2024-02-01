@@ -743,7 +743,7 @@ function show_event_args_modal_json_import_form(container, table){
     event_args_json_import(modal_body, "json_import_form",table);
 
     var form = $(modal).find("form");
-    console.log(form);
+    // console.log(form);
     form.on('submit',function(){
         modal.modal('hide');
     })
@@ -809,7 +809,7 @@ function show_event_args_modal_json_export_form(container, table){
     event_args_json_export(modal_body, table);
 
     var form = $(modal).find("form");
-    console.log(form);
+    // console.log(form);
     form.on('submit',function(){
         modal.modal('hide');
     })
@@ -859,7 +859,7 @@ function show_event_args_modal_preview(container,table){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[field.name] = parse_val(field.value==""?null:field.value);
+                values[field.name] = get_readable_value(form,field.name,field.value)
             }
             
         });

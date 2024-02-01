@@ -147,7 +147,7 @@ function initEventDefinitionsTable(container,tableId){
                     values[field.name] = parse_val(data_val==""?null:data_val);
                 }
                 else{
-                    values[field.name] = parse_val(field.value==""?null:field.value);
+                    values[field.name] = get_readable_value(form,field.name,field.value);
                 }
                 
             });

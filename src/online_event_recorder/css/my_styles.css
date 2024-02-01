@@ -3,6 +3,12 @@
     margin-bottom: 5px;
 }
 
+.data-required-style{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
 .event-custom-field{
     margin-bottom: 5px;
 }

@@ -205,7 +205,17 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
     else if(datatype=="numeric")  dynamicNumericInput(container,name,label,arg);
     else if(datatype=="range")  dynamicRangeInput(container,name,label,arg);
     
-    if(required) container.find("[name='"+name+"']").prop('required',true).addClass("border border-2 border-dark data-required");
+    if(required) {
+        container.find("[name='"+name+"']").prop('required',true).addClass("data-required-style data-required");
+        if(datatype=="range"){
+            $(container.find("[name='"+name+"']")).get(0).setCustomValidity('Please fill out this field.');
+
+            $(container.find("[name='"+name+"']")).on("change",function(){
+                $(this).get(0).setCustomValidity("");
+            })
+        }
+    }
+
     if(default_value!=null) {
         container.find("[name='"+name+"']").val(default_value).trigger("change");
         console.log(name + " initialized with default value " + default_value);
@@ -425,7 +435,7 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
         case 'study':  dynamicStudySelect(container,name,label); break;
     }
     
-    if(required) container.find("[name='"+name+"']").prop('required',true).addClass("border border-2 border-dark data-required");
+    if(required) container.find("[name='"+name+"']").prop('required',true).addClass("data-required-style data-required");
     if(default_value!=null) container.find("[name='"+name+"']").val(default_value).trigger("change");
 }
 
@@ -440,7 +450,7 @@ function showCustomArgs(container,custom_args){
             var object_type = arg.FieldType;
             var required = arg.FieldRequired;
 
-            var default_value = arg.hasOwnProperty("FieldDefaultValue")? arg.FieldDefaultValue : null;
+            var default_value = arg.hasOwnProperty("FieldDefaultValue")? parse_val(arg.FieldDefaultValue) : null;
 
             if(object_type=="input"){
                 if(!arg.hasOwnProperty('FieldDataType')) 

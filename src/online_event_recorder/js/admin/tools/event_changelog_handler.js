@@ -802,7 +802,7 @@ function event_changelog_subject_select_from_pool(container, subject_pool, subje
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
     var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect").attr("name","EventSubject");
-    subject_select_dropdow.prop('required',true).addClass("data-required border border-2 border-dark").attr("data-name","EventSubject");
+    subject_select_dropdow.prop('required',true).addClass("data-required data-required-style").attr("data-name","EventSubject");
 
     $.each(subject_pool,function(index,entry){
         if(!entry.hasOwnProperty("SubjectIndex")) return;
