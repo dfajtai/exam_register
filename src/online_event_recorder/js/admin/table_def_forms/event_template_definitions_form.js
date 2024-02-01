@@ -176,9 +176,7 @@ function eventDefinitionInputs(container){
         {"FieldName":"EventName","FieldLabel":"Name","FieldDataType":"text","FieldType":"input","FieldRequired":true},
         {"FieldName":"EventType","FieldLabel":"Type","FieldType":"select","FieldSource":"event_type","FieldRequired":true},
         {"FieldName":"EventDesc","FieldLabel":"Description","FieldDataType":"text","FieldType":"input","FieldRequired":false},
-        {"FieldName":"EventFormJSON","FieldLabel":"Event form params","FieldDataType":"longtext","FieldType":"input","FieldRequired":false},
+        {"FieldName":"EventFormJSON","FieldLabel":"Event form params","FieldDataType":"longtext","FieldType":"input","FieldRequired":false,"FieldDefaultValue":"[]"},
         ]
-    
     showCustomArgs(container,params);
-
 }

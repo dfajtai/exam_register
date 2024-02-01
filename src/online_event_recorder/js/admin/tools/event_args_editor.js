@@ -579,7 +579,7 @@ function show_event_args_modal_add_form(container, table){
 
 }
 
-function event_args_edit_form(container, form_id,  table, index){
+function event_args_edit_form(container, form_id,  table, index, submit_callback = null){
     // container.empty();
     event_args_add_form(container, form_id, table);
 
@@ -592,9 +592,12 @@ function event_args_edit_form(container, form_id,  table, index){
 
     // TODO store inputs updated to prevent redundant update
 
+    var fields_initialized = [];
+
     form.find("input[name][type!=radio]").each(function(){
         var name = $(this).attr("name");
         if(name in entry){
+            fields_initialized.push(name);
             $(this).val(entry[name]);
         }
     });
@@ -612,6 +615,7 @@ function event_args_edit_form(container, form_id,  table, index){
         var name = $(this).attr("name");
         if(name in entry){
             $(this).val(entry[name]);
+            fields_initialized.push(name);
         }
         $(this).trigger("change");
     });
@@ -621,10 +625,19 @@ function event_args_edit_form(container, form_id,  table, index){
         var name = $(this).attr("name");
         if(name in entry){
             $(this).val(entry[name]);
+            fields_initialized.push(name);
         }
     });
     form.find("select[name]").each(function(){
         var name = $(this).attr("name");
+        if(name in entry){
+            $(this).val(entry[name]);
+            fields_initialized.push(name);
+        }
+    });
+    form.find("[name]").each(function(){
+        var name = $(this).attr("name");
+        if(fields_initialized.includes(name)) return true;
         if(name in entry){
             $(this).val(entry[name]);
         }
@@ -677,9 +690,10 @@ function event_args_edit_form(container, form_id,  table, index){
         event_args_update_unique();
         event_args_uniqueness_warning();
         table.bootstrapTable("resetSearch"); // to call the formatter...
-
-        container.empty();
-
+        
+        if(submit_callback!=null){
+            submit_callback();
+        }
     });
 }
 
@@ -700,7 +714,7 @@ function show_event_args_modal_edit_form(container, table, index){
     event_args_content_name = "edit";
     $( document ).trigger( "_lock", [ "edit"] );
 
-    event_args_edit_form(modal_body, "edit_form", table, index);
+    event_args_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
 
     var form = $(modal).find("form");
     // console.log(form);
@@ -712,7 +726,7 @@ function show_event_args_modal_edit_form(container, table, index){
 
     modal_footer.find("#revert_form").click(function(){
         modal_body.empty();
-        event_args_edit_form(modal_body, "edit_form", table, index);
+        event_args_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
     })
 
     modal.on("hide.bs.modal",function(){

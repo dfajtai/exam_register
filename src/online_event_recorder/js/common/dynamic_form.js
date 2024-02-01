@@ -232,7 +232,7 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
 
     if(default_value!=null) {
         container.find("[name='"+name+"']").val(default_value).trigger("change");
-        console.log(name + " initialized with default value " + default_value);
+        // console.log(name + " initialized with default value " + default_value);
     }
 }
 
