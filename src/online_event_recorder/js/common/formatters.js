@@ -10,8 +10,12 @@ function simpleFlatFormatter(index, row) {
     return html.join('')
 }
 
-function batch_update_formatter(updates, formatter_func){
+function batch_update_formatter(updates, formatter_func = null){
     return detail_as_table_formatter(null,updates,formatter_func,"Updated value");
+}
+
+function object_to_table_formatter(obj, formatter_func= null){
+    return detail_as_table_formatter(null,obj,formatter_func);
 }
 
 function detail_as_table_formatter(index, row, row_data_formatter = null, value_col_head = "Current value"){

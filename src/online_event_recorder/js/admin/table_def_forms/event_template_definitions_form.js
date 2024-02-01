@@ -122,10 +122,44 @@ function initEventDefinitionsTable(container,tableId){
 
         var modal = container.find("#"+modal_id);
         var modal_body = modal.find(".modal-body");
+        var form = $("<form>").addClass("needs-validation");
+        var modal_footer = modal.find(".modal-footer");
+        modal_footer.find("button").remove();
+        modal_footer.append($("<button>").addClass("btn btn-outline-dark w-100 validate-preview-btn").html("Test input"));
+
+        modal_footer.find(".validate-preview-btn").on("click",function(){
+            if (! $(form)[0].checkValidity()) {    
+                $(form)[0].reportValidity();
+            }
+            else{
+                form.trigger("submit",true);
+            }
+        });
+
+        form.on("submit",function(e){
+            e.preventDefault();
+            var values = {};
+            $.each($(this).serializeArray(), function(i, field) {
+                var entries = $(form).find("[name='"+field.name+"'][data-value]");
+                if(entries.length>0){
+                    var _entry = entries[0];
+                    var data_val = $(_entry).prop("data-value");
+                    values[field.name] = parse_val(data_val==""?null:data_val);
+                }
+                else{
+                    values[field.name] = parse_val(field.value==""?null:field.value);
+                }
+                
+            });
+
+            var table = object_to_table_formatter(values);
+            bootbox.alert('Values read:</br>'+$(table).prop("outerHTML"));
+        })
 
         var data = JSON.parse(table.bootstrapTable("getSelections")[0]["EventFormJSON"]);
         modal_body.empty();
-        showCustomArgs(modal_body,data);
+        showCustomArgs(form,data);
+        modal_body.append(form);
 
         modal.modal('show');
 
