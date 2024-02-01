@@ -183,7 +183,7 @@ function argname_validate_formatter(value, row, index){
 function event_args_select_form(container){
     container.empty();
 
-    var defSelectGroup = $("<div/>").addClass("row mb-3");
+    var defSelectGroup = $("<div/>").addClass("row mb-2").attr("id","defitinitonSelectGroup");
     defSelectGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","selectDataSource").html("Data Source"));
     var def_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","selectDataSource").attr("name","FieldSource").prop('required',true);
     def_select_dropdow.append($("<option/>").html("Choose Field Data Source...").prop('selected',true).attr("disabled","disabled").attr("value",""));
@@ -197,10 +197,13 @@ function event_args_select_form(container){
     container.append($("<hr/>").addClass("hr mt-3 mb-3"));
     container.append(defSelectGroup);
 
-    var defaultValueGroup = $("<div/>").attr("id","defaultValue");
-    container.append(defaultValueGroup);
-
+    var default_value_hr = $("<hr>").addClass("my-2");
+    var defaultValueGroup = $("<div/>").attr("id","defaultValueGroup");
+    
     defSelectGroup.find("select").change(function(){
+        container.append(default_value_hr);
+        container.append(defaultValueGroup);
+
         switch (this.value) {
             case "location":
                 defaultValueGroup.empty().addClass("row mb-3");
@@ -224,8 +227,29 @@ function event_args_select_form(container){
 
             default:
                 defaultValueGroup.empty().removeClass("row mb-3");
+                default_value_hr.prop("hidden",true);
                 break;
         }
+
+        // var remove_default_value_switch_group = $("<div/>").addClass("form-check form-switch");
+        // var remove_default_value_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","remove_default_val");
+        // remove_default_value_switch_group.append(remove_default_value_switch);
+        // remove_default_value_switch_group.append($("<label/>").addClass("form-check-label").attr("for","remove_default_val").html("Remove default value "));
+        // defaultValueGroup.append($("<div/>").addClass("mt-3 mb-2").append(remove_default_value_switch_group));
+
+        // remove_default_value_switch.on("change",function(){
+
+        //     var def_val_entry = $(defaultValueGroup).find('[name="FieldDefaultValue"]')[0];
+
+        //     var checked = $(this).prop("checked");
+        //     if(checked){
+        //         $(def_val_entry).attr("data-value","");
+        //     }
+        //     else{
+        //         $(def_val_entry).attr("data-value",$(def_val_entry).val());
+        //     }
+        // })
+
     });
 }
 
@@ -236,7 +260,7 @@ function event_args_input_form(container){
     var dtypeSelectGroup = $("<div/>").addClass("row mb-3");
     dtypeSelectGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","dtypeSelect").html("Field Data Type"));
 
-    var dtype_dropdown = $("<select/>").addClass("form-select required").attr("type","text").attr("id","dtypeSelect").attr("name","FieldDataType").prop('required',true);
+    var dtype_dropdown = $("<select/>").addClass("form-select required data-required data-required-style").attr("type","text").attr("id","dtypeSelect").attr("name","FieldDataType").prop('required',true);
     dtype_dropdown.append($("<option/>").html("Choose Field Data Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
     dtype_dropdown.append($("<option/>").html("text").attr("value","text"));
     dtype_dropdown.append($("<option/>").html("longtext").attr("value","longtext"));
@@ -248,15 +272,16 @@ function event_args_input_form(container){
 
     dtypeSelectGroup.append($("<div/>").addClass("col-md-9").append(dtype_dropdown));
 
-    container.append($("<hr/>").addClass("hr mt-3 mb-3"));
+    container.append($("<hr/>").addClass("mt-3 mb-3"));
     container.append(dtypeSelectGroup);
 
 
     var dtypeNumericGroup = $("<div/>").attr("id","numericParamGroup");
     container.append(dtypeNumericGroup);
 
-
-    var defaultValueGroup = $("<div/>").attr("id","defaultValue");
+    var default_value_hr = $("<hr/>").addClass("mt-3 mb-3").prop("hidden",true);
+    container.append(default_value_hr);
+    var defaultValueGroup = $("<div/>").attr("id","defaultValueGroup");
     container.append(defaultValueGroup);
 
     dtypeSelectGroup.find("select").change(function(){
@@ -267,7 +292,7 @@ function event_args_input_form(container){
             dtypeNumericGroup.empty().addClass("row mb-3");
             var _step = $("<div/>").addClass("col-md-4");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
-            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
+            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
             var _unitType = $("<div/>").addClass("col-md-4");
@@ -280,7 +305,7 @@ function event_args_input_form(container){
 
             var _unit = $("<div/>").addClass("col-md-4");
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
-            var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit").prop('required',true);;
+            var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit").prop('required',false);;
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
             showAllDefs(unit_select_dropdow,"unit_definitions","UnitUnit","UnitUnit","UnitUnit");
             _unit.append(unit_select_dropdow);
@@ -289,6 +314,7 @@ function event_args_input_form(container){
             connectSelectByAttr(_unitType,_unit, "unit_definitions","UnitType", "UnitTypeID", "UnitID");
 
             defaultValueGroup.empty().addClass("row mb-3");
+            default_value_hr.prop("hidden",false);
             defaultValueGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","defvalInput").html("Default value"));
             var defValInput = $("<input/>").addClass("form-control").attr("type","numeric").attr("id","defvalInput").attr("name","FieldDefaultValue").prop('required',false);
             defaultValueGroup.append($("<div/>").addClass("col-md-9").append(defValInput));
@@ -299,7 +325,7 @@ function event_args_input_form(container){
             dtypeNumericGroup.empty().addClass("row mb-3");
             var _step = $("<div/>").addClass("col-md-2");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
-            _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
+            _step.append($("<input/>").addClass("form-control data-required data-required-style").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
             var _min = $("<div/>").addClass("col-md-2");
@@ -331,6 +357,7 @@ function event_args_input_form(container){
             connectSelectByAttr(_unitType,_unit, "unit_definitions", "UnitType", "UnitTypeID", "UnitID");
 
             defaultValueGroup.empty().addClass("row mb-3");
+            default_value_hr.prop("hidden",false);
             defaultValueGroup.append($("<label/>").addClass("col-form-label col-md-3").attr("for","defvalInput").html("Default value"));
             var defValInput = $("<input/>").addClass("form-control").attr("type","numeric").attr("id","defvalInput").attr("name","FieldDefaultValue").prop('required',false);
             defaultValueGroup.append($("<div/>").addClass("col-md-9").append(defValInput));
@@ -342,26 +369,31 @@ function event_args_input_form(container){
             switch (this.value) {
                 case "text":
                     defaultValueGroup.empty().addClass("row mb-3");
+                    default_value_hr.prop("hidden",false);
                     dynamicTextInput(defaultValueGroup,"FieldDefaultValue","Default value");
                     break;
                 
                 case "longtext":
                     defaultValueGroup.empty().addClass("row mb-3");
+                    default_value_hr.prop("hidden",false);
                     dynamicLongTextInput(defaultValueGroup,"FieldDefaultValue","Default value");
                     break;
 
                 case "date":
                     defaultValueGroup.empty().addClass("row mb-3");
+                    default_value_hr.prop("hidden",false);
                     dynamicDateInput(defaultValueGroup,"FieldDefaultValue","Default value");
                     break;
             
                 case "datetime":
                     defaultValueGroup.empty().addClass("row mb-3");
+                    default_value_hr.prop("hidden",false);
                     dynamicDatetimeInput(defaultValueGroup,"FieldDefaultValue","Default value");
                     break;
                 
                 case "time":
                     defaultValueGroup.empty().addClass("row mb-3");
+                    default_value_hr.prop("hidden",false);
                     dynamicTimeInput(defaultValueGroup,"FieldDefaultValue","Default value");
                     break;
 
@@ -410,23 +442,23 @@ function event_args_add_form(container,form_id, table){
     var primaryProperties = $("<div/>");
     var nameGroup = $("<div/>").addClass("row mb-3");
     nameGroup.append($("<label/>").addClass("col-md-3 col-form-label").attr("for","name").html("Field Name"));
-    var nameInput = $("<input/>").addClass("form-control").attr("type","text").attr("id","name").attr("name","FieldName").prop('required',true).attr("placeholder","Field name in database.");
+    var nameInput = $("<input/>").addClass("form-control data-required data-required-style").attr("type","text").attr("id","name").attr("name","FieldName").prop('required',true).attr("placeholder","Field name in database.");
     nameGroup.append($("<div/>").addClass("col-md-9").append(nameInput));
     
     var labelGroup = $("<div/>").addClass("row mb-3");
     labelGroup.append($("<label/>").addClass("col-md-3 col-form-label").attr("for","label").html("Field Label"));
-    var labelInput = $("<input/>").addClass("form-control").attr("type","text").attr("id","label").attr("name","FieldLabel").prop('required',true).attr("placeholder","Field label in visualization.")
+    var labelInput = $("<input/>").addClass("form-control data-required data-required-style").attr("type","text").attr("id","label").attr("name","FieldLabel").prop('required',true).attr("placeholder","Field label in visualization.")
     labelGroup.append($("<div/>").addClass("col-md-9").append(labelInput));
 
     var typeGroup = $("<div/>").addClass("row mb-3");
     var typeGroupLabel = $("<div/>").addClass("form-label col-md-3").html("Field Type");
 
     var inputGroup = $("<div/>").addClass("form-check form-check-inline col-md-2 ms-3");
-    inputGroup.append($("<input/>").addClass("form-check-input").attr("type","radio").attr("id","inputRadio").attr("name","FieldType").prop('required',true).attr("value","input"));
+    inputGroup.append($("<input/>").addClass("form-check-input data-required data-required-style").attr("type","radio").attr("id","inputRadio").attr("name","FieldType").prop('required',true).attr("value","input"));
     inputGroup.append($("<label/>").addClass("form-check-label").attr("for","inputRadio").html("Input"));
 
     var selectGroup = $("<div/>").addClass("form-check form-check-inline col-md-2");
-    selectGroup.append($("<input/>").addClass("form-check-input").attr("type","radio").attr("id","selectRadio").attr("name","FieldType").prop('required',true).attr("value","select"));
+    selectGroup.append($("<input/>").addClass("form-check-input data-required data-required-style").attr("type","radio").attr("id","selectRadio").attr("name","FieldType").prop('required',true).attr("value","select"));
     selectGroup.append($("<label/>").addClass("form-check-label").attr("for","selectRadio").html("Select"));
 
     var requiredGroup = $("<div/>").addClass("form-check form-check-inline col-md-2");
@@ -467,41 +499,38 @@ function event_args_add_form(container,form_id, table){
 
     form.on('submit',function(e){
         e.preventDefault();
-        var newFieldInfo = {}
-        form.find("input[type=text]").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("input[type=numeric]").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("select[name]").each(function(){
-            if($(this).val()!=null) newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("input[type=radio]:checked").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("input[type=checkbox]").each(function(){
-            newFieldInfo[$(this).attr("name")]= this.checked;
-        })
-        // console.log(newFieldInfo);
 
-        if(newFieldInfo.FieldType == "input"){
-            delete newFieldInfo.FieldSource;
+        var values = {};
+        $.each($(this).serializeArray(),function(index,field){
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                var _entry = entries[0];
+                var data_val = $(_entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
+            }
+            else{
+                values[field.name] = parse_val(field.value==""?null:field.value);
+            }
+        })
+        
+
+        if(values.FieldType == "input"){
+            delete values.FieldSource;
         }
-        else if(newFieldInfo.FieldType == "select"){
-            delete newFieldInfo.FieldUnit;
-            delete newFieldInfo.FieldDataType;
-            delete newFieldInfo.FieldDataStep;
-            delete newFieldInfo.FieldDataMin;
-            delete newFieldInfo.FieldDataMax;
+        else if(values.FieldType == "select"){
+            delete values.FieldUnit;
+            delete values.FieldDataType;
+            delete values.FieldDataStep;
+            delete values.FieldDataMin;
+            delete values.FieldDataMax;
         }
 
 
-        if(event_args_content_name.includes(newFieldInfo.FieldName)){
-            event_args_doubles.push(newFieldInfo.FieldName);
+        if(event_args_content_name.includes(values.FieldName)){
+            event_args_doubles.push(values.FieldName);
         }
 
-        table.bootstrapTable("append",newFieldInfo);
+        table.bootstrapTable("append",values);
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
 
@@ -608,39 +637,35 @@ function event_args_edit_form(container, form_id,  table, index){
 
     form.off("submit").on('submit',function(e){
         e.preventDefault();
-        var newFieldInfo = {}
-        form.find("input[type=text]").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("input[type=numeric]").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("select[name]").each(function(){
-            if($(this).val()!=null) newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
-        form.find("input[type=radio]:checked").each(function(){
-            newFieldInfo[$(this).attr("name")]= $(this).val();
-        })
 
-        form.find("input[type=checkbox]").each(function(){
-            newFieldInfo[$(this).attr("name")]= this.checked;
+        var values = {};
+        $.each($(this).serializeArray(),function(index,field){
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                var _entry = entries[0];
+                var data_val = $(_entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
+            }
+            else{
+                values[field.name] = parse_val(field.value==""?null:field.value);
+            }
         })
         // console.log(newFieldInfo);
 
-        if(newFieldInfo.FieldType == "input"){
-            newFieldInfo.FieldSource = undefined;
+        if(values.FieldType == "input"){
+            values.FieldSource = undefined;
         }
-        else if(newFieldInfo.FieldType == "select"){
-            newFieldInfo.FieldUnit = undefined;
-            newFieldInfo.FieldDataType = undefined;
-            newFieldInfo.FieldDataStep = undefined;
-            newFieldInfo.FieldDataMin = undefined;
-            newFieldInfo.FieldDataMax = undefined;
+        else if(values.FieldType == "select"){
+            values.FieldUnit = undefined;
+            values.FieldDataType = undefined;
+            values.FieldDataStep = undefined;
+            values.FieldDataMin = undefined;
+            values.FieldDataMax = undefined;
         }
 
         table.bootstrapTable("updateRow",{
             index: index,
-            row: newFieldInfo
+            row: values
             })
 
 

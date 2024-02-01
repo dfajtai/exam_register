@@ -2,8 +2,8 @@
 include_once 'php_functions.php';
 session_start();
 
-if(isset($_GET['table_name'])){ 
-// if(isset($_GET['table_name']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
+// if(isset($_GET['table_name'])){ 
+if(isset($_GET['table_name']) && isset($_SESSION['id']) && isset($_SESSION['fname'])){
     $table = $_GET['table_name'];
     if(isset($_GET['columns'])){$columns = $_GET['columns'];}else{$columns = "*";};
 

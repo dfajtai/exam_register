@@ -60,10 +60,17 @@ function dynamicDateInput(container,name,label){
     _input.val(moment().format("YYYY-MM-DD"));
     group_container.append(_input)
 
+    var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
+    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
+
     current.html(moment().format("YYYY-MM-DD"));
 
     group_container.find(".update-date").on("click", function (){
         $(_input).val(current.html());
+    });
+
+    group_container.find(".clear-datetime").on("click", function (){
+        $(_input).val(null);
     });
 
     container.append(_label);
@@ -83,13 +90,20 @@ function dynamicTimeInput(container,name,label){
     var _input = $("<input/>").addClass("form-control").attr("type","time").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
 
     _input.val(moment().format("HH:mm:ss"));
-    group_container.append(_input)
+    group_container.append(_input);
+
+    var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
+    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
 
     current.html(moment().format("HH:mm:ss"));
     setInterval(function(){current.html(moment().format("HH:mm:ss"));},1000);
 
     group_container.find(".update-date").on("click", function (){
         $(_input).val(current.html());
+    });
+
+    group_container.find(".clear-datetime").on("click", function (){
+        $(_input).val(null);
     });
 
     container.append(_label);
