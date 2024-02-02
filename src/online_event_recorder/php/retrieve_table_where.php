@@ -29,7 +29,7 @@ if(isset($_GET['table_name']) && isset($_SESSION['id']) && isset($_SESSION['fnam
             }
         }        
 
-        $table_data = $database -> select($table, $columns, $filter);
+        $table_data = $database -> select($table, $columns, ["AND"=>$filter]);
     }
     else{
         $table_data = $database -> select($table, $columns);

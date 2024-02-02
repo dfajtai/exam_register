@@ -49,13 +49,15 @@ function trueFalseFormatter(value,row){
 function userDetailFormatter(index, row) {
     var html = []
     var hidden_keys = ["UserPwd","state"]
+    var vals = {};
     $.each(row, function (key, value) {
       if(!(hidden_keys.includes(key))){
-        html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+        vals[key] = value;
       }
 
     })
-    return html.join('')
+
+    return detail_as_table_formatter(null,vals).prop("outerHTML");
   }
 
 function initUsersDefinitionsTable(container,tableId){

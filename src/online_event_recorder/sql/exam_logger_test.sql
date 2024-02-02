@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 30, 2024 at 04:12 PM
--- Server version: 8.0.35-0ubuntu0.22.04.1
--- PHP Version: 8.2.15
+-- Generation Time: Feb 02, 2024 at 04:14 PM
+-- Server version: 8.0.36-0ubuntu0.22.04.1
+-- PHP Version: 8.3.2-1+ubuntu22.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Database: `exam_logger_test`
 --
+CREATE DATABASE IF NOT EXISTS `exam_logger_test` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `exam_logger_test`;
+
+DELIMITER $$
+--
+-- Procedures
+--
+DROP PROCEDURE IF EXISTS `release_resource`$$
+CREATE DEFINER=`debian-sys-maint`@`localhost` PROCEDURE `release_resource` ()  BEGIN
+UPDATE resource_lock SET resource_id = '[]', valid = NULL WHERE valid < CURRENT_TIME;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -27,6 +40,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `asset_definitions`
 --
 
+DROP TABLE IF EXISTS `asset_definitions`;
 CREATE TABLE `asset_definitions` (
   `AssetID` int NOT NULL,
   `AssetName` varchar(32) NOT NULL,
@@ -47,12 +61,14 @@ INSERT INTO `asset_definitions` (`AssetID`, `AssetName`, `AssetDesc`, `AssetLoca
 --
 -- Triggers `asset_definitions`
 --
+DROP TRIGGER IF EXISTS `asset_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `asset_definitions_insert` AFTER INSERT ON `asset_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "asset_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `asset_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `asset_definitions_update` AFTER UPDATE ON `asset_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -66,6 +82,7 @@ DELIMITER ;
 -- Table structure for table `bodypart_definitions`
 --
 
+DROP TABLE IF EXISTS `bodypart_definitions`;
 CREATE TABLE `bodypart_definitions` (
   `BodypartID` int NOT NULL,
   `BodypartName` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -85,12 +102,14 @@ INSERT INTO `bodypart_definitions` (`BodypartID`, `BodypartName`, `BodypartDesc`
 --
 -- Triggers `bodypart_definitions`
 --
+DROP TRIGGER IF EXISTS `bodypart_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `bodypart_definitions_insert` AFTER INSERT ON `bodypart_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "bodypart_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `bodypart_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `bodypart_definitions_update` AFTER UPDATE ON `bodypart_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -104,6 +123,7 @@ DELIMITER ;
 -- Table structure for table `consumable_definitions`
 --
 
+DROP TABLE IF EXISTS `consumable_definitions`;
 CREATE TABLE `consumable_definitions` (
   `ConsumableID` int NOT NULL,
   `ConsumableType` int NOT NULL COMMENT 'consumable_type_definitions.consumable_typeID',
@@ -123,12 +143,14 @@ INSERT INTO `consumable_definitions` (`ConsumableID`, `ConsumableType`, `Consuma
 --
 -- Triggers `consumable_definitions`
 --
+DROP TRIGGER IF EXISTS `consumable_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `consumable_definitions_insert` AFTER INSERT ON `consumable_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "consumable_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `consumable_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `consumable_definitions_update` AFTER UPDATE ON `consumable_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -142,6 +164,7 @@ DELIMITER ;
 -- Table structure for table `consumable_type_definitions`
 --
 
+DROP TABLE IF EXISTS `consumable_type_definitions`;
 CREATE TABLE `consumable_type_definitions` (
   `ConsumableTypeID` int NOT NULL,
   `ConsumableTypeName` varchar(32) NOT NULL,
@@ -163,12 +186,14 @@ INSERT INTO `consumable_type_definitions` (`ConsumableTypeID`, `ConsumableTypeNa
 --
 -- Triggers `consumable_type_definitions`
 --
+DROP TRIGGER IF EXISTS `consumable_type_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `consumable_type_definitions_insert` AFTER INSERT ON `consumable_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "consumable_type_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `consumable_type_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `consumable_type_definitions_update` AFTER UPDATE ON `consumable_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -182,6 +207,7 @@ DELIMITER ;
 -- Table structure for table `definition_tables`
 --
 
+DROP TABLE IF EXISTS `definition_tables`;
 CREATE TABLE `definition_tables` (
   `TableID` int NOT NULL,
   `TableName` varchar(127) NOT NULL,
@@ -205,9 +231,9 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (10, 'sex_definitions', '2023-11-23 11:37:03', '18eba199'),
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
-(14, 'event_type_definitions', '2023-12-08 15:47:43', '48c3dca1'),
-(15, 'event_template_definitions', '2024-01-17 10:48:26', '1c030179'),
-(16, 'studies', '2024-01-30 16:11:13', 'a7a2f5e7');
+(14, 'event_type_definitions', '2024-02-01 14:46:02', 'd0e0bfd'),
+(15, 'event_template_definitions', '2024-01-17 10:48:26', 'd5e5b178'),
+(16, 'studies', '2024-01-31 14:10:51', '9b175c51');
 
 -- --------------------------------------------------------
 
@@ -215,6 +241,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 -- Table structure for table `event_change_log`
 --
 
+DROP TABLE IF EXISTS `event_change_log`;
 CREATE TABLE `event_change_log` (
   `EventChangeLogIndex` int NOT NULL,
   `EventIndex` int NOT NULL,
@@ -232,6 +259,7 @@ CREATE TABLE `event_change_log` (
 -- Table structure for table `event_log`
 --
 
+DROP TABLE IF EXISTS `event_log`;
 CREATE TABLE `event_log` (
   `EventIndex` int NOT NULL,
   `EventTemplate` int NOT NULL COMMENT 'event_definitions.eventid',
@@ -253,6 +281,7 @@ CREATE TABLE `event_log` (
 -- Table structure for table `event_status_definitions`
 --
 
+DROP TABLE IF EXISTS `event_status_definitions`;
 CREATE TABLE `event_status_definitions` (
   `EventStatusID` int NOT NULL,
   `EventStatusName` varchar(32) NOT NULL,
@@ -273,12 +302,14 @@ INSERT INTO `event_status_definitions` (`EventStatusID`, `EventStatusName`, `Eve
 --
 -- Triggers `event_status_definitions`
 --
+DROP TRIGGER IF EXISTS `event_status_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `event_status_definitions_insert` AFTER INSERT ON `event_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "event_status_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `event_status_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `event_status_definitions_update` AFTER UPDATE ON `event_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -292,6 +323,7 @@ DELIMITER ;
 -- Table structure for table `event_template_definitions`
 --
 
+DROP TABLE IF EXISTS `event_template_definitions`;
 CREATE TABLE `event_template_definitions` (
   `EventTemplateID` int NOT NULL,
   `EventName` varchar(32) NOT NULL,
@@ -308,17 +340,20 @@ INSERT INTO `event_template_definitions` (`EventTemplateID`, `EventName`, `Event
 (1, 'vérvétel', '', 1, '[{\"FieldName\": \"bodypart\", \"FieldType\": \"select\", \"FieldLabel\": \"vervetel_helye\", \"FieldSource\": \"bodypart\", \"FieldRequired\": true}, {\"FieldName\": \"volume\", \"FieldType\": \"input\", \"FieldUnit\": \"ml\", \"FieldLabel\": \"terfogat\", \"FieldDataMax\": \"20\", \"FieldDataMin\": \"0\", \"FieldDataStep\": \"0.1\", \"FieldDataType\": \"range\", \"FieldRequired\": true}]'),
 (2, 'altatás kezdete', '', 2, '[{\"FieldName\": \"anest_start\", \"FieldType\": \"input\", \"FieldLabel\": \"anest_start\", \"FieldSource\": \"location\", \"FieldDataType\": \"datetime\", \"FieldRequired\": true}, {\"FieldName\": \"anest_start_loc\", \"FieldType\": \"select\", \"FieldLabel\": \"anest start location\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"canule_loc_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 1 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 1\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}, {\"FieldName\": \"canule_loc_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 2 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 2\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}]'),
 (3, 'altatás vége', '', 2, '[{\"FieldName\": \"asd\", \"FieldType\": \"input\", \"FieldLabel\": \"asasd\", \"FieldDataType\": \"date\", \"FieldRequired\": false}, {\"FieldName\": \"asd2\", \"FieldType\": \"select\", \"FieldLabel\": \"asasd\", \"FieldSource\": \"consumable\", \"FieldDataType\": \"date\", \"FieldRequired\": false, \"FieldDefaultValue\": \"heparin\"}]'),
-(4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]');
+(4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]'),
+(6, 'note', '', 6, '[{\"FieldName\": \"NoteTimestamp\", \"FieldType\": \"input\", \"FieldLabel\": \"Timestamp\", \"FieldDataType\": \"datetime\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}, {\"FieldName\": \"Note\", \"FieldType\": \"input\", \"FieldLabel\": \"Note\", \"FieldDataType\": \"longtext\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}]');
 
 --
 -- Triggers `event_template_definitions`
 --
+DROP TRIGGER IF EXISTS `event_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `event_definitions_insert` AFTER INSERT ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "event_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `event_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `event_definitions_update` AFTER UPDATE ON `event_template_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -332,6 +367,7 @@ DELIMITER ;
 -- Table structure for table `event_type_definitions`
 --
 
+DROP TABLE IF EXISTS `event_type_definitions`;
 CREATE TABLE `event_type_definitions` (
   `EventTypeID` int NOT NULL,
   `EventTypeName` varchar(32) NOT NULL,
@@ -346,17 +382,20 @@ INSERT INTO `event_type_definitions` (`EventTypeID`, `EventTypeName`, `EventType
 (1, 'measurement', 'any kind of measurement / assession performed on the subject'),
 (2, 'treatment', NULL),
 (3, 'transport', 'transport form one location to an another'),
-(5, 'care', 'feeding, cleaning, brooming');
+(5, 'care', 'feeding, cleaning, brooming'),
+(6, 'other', '');
 
 --
 -- Triggers `event_type_definitions`
 --
+DROP TRIGGER IF EXISTS `event_type_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `event_type_definitions_insert` AFTER INSERT ON `event_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "event_type_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `event_type_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `event_type_definitions_update` AFTER UPDATE ON `event_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -370,6 +409,7 @@ DELIMITER ;
 -- Table structure for table `location_definitions`
 --
 
+DROP TABLE IF EXISTS `location_definitions`;
 CREATE TABLE `location_definitions` (
   `LocationID` int NOT NULL,
   `LocationName` varchar(32) NOT NULL,
@@ -392,12 +432,14 @@ INSERT INTO `location_definitions` (`LocationID`, `LocationName`, `LocationDesc`
 --
 -- Triggers `location_definitions`
 --
+DROP TRIGGER IF EXISTS `location_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `location_definitions_insert` AFTER INSERT ON `location_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "location_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `location_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `location_definitions_update` AFTER UPDATE ON `location_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -408,9 +450,33 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `resource_lock`
+--
+
+DROP TABLE IF EXISTS `resource_lock`;
+CREATE TABLE `resource_lock` (
+  `lock_id` int NOT NULL,
+  `user` int NOT NULL,
+  `resource` enum('subjects','event_log') NOT NULL,
+  `resource_id` json DEFAULT NULL,
+  `valid` timestamp NULL DEFAULT NULL COMMENT 'valid until'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `resource_lock`
+--
+
+INSERT INTO `resource_lock` (`lock_id`, `user`, `resource`, `resource_id`, `valid`) VALUES
+(1, 4, 'subjects', '[]', NULL),
+(2, 4, 'event_log', '[]', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sex_definitions`
 --
 
+DROP TABLE IF EXISTS `sex_definitions`;
 CREATE TABLE `sex_definitions` (
   `SexID` int NOT NULL,
   `SexName` varchar(32) NOT NULL,
@@ -430,12 +496,14 @@ INSERT INTO `sex_definitions` (`SexID`, `SexName`, `SexDesc`) VALUES
 --
 -- Triggers `sex_definitions`
 --
+DROP TRIGGER IF EXISTS `sex_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `sex_definitions_insert` AFTER INSERT ON `sex_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "sex_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `sex_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `sex_definitions_update` AFTER UPDATE ON `sex_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -449,6 +517,7 @@ DELIMITER ;
 -- Table structure for table `side_definitions`
 --
 
+DROP TABLE IF EXISTS `side_definitions`;
 CREATE TABLE `side_definitions` (
   `SideID` int NOT NULL,
   `SideName` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -468,12 +537,14 @@ INSERT INTO `side_definitions` (`SideID`, `SideName`, `SideShortName`) VALUES
 --
 -- Triggers `side_definitions`
 --
+DROP TRIGGER IF EXISTS `side_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `side_definitions_insert` AFTER INSERT ON `side_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "side_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `side_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `side_definitions_update` AFTER UPDATE ON `side_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -487,6 +558,7 @@ DELIMITER ;
 -- Table structure for table `studies`
 --
 
+DROP TABLE IF EXISTS `studies`;
 CREATE TABLE `studies` (
   `StudyID` int NOT NULL,
   `StudyName` varchar(255) NOT NULL,
@@ -504,18 +576,20 @@ CREATE TABLE `studies` (
 
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
 (1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 0),
-(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 0),
-(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 0);
+(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 6),
+(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 3);
 
 --
 -- Triggers `studies`
 --
+DROP TRIGGER IF EXISTS `study_def_insert`;
 DELIMITER $$
 CREATE TRIGGER `study_def_insert` AFTER INSERT ON `studies` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "studies"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `study_def_update`;
 DELIMITER $$
 CREATE TRIGGER `study_def_update` AFTER UPDATE ON `studies` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -529,6 +603,7 @@ DELIMITER ;
 -- Table structure for table `subjects`
 --
 
+DROP TABLE IF EXISTS `subjects`;
 CREATE TABLE `subjects` (
   `SubjectIndex` int NOT NULL,
   `SubjectID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -545,12 +620,13 @@ CREATE TABLE `subjects` (
   `Comment` text,
   `LastChange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ModifiedBy` int NOT NULL,
-  `Status` int DEFAULT NULL
+  `Status` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Triggers `subjects`
 --
+DROP TRIGGER IF EXISTS `alter subject`;
 DELIMITER $$
 CREATE TRIGGER `alter subject` AFTER UPDATE ON `subjects` FOR EACH ROW BEGIN
 UPDATE studies SET StudyNCurrent = StudyNCurrent +1 WHERE StudyID = NEW.StudyID;
@@ -558,12 +634,14 @@ UPDATE studies SET StudyNCurrent = StudyNCurrent -1 WHERE StudyID = old.StudyID;
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `delete subject`;
 DELIMITER $$
 CREATE TRIGGER `delete subject` AFTER DELETE ON `subjects` FOR EACH ROW BEGIN
 UPDATE studies SET StudyNCurrent = StudyNCurrent -1 WHERE StudyID = old.StudyID;
 END
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `new subject`;
 DELIMITER $$
 CREATE TRIGGER `new subject` AFTER INSERT ON `subjects` FOR EACH ROW BEGIN
 UPDATE studies SET StudyNCurrent = StudyNCurrent +1 WHERE StudyID = NEW.StudyID;
@@ -577,6 +655,7 @@ DELIMITER ;
 -- Table structure for table `subject_change_log`
 --
 
+DROP TABLE IF EXISTS `subject_change_log`;
 CREATE TABLE `subject_change_log` (
   `SubjectChangeLogIndex` int NOT NULL,
   `SubjectIndex` int NOT NULL,
@@ -597,6 +676,7 @@ CREATE TABLE `subject_change_log` (
 -- Table structure for table `subject_status_definitions`
 --
 
+DROP TABLE IF EXISTS `subject_status_definitions`;
 CREATE TABLE `subject_status_definitions` (
   `StatusID` int NOT NULL,
   `StatusName` varchar(16) NOT NULL,
@@ -617,12 +697,14 @@ INSERT INTO `subject_status_definitions` (`StatusID`, `StatusName`, `StatusDescr
 --
 -- Triggers `subject_status_definitions`
 --
+DROP TRIGGER IF EXISTS `subject_status_definitions_insert`;
 DELIMITER $$
 CREATE TRIGGER `subject_status_definitions_insert` AFTER INSERT ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "subject_status_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `subject_status_definitions_update`;
 DELIMITER $$
 CREATE TRIGGER `subject_status_definitions_update` AFTER UPDATE ON `subject_status_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -636,6 +718,7 @@ DELIMITER ;
 -- Table structure for table `unit_definitions`
 --
 
+DROP TABLE IF EXISTS `unit_definitions`;
 CREATE TABLE `unit_definitions` (
   `UnitID` int NOT NULL,
   `UnitType` int NOT NULL,
@@ -667,12 +750,14 @@ INSERT INTO `unit_definitions` (`UnitID`, `UnitType`, `UnitName`, `UnitUnit`, `U
 --
 -- Triggers `unit_definitions`
 --
+DROP TRIGGER IF EXISTS `unit_def_insert`;
 DELIMITER $$
 CREATE TRIGGER `unit_def_insert` AFTER INSERT ON `unit_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "unit_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `unit_def_update`;
 DELIMITER $$
 CREATE TRIGGER `unit_def_update` AFTER UPDATE ON `unit_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -686,6 +771,7 @@ DELIMITER ;
 -- Table structure for table `unit_type_definitions`
 --
 
+DROP TABLE IF EXISTS `unit_type_definitions`;
 CREATE TABLE `unit_type_definitions` (
   `UnitTypeID` int NOT NULL,
   `UnitTypeName` varchar(127) NOT NULL,
@@ -710,12 +796,14 @@ INSERT INTO `unit_type_definitions` (`UnitTypeID`, `UnitTypeName`, `UnitTypeDesc
 --
 -- Triggers `unit_type_definitions`
 --
+DROP TRIGGER IF EXISTS `unit_type_def_insert`;
 DELIMITER $$
 CREATE TRIGGER `unit_type_def_insert` AFTER INSERT ON `unit_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
 WHERE TableName = "unit_type_definitions"
 $$
 DELIMITER ;
+DROP TRIGGER IF EXISTS `unit_type_def_update`;
 DELIMITER $$
 CREATE TRIGGER `unit_type_def_update` AFTER UPDATE ON `unit_type_definitions` FOR EACH ROW UPDATE definition_tables
 SET LastChange = NOW()
@@ -729,6 +817,7 @@ DELIMITER ;
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `UserID` int NOT NULL,
   `UserFullName` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -748,7 +837,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-01-30 16:12:00', 0, '2023-11-16 11:21:08', 1, 1);
+(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-02-02 16:08:18', 0, '2023-11-16 11:21:08', 1, 1),
+(16, 'Fajtai Dániel', 'daniel.fajtai@sic.medicopus.hu', 'daniuser', '$2y$10$UYtF6XlUM5wptdt1mE8yFuPee63lJ3IIxw7hK2sKhrpIr4JWzcaa.', '2024-01-31 09:07:08', '2024-01-31 13:35:53', 0, '2024-01-31 10:07:08', 0, 1);
 
 --
 -- Indexes for dumped tables
@@ -841,6 +931,14 @@ ALTER TABLE `event_type_definitions`
 ALTER TABLE `location_definitions`
   ADD PRIMARY KEY (`LocationID`),
   ADD UNIQUE KEY `LocationName` (`LocationName`);
+
+--
+-- Indexes for table `resource_lock`
+--
+ALTER TABLE `resource_lock`
+  ADD PRIMARY KEY (`lock_id`),
+  ADD UNIQUE KEY `lock_id` (`lock_id`),
+  ADD UNIQUE KEY `user` (`user`,`resource`);
 
 --
 -- Indexes for table `sex_definitions`
@@ -968,19 +1066,25 @@ ALTER TABLE `event_status_definitions`
 -- AUTO_INCREMENT for table `event_template_definitions`
 --
 ALTER TABLE `event_template_definitions`
-  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `event_type_definitions`
 --
 ALTER TABLE `event_type_definitions`
-  MODIFY `EventTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `EventTypeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `location_definitions`
 --
 ALTER TABLE `location_definitions`
   MODIFY `LocationID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `resource_lock`
+--
+ALTER TABLE `resource_lock`
+  MODIFY `lock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `sex_definitions`
@@ -1034,7 +1138,7 @@ ALTER TABLE `unit_type_definitions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
@@ -1086,6 +1190,12 @@ ALTER TABLE `event_template_definitions`
   ADD CONSTRAINT `event_template_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
+-- Constraints for table `resource_lock`
+--
+ALTER TABLE `resource_lock`
+  ADD CONSTRAINT `resource_lock_ibfk_1` FOREIGN KEY (`user`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
 -- Constraints for table `subjects`
 --
 ALTER TABLE `subjects`
@@ -1109,6 +1219,17 @@ ALTER TABLE `subject_change_log`
 --
 ALTER TABLE `unit_definitions`
   ADD CONSTRAINT `unit_definitions_ibfk_1` FOREIGN KEY (`UnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+DROP EVENT IF EXISTS `release_resource_event`$$
+CREATE DEFINER=`debian-sys-maint`@`localhost` EVENT `release_resource_event` ON SCHEDULE EVERY 1 MINUTE STARTS '2024-02-01 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN 
+CALL release_resource();
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

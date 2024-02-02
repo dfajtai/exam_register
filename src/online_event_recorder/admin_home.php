@@ -60,6 +60,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
 	<script defer src="js/common/inactivity_protection.js"></script>
+	<script defer src="js/common/resource_locking.js"></script>
 	
 
 	<script defer src="js/admin/table_def_forms/admin_definition_form_handler.js"></script>
@@ -412,6 +413,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else{
 					show_table("users");
+
+					var set_ajax = setLock("subjects",[1,2,3,4,5,6],null, true);
+					var check = getOwnLocks(function(indices,locks){
+												console.log(indices);
+												console.log(locks);
+											},
+											true);
+
+					$.when(set_ajax);
 				}
 			});
 		});
