@@ -3,6 +3,8 @@ var subject_content = {};
 // var _content_name = "";
 // var _lock_list = []
 
+var active_subject_locks = [];
+var subjects_lock_interval = null;
 
 function subject_retrieve_all_ajax(params) {
     // console.log("get all subjects");
@@ -68,8 +70,21 @@ function subject_update_ajax(subject_index,subject_info,callback,return_ajax = f
 }
 
 
+function update_subject_locks(){
+    getLocksFast("subjects",function(locks){
+        if(!isEqual(locks,active_subject_locks)){
+            active_subject_locks = locks;
+            // $('#'+subject_table_id).trigger($.Event("load-success.bs.table"),[]);
+            // $('#'+subject_table_id).bootstrapTable('resetView');
+            // $('#'+subject_table_id).bootstrapTable('refreshOptions',{});
+            $('#'+subject_table_id).bootstrapTable('filterBy',{});
+            // $('#'+subject_table_id).bootstrapTable('resetSearch');
+            
+        }       
+    })
+}
+
 function subjectOperateFormatter(value, row, index) {
-    var container = $("<div/>").addClass("lockable");
     var container = $("<div/>").addClass("lockable");
 
     var edit_btn = $("<button/>").addClass("btn btn-outline-dark btn-sm edit lockable me-1").append($("<i/>").addClass("fa fa-edit"))
@@ -86,29 +101,79 @@ function subjectOperateFormatter(value, row, index) {
         btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
         container.append(btn_resotre);
     }
+    if(active_subject_locks.includes(row["SubjectIndex"])){
+        container.find(".lockable").prop("disabled",true);
+    }
 
     return container.prop("outerHTML");
   }
 
+function subject_lock_check(entries, candidate_indices, callback){
+    if(!isArray(candidate_indices)) candidate_indices = [candidate_indices];
+    if(!isArray(entries)) entries = [entries];
+
+    getLocks("subjects",function(locked_indices,locks){
+        var resource_already_locked = false;
+        $.each(candidate_indices,function(entry_index,candidate_index){
+            if(locked_indices.includes(candidate_index)){
+                var user = null;
+                var valid = null;
+                $.each(locks,function(index, lock_info){
+                    if(lock_info.resources.includes(candidate_index)){
+                        user = lock_info.user;
+                        valid = lock_info.valid;
+                        return false;
+                    }
+                })
+                resource_already_locked = true;
+                var message = 'Subject is locked by <b>'+userFormatter(user) + '</b> until <b>' + valid + '</b> - or until it gets released.'
+                message+="<br>"+ object_to_table_formatter(entries[entry_index],subject_register_subject_formatter).prop("outerHTML");
+                bootbox.alert(message);
+            }
+        })
+        
+        if(!resource_already_locked){
+            callback();
+        }
+    })        
+}
+
 
 window.subject_operate_events = {
     'click .edit': function (e, value, row, index) {
-        show_subject_modal_edit(subject_content,$("#"+subject_table_id),index);
+        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.SubjectIndex;
+
+        subject_lock_check([entry],[candidate_index],function(){show_subject_modal_edit(subject_content,$("#"+subject_table_id),index)});
+        
     },
+
     'click .remove': function (e, value, row, index) {
-        subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
-        subject_info = {"Status":subject_deleted_status},
-        function(){
-            $('#'+subject_table_id).bootstrapTable('refresh');
-            $('#'+subject_table_id).bootstrapTable('resetView');
+        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.SubjectIndex;
+
+        subject_lock_check([entry],[candidate_index],function(){
+            subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
+            subject_info = {"Status":subject_deleted_status},
+            function(){
+                $('#'+subject_table_id).bootstrapTable('refresh');
+                $('#'+subject_table_id).bootstrapTable('resetView');
+            });
         });
+
+
     },
     'click .restore': function (e, value, row, index) {
-        subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
-        subject_info = {"Status":subject_planned_status},
-        function(){
-            $('#'+subject_table_id).bootstrapTable('refresh');
-            $('#'+subject_table_id).bootstrapTable('resetView');
+        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.SubjectIndex;
+
+        subject_lock_check([entry],[candidate_index],function(){
+            subject_update_ajax(subject_index = parse_val(row["SubjectIndex"]),
+            subject_info = {"Status":subject_planned_status},
+            function(){
+                $('#'+subject_table_id).bootstrapTable('refresh');
+                $('#'+subject_table_id).bootstrapTable('resetView');
+            });
         });
     },
 }
@@ -148,6 +213,20 @@ function subject_register_subject_formatter(subject_entry){
     })
 
     return res;
+}
+
+function subject_lock_formatter(value,row){
+    if(active_subject_locks.includes(row["SubjectIndex"])){
+        return $("<span/>").addClass("bi bi-lock-fill text-danger").prop("outerHTML");
+    }
+    return $("<span/>").addClass("bi bi-unlock-fill text-success").prop("outerHTML");
+}
+
+function subject_checkbox_formatter(value,row, index){
+    if(active_subject_locks.includes(row["SubjectIndex"])){
+        return {disabled: true, checked:false}
+    }
+    return {disabled: false};
 }
 
 function subjects_status_filter(row, filters, visible_status = null){
@@ -258,7 +337,8 @@ function createSubjectTable(container,table_id, simplify = false){
 
     table.bootstrapTable({
             columns : [
-                {field : 'state', checkbox: true, align:'center', forceHide:true},
+                {field : 'state', checkbox: true, align:'center', forceHide:true,formatter: "subject_checkbox_formatter"},
+                {title: '', field : 'locked', align:'center', forceHide:true,formatter: "subject_lock_formatter"},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.subject_operate_events, formatter: subjectOperateFormatter, forceHide:true},
                 {title: '#', field : 'SubjectIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
@@ -447,12 +527,7 @@ function show_subject_modal_edit(container, table, index){
     }
     var entry = table.bootstrapTable('getData')[index];
 
-    setLock("subjects",[entry["SubjectIndex"]],null).then(
-        getOwnLocks(function(indices,locks){
-        console.log(indices);
-        console.log(locks);
-        }
-    ))
+    setLock("subjects",[entry["SubjectIndex"]]);
     
     container.find("#"+modal_id).remove();
 
@@ -482,13 +557,7 @@ function show_subject_modal_edit(container, table, index){
 
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["edit"]);
-
-        releaseLock("subjects").then(
-            getOwnLocks(function(indices,locks){
-            console.log(indices);
-            console.log(locks);
-            }
-        ))
+        releaseLock("subjects");
     })
 
     function init_fields(form,entry){
@@ -567,6 +636,9 @@ function show_subject_batch_modal_edit(container, table){
         return
     }
 
+    var candidate_indices = getCol(selected,"SubjectIndex");
+    setLock("subjects",candidate_indices);
+
 
     container.find("#"+modal_id).remove();
     
@@ -592,6 +664,7 @@ function show_subject_batch_modal_edit(container, table){
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["batch_edit"]);
         form[0].reset();
+        releaseLock("subjects");
     })
 
     modal_footer.find("#clear_form").click(function(){
@@ -961,7 +1034,13 @@ function show_subject_register(container){
 
 
     toolbar.find("#toolbar_batch_edit").on("click", function(){
-        show_subject_batch_modal_edit(subject_content, table);
+        var entries = table.bootstrapTable("getSelections");
+        var candidate_indices = getCol(entries,"SubjectIndex");
+
+        subject_lock_check(entries,candidate_indices,function(){
+            show_subject_batch_modal_edit(subject_content, table);
+        });
+
         // $(document).trigger("_lock",["batch_edit"]);
     });
 
@@ -973,8 +1052,17 @@ function show_subject_register(container){
 
     toolbar.find(".needs-select").addClass("disabled");
 
+    // table.on('all.bs.table',function(args,name){
+    //     console.log(name)
+    // })
+
+    table.on('load-success.bs.table',function(args,name){
+        update_subject_locks();
+    })
+
     subjects_table_events();
     
+    subjects_lock_interval = setInterval(update_subject_locks,5000);
 
 }
 

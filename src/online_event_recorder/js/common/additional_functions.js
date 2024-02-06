@@ -44,8 +44,15 @@ function getEntryWhere(objlist, key, value){
 function getEntriesWhere(objlist, key, value){
     var result_entries = [];
     $.each(objlist,function(index,entry){
-        if(String(entry[key])===String(value)) {
-            result_entries.push({... entry});
+        if(isArray(value)){
+            if(String(entry[key]) in value) {
+                result_entries.push({... entry});
+            }
+        }
+        else{
+            if(String(entry[key])===String(value)) {
+                result_entries.push({... entry});
+            }
         }
     })
     return result_entries;
