@@ -4,6 +4,8 @@ var subject_content = {};
 // var _lock_list = []
 
 var active_subject_locks = [];
+var active_lock_info = {};
+
 var subjects_lock_interval = null;
 
 function subject_retrieve_all_ajax(params) {
@@ -71,16 +73,40 @@ function subject_update_ajax(subject_index,subject_info,callback,return_ajax = f
 
 
 function update_subject_locks(){
-    getLocksFast("subjects",function(locks){
-        if(!isEqual(locks,active_subject_locks)){
-            active_subject_locks = locks;
-            // $('#'+subject_table_id).trigger($.Event("load-success.bs.table"),[]);
-            // $('#'+subject_table_id).bootstrapTable('resetView');
-            // $('#'+subject_table_id).bootstrapTable('refreshOptions',{});
-            $('#'+subject_table_id).bootstrapTable('filterBy',{});
-            // $('#'+subject_table_id).bootstrapTable('resetSearch');
+    // getLocksFast("subjects",function(locks){
+    //     if(!isEqual(locks,active_subject_locks)){
+    //         active_subject_locks = locks;
+    //         // $('#'+subject_table_id).trigger($.Event("load-success.bs.table"),[]);
+    //         // $('#'+subject_table_id).bootstrapTable('resetView');
+    //         // $('#'+subject_table_id).bootstrapTable('refreshOptions',{});
+    //         $('#'+subject_table_id).bootstrapTable('filterBy',{});
+    //         // $('#'+subject_table_id).bootstrapTable('resetSearch');
             
-        }       
+    //     }       
+    // });
+
+    getLocks("subjects",function(locked_indices,locks){
+        var resource_lock_info = {};
+        $.each(locked_indices,function(index,resource_id){
+            var user = null;
+            var valid = null;
+
+            $.each(locks,function(index, lock_info){
+                if(lock_info.resources.includes(resource_id)){
+                    user = lock_info.user;
+                    valid = lock_info.valid;
+                    return false;
+                }
+            })
+            resource_lock_info[resource_id] = {user:user,valid:valid};
+        });
+
+        if(!isEqual(locks,active_subject_locks)){
+            active_subject_locks = locked_indices;
+            active_lock_info = resource_lock_info;
+
+            $('#'+subject_table_id).bootstrapTable('filterBy',{});
+        }
     })
 }
 
@@ -217,7 +243,10 @@ function subject_register_subject_formatter(subject_entry){
 
 function subject_lock_formatter(value,row){
     if(active_subject_locks.includes(row["SubjectIndex"])){
-        return $("<span/>").addClass("bi bi-lock-fill text-danger").prop("outerHTML");
+        var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
+        var _info = active_lock_info[row["SubjectIndex"]];
+        content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Subject has been locked by '"+ userFormatter(_info["user"]) +"' until "+ _info["valid"] +".")
+        return content.prop("outerHTML");
     }
     return $("<span/>").addClass("bi bi-unlock-fill text-success").prop("outerHTML");
 }
