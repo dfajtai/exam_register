@@ -8,6 +8,12 @@ var eventlog_visible_subjects_info = null;
 var eventlog_subject_string_lookup = {};
 
 
+var active_eventlog_locks = [];
+var active_eventlog_lock_info = {};
+
+var eventlog_lock_interval = null;
+
+
 function eventlog_retrieve_all_ajax(params) {
     // console.log("retrieve all subj");
     $.ajax({
@@ -78,6 +84,33 @@ function eventlog_update_ajax(event_index, event_info, callback = null, return_a
 }
 
 
+function update_eventlog_locks(){
+    getLocks("event_log",function(locked_indices,locks){
+        var resource_lock_info = {};
+        $.each(locked_indices,function(index,resource_id){
+            var user = null;
+            var valid = null;
+
+            $.each(locks,function(index, lock_info){
+                if(lock_info.resources.includes(resource_id)){
+                    user = lock_info.user;
+                    valid = lock_info.valid;
+                    return false;
+                }
+            })
+            resource_lock_info[resource_id] = {user:user,valid:valid};
+        });
+
+        if(!isEqual(locked_indices,active_eventlog_locks)){
+            active_eventlog_locks = locked_indices;
+            active_eventlog_lock_info = resource_lock_info;
+
+            $('#'+eventlog_table_id).bootstrapTable('filterBy',{});
+        }
+    })
+}
+
+
 function eventlog_subjectFormatter(value,row){
     value = parse_val(value);
     if(value==null) return;
@@ -114,30 +147,81 @@ function eventlog_operate_formatter(value, row, index) {
     //     container.find("button").addClass("disabled");
     // }
 
+    if(active_eventlog_locks.includes(row["EventIndex"])){
+        container.find(".lockable").prop("disabled",true);
+    }
+
     return container.prop("outerHTML");
   }
 
+  function eventlog_lock_check(entries, candidate_indices, callback){
+    if(!isArray(candidate_indices)) candidate_indices = [candidate_indices];
+    if(!isArray(entries)) entries = [entries];
+
+    getLocks("event_log",function(locked_indices,locks){
+        var resource_already_locked = false;
+        $.each(candidate_indices,function(entry_index,candidate_index){
+            if(locked_indices.includes(candidate_index)){
+                var user = null;
+                var valid = null;
+                $.each(locks,function(index, lock_info){
+                    if(lock_info.resources.includes(candidate_index)){
+                        user = lock_info.user;
+                        valid = lock_info.valid;
+                        return false;
+                    }
+                })
+                resource_already_locked = true;
+                var message = 'Event is locked by <b>'+userFormatter(user) + '</b> until <b>' + valid + '</b> - or until it gets released.'
+                message+="<br>"+ object_to_table_formatter(entries[entry_index],eventlog_row_formatter).prop("outerHTML");
+                bootbox.alert(message);
+            }
+        })
+        
+        if(!resource_already_locked){
+            callback();
+        }
+    })        
+}
+
 window.eventlog_operate_events = {
     'click .edit': function (e, value, row, index) {
-        show_eventlog_modal_edit(eventlog_content,$("#"+eventlog_table_id),index);
+        var entry = $('#'+eventlog_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.EventIndex;
+
+        eventlog_lock_check([entry],[candidate_index],function(){
+            show_eventlog_modal_edit(eventlog_content,$("#"+eventlog_table_id),index);
+        })
+        
         // eventlog_content_name = "edit";
         // $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
-        eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
-        event_info = {"EventStatus":event_deleted_status},
-        function(){
-            $('#'+eventlog_table_id).bootstrapTable('refresh');
-            $('#'+eventlog_table_id).bootstrapTable('resetView');
-        });
+        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.EventIndex;
+
+        eventlog_lock_check([entry],[candidate_index],function(){
+            eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
+            event_info = {"EventStatus":event_deleted_status},
+            function(){
+                $('#'+eventlog_table_id).bootstrapTable('refresh');
+                $('#'+eventlog_table_id).bootstrapTable('resetView');
+            });
+        })
+
     },
     'click .restore': function (e, value, row, index) {
-        eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
-        event_info = {"EventStatus":event_planned_status},
-        function(){
-            $('#'+eventlog_table_id).bootstrapTable('refresh');
-            $('#'+eventlog_table_id).bootstrapTable('resetView');
-        });
+        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var candidate_index = entry.EventIndex;
+        eventlog_lock_check([entry],[candidate_index],function(){
+            eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
+            event_info = {"EventStatus":event_planned_status},
+            function(){
+                $('#'+eventlog_table_id).bootstrapTable('refresh');
+                $('#'+eventlog_table_id).bootstrapTable('resetView');
+            });
+        })
+        
     },
 }
 
@@ -226,6 +310,10 @@ function eventlog_detail_view_formatter(index, row) {
     var update_data_btn = $("<button/>").addClass("btn btn-outline-dark my-2 w-100").attr("type","submit").html("Update event data");
     detail_view_data_form.append(update_data_btn);
 
+    if(active_eventlog_locks.includes(row["EventIndex"])){
+        update_data_btn.prop("disabled",true);
+    }
+
     detail_view_data_form.on('submit',function(e){
         e.preventDefault();
         
@@ -273,6 +361,23 @@ function eventlog_detail_view_formatter(index, row) {
 
     // return detail_view_content.prop("outerHTML");
     return detail_view_content
+}
+
+function eventlog_lock_formatter(value,row){
+    if(active_eventlog_locks.includes(row["EventIndex"])){
+        var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
+        var _info = active_eventlog_lock_info[row["EventIndex"]];
+        content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Event has been locked by '"+ userFormatter(_info["user"]) +"' until "+ _info["valid"] +".")
+        return content.prop("outerHTML");
+    }
+    return $("<span/>").addClass("bi bi-unlock-fill text-success").prop("outerHTML");
+}
+
+function eventlog_checkbox_formatter(value,row, index){
+    if(active_eventlog_locks.includes(row["EventIndex"])){
+        return {disabled: true, checked:false}
+    }
+    return {disabled: false};
 }
 
 function eventlog_status_filter(row, filters, visible_status = null){
@@ -435,7 +540,8 @@ function create_eventlog_table(container, table_id, simplify = false){
 
     table.bootstrapTable({
             columns : [
-                {field : 'state', checkbox: true, align:'center', forceHide:true},
+                {field : 'state', checkbox: true, align:'center', forceHide:true, formatter: "eventlog_checkbox_formatter"},
+                {title: '', field : 'locked', align:'center', forceHide:true,formatter: "eventlog_lock_formatter"},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.eventlog_operate_events, formatter: eventlog_operate_formatter, forceHide:true},
                 {title: '#', field : 'EventIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
@@ -700,6 +806,8 @@ function show_eventlog_modal_edit(container, table, index){
     var entry = table.bootstrapTable('getData')[index];
     // console.log(entry);
 
+    setLock("event_log",[entry["EventIndex"]]);
+
     container.find("#"+modal_id).remove();
 
     eventlog_modal(container, modal_id, "Edit event");
@@ -817,6 +925,7 @@ function show_eventlog_modal_edit(container, table, index){
 
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["edit"]);
+        releaseLock("event_log");
         form[0].reset();
     });
 
@@ -934,6 +1043,9 @@ function show_eventlog_batch_edit(container, table){
     if(selected.length==0){
         return
     }
+
+    var candidate_indices = getCol(selected,"EventIndex");
+    setLock("event_log",candidate_indices);
 
     container.find("#"+modal_id).remove();
 
@@ -1149,6 +1261,7 @@ function show_eventlog_batch_edit(container, table){
 
     $(modal).on('hidden.bs.modal',function(){
         form[0].reset();
+        releaseLock("event_log");
     });
 
     modal.modal('show');
@@ -1215,4 +1328,5 @@ function show_event_log_handler(container){
 
     toolbar.find(".needs-select").addClass("disabled");
 
+    eventlog_lock_interval = setInterval(update_eventlog_locks,5000);
 }

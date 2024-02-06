@@ -4,7 +4,7 @@ var subject_content = {};
 // var _lock_list = []
 
 var active_subject_locks = [];
-var active_lock_info = {};
+var active_subject_lock_info = {};
 
 var subjects_lock_interval = null;
 
@@ -101,9 +101,9 @@ function update_subject_locks(){
             resource_lock_info[resource_id] = {user:user,valid:valid};
         });
 
-        if(!isEqual(locks,active_subject_locks)){
+        if(!isEqual(locked_indices,active_subject_locks)){
             active_subject_locks = locked_indices;
-            active_lock_info = resource_lock_info;
+            active_subject_lock_info = resource_lock_info;
 
             $('#'+subject_table_id).bootstrapTable('filterBy',{});
         }
@@ -244,7 +244,7 @@ function subject_register_subject_formatter(subject_entry){
 function subject_lock_formatter(value,row){
     if(active_subject_locks.includes(row["SubjectIndex"])){
         var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
-        var _info = active_lock_info[row["SubjectIndex"]];
+        var _info = active_subject_lock_info[row["SubjectIndex"]];
         content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Subject has been locked by '"+ userFormatter(_info["user"]) +"' until "+ _info["valid"] +".")
         return content.prop("outerHTML");
     }
