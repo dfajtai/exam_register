@@ -100,6 +100,10 @@ function initConsumableDefinitionsTable(container,tableId){
     container.find("#consumable_modal_add_new").find(".modal-dialog").addClass("modal-lg");
     container.find("#consumable_modal_edit_selected").find(".modal-dialog").addClass("modal-lg");
 
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("consumable_definitions",data["rows"]);
+    })
+
 }
 
 function consumableDefinitionInputs(container){

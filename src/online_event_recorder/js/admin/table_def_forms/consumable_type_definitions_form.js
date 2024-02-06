@@ -66,7 +66,10 @@ function initConsumableTypeDefinitionsTable(container,tableId){
 
     modalInsert("ConsumableType", container,"consumable_type_modal_add_new",tableId, consumableTypeDefinitionInputs, consumable_type_definition_insert_ajax);
     modalUpdate("ConsumableType", container,"consumable_type_modal_edit_selected",tableId, consumableTypeDefinitionInputs, consumable_type_definition_update_ajax,"ConsumableTypeID");
-
+    
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("consumable_type_definitions",data["rows"]);
+    })
 }
 
 function consumableTypeDefinitionInputs(container){

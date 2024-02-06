@@ -148,7 +148,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			});
 			
 
-			updateRemoteDefinitionChecksum();
+			// updateRemoteDefinitionChecksums();
 			updateLocalDefinitionDatabase(function(){
 				if(statusInUrl("activeStudy")){
 					syncStatusFromUrlToStorage("activeStudy");

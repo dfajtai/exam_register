@@ -57,7 +57,7 @@
 
     $(document).ready(function() {
 
-        updateRemoteDefinitionChecksum();
+        updateRemoteDefinitionChecksums();
         updateLocalDefinitionDatabase(function(){
 			var mainContainer = $("#mainContainer");
 

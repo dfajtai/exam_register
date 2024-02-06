@@ -91,7 +91,10 @@ function initBodypartDefinitionsTable(container,tableId){
 
     modalInsert("BodyPart", container,"bodypart_modal_add_new",tableId, bodypartDefinitionInputs, bodypart_definitions_insert_ajax);
     modalUpdate("BodyPart", container,"bodypart_modal_edit_selected",tableId, bodypartDefinitionInputs, bodypart_definitions_update_ajax,"BodypartID");
-
+    
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("bodypart_definitions",data["rows"]);
+    })
 }
 
 function bodypartDefinitionInputs(container){

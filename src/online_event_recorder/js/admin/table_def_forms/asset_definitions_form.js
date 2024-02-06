@@ -92,6 +92,10 @@ function initAssetDefinitionsTable(container,tableId){
 
     modalInsert("Asset", container,"asset_modal_add_new",tableId, assetDefinitionInputs, asset_definition_insert_ajax);
     modalUpdate("Asset", container,"asset_modal_edit_selected",tableId, assetDefinitionInputs, asset_definition_update_ajax,"AssetID");
+
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("asset_definitions",data["rows"]);
+    })
 }
 
 function assetDefinitionInputs(container){

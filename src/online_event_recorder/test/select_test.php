@@ -58,7 +58,7 @@
 
     $(document).ready(function() {
 
-        updateRemoteDefinitionChecksum();
+        updateRemoteDefinitionChecksums();
         updateLocalDefinitionDatabase(function(){
             var typeForm = $("<div/>").addClass("row mb-3");
             typeForm.append($("<label/>").addClass("col-sm-3 ").html("UnitType"));

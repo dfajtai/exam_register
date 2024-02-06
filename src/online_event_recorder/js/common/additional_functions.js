@@ -18,6 +18,18 @@ function getColUnique(objlist, col){
     return unique;
 }
 
+function filterObjListKeys(objlist,keylist){
+    var obj_list = [];
+    $.each(objlist,function(index,entry){
+        var obj = {};
+        $.each(keylist,function(_index,key){
+            obj[key]=entry[key];
+        })
+        obj_list.push(obj);
+    })
+    return obj_list;
+}
+
 function getEntryWhere(objlist, key, value){
     var result_entry = null;
     $.each(objlist,function(index,entry){
@@ -56,6 +68,10 @@ function listAppend(orig_array, new_array){
 
 function listPrepend(orig_array, new_array){
     return new_array.concat(orig_array);
+}
+
+function objectToArray(obj){
+    return Object.keys(obj).map((key) => [key, obj[key]]);
 }
 
 

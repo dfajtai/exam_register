@@ -6,7 +6,7 @@ function simpleChecksum(input){
     return (CRC32.str(JSON.stringify(input))>>>0).toString(16);
 }
 
-function updateRemoteDefinitionChecksum(){
+function updateRemoteDefinitionChecksums(){
     // get definition tables
     $.ajax({type:"GET",
             url:"php/retrieve_table.php",
@@ -43,12 +43,78 @@ function updateRemoteDefinitionChecksum(){
                     })
                 });
             }}
-            
-            
     );
 }
 
+function updateRemoteDefinitionChecksum(table_name=null, current_data = null){
+    if(table_name==null){
+        updateRemoteDefinitionChecksums();
+        return
+    }
+    $.ajax({type:"GET",
+            url:"php/retrieve_table.php",
+            dataType:"json",
+            data:({table_name:"definition_tables"}),
+            success:function(table_info){
+                var old_checksum = getEntryFieldWhere(table_info,"TableName",table_name,"Checksum");
+                if(current_data == null){
+                    $.ajax({
+                        // retrieve the table
+                        type:"GET",
+                        url:"php/retrieve_table.php",
+                        dataType:"json",
+                        data:({table_name:table_name}),
+                        success:function(_result){
+                            var valid_cols = getDefCols(table_name);
+                            var data = filterObjListKeys(_result,valid_cols);
 
+                            // calculate its checksum
+                            var new_checksum = simpleChecksum(data);
+                            // update remote checksum if it is changed
+                            if (new_checksum!=old_checksum){
+                                $.ajax({
+                                    type:"POST",
+                                    url:"php/update_table.php",
+                                    dataType:"json",
+                                    data:({table_name:"definition_tables",
+                                           key_info:{key:"TableName",value:table_name},
+                                           updated_info:{Checksum:new_checksum}}),
+                                    success:function(_e){
+                                        console.log("Checksum of table '" + table_name + "' has been updated");
+                                        
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }else{
+                    // if(!isArray(current_data)){
+                    //     current_data = objectToArray(current_data);
+                    // }
+
+                    var valid_cols = getDefCols(table_name);
+                    var data = filterObjListKeys(current_data,valid_cols);
+                    var new_checksum = simpleChecksum(data);
+                    // update remote checksum if it is changed
+                    if (new_checksum!=old_checksum){
+                        $.ajax({
+                            type:"POST",
+                            url:"php/update_table.php",
+                            dataType:"json",
+                            data:({table_name:"definition_tables",
+                                    key_info:{key:"TableName",value:table_name},
+                                    updated_info:{Checksum:new_checksum}}),
+                            success:function(_e){
+                                console.log("Checksum of table '" + table_name + "' has been updated");
+                            }
+                        })
+                    }
+                }
+
+
+    }});
+    
+}
 
 function updateLocalDefinitionDatabase(callback){
     $.ajax({type:"GET",

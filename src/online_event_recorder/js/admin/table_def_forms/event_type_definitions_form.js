@@ -66,6 +66,10 @@ function initEventTypeDefinitionsTable(container,tableId){
 
     modalInsert("EventType", container,"event_type_modal_add_new",tableId, eventTypeDefinitionInputs, event_type_definition_insert_ajax);
     modalUpdate("EventType", container,"event_type_modal_edit_selected",tableId, eventTypeDefinitionInputs, event_type_definition_update_ajax,"EventTypeID");
+    
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("event_type_definitions",data["rows"]);
+    })
 
 }
 

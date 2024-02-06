@@ -94,6 +94,11 @@ function initStudyDefinitionsTable(container,tableId){
     
     container.find("#study_modal_add_new").find(".modal-dialog").addClass("modal-xl");
     container.find("#study_modal_edit_selected").find(".modal-dialog").addClass("modal-xl");
+
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("studies",data["rows"]);
+    })
+
 }
 
 function studyDefinitionInputs(container){

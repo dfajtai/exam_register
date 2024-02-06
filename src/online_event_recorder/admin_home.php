@@ -378,7 +378,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		
 
-			updateRemoteDefinitionChecksum();
+			// updateRemoteDefinitionChecksums();
 			updateLocalDefinitionDatabase(function(){
 				available_def_tables = {
 							"users": {"title":"Manage users","func":initUsersDefinitionsTable},
@@ -413,15 +413,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else{
 					show_table("users");
-
-					var set_ajax = setLock("subjects",[1,2,3,4,5,6],null, true);
-					var check = getOwnLocks(function(indices,locks){
-												console.log(indices);
-												console.log(locks);
-											},
-											true);
-
-					$.when(set_ajax);
 				}
 			});
 		});

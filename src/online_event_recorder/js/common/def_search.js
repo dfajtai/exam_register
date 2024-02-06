@@ -1,3 +1,12 @@
+function getDefCols(def_name){
+    if(!(def_name in defs)) return null;
+    var cols = []
+    $.each(defs[def_name],function(index,entry){
+        cols.push(... Object.keys(entry));
+    })
+    return cols.filter(onlyUnique);
+}
+
 function getDefEntryWhere(def_name, key, value){
     if(!(def_name in defs)) return null;
 

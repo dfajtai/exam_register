@@ -66,6 +66,10 @@ function initLocationDefinitionsTable(container,tableId){
 
     modalInsert("Location", container,"location_modal_add_new",tableId, locationDefinitionInputs, location_definition_insert_ajax);
     modalUpdate("Location", container,"location_modal_edit_selected",tableId, locationDefinitionInputs, location_definition_update_ajax,"LocationID");
+    
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("location_definitions",data["rows"]);
+    })
 
 }
 

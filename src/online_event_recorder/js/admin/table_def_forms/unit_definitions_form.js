@@ -93,6 +93,10 @@ function initUnitDefinitionsTable(container,tableId){
 
     modalInsert("Unit", container,"unit_modal_add_new",tableId, unitDefinitionInputs, unit_definition_insert_ajax);
     modalUpdate("Unit", container,"unit_modal_edit_selected",tableId, unitDefinitionInputs, unit_definition_update_ajax,"UnitID");
+
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("unit_definitions",data["rows"]);
+    })
 }
 
 function unitDefinitionInputs(container){

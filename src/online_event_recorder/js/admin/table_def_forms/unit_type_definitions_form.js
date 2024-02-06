@@ -66,7 +66,11 @@ function initUnitTypeDefinitionsTable(container,tableId){
 
     modalInsert("UnitType", container,"unit_type_modal_add_new",tableId, unitTypeDefinitionInputs, unit_type_definition_insert_ajax);
     modalUpdate("UnitType", container,"unit_type_modal_edit_selected",tableId, unitTypeDefinitionInputs, unit_type_definition_update_ajax,"UnitTypeID");
+    
 
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("unit_type_definitions",data["rows"]);
+    })
 }
 
 function unitTypeDefinitionInputs(container){

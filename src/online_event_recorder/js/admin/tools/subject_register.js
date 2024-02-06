@@ -446,6 +446,13 @@ function show_subject_modal_edit(container, table, index){
         return
     }
     var entry = table.bootstrapTable('getData')[index];
+
+    setLock("subjects",[entry["SubjectIndex"]],null).then(
+        getOwnLocks(function(indices,locks){
+        console.log(indices);
+        console.log(locks);
+        }
+    ))
     
     container.find("#"+modal_id).remove();
 
@@ -475,6 +482,13 @@ function show_subject_modal_edit(container, table, index){
 
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["edit"]);
+
+        releaseLock("subjects").then(
+            getOwnLocks(function(indices,locks){
+            console.log(indices);
+            console.log(locks);
+            }
+        ))
     })
 
     function init_fields(form,entry){

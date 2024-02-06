@@ -60,7 +60,7 @@
 
     $(document).ready(function() {
 
-        updateRemoteDefinitionChecksum();
+        updateRemoteDefinitionChecksums();
         updateLocalDefinitionDatabase(function(){
             var container = $("#main_container");
 			showEventFieldDefinitionHelper(container);

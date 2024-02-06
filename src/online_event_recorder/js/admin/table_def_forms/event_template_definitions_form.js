@@ -169,6 +169,10 @@ function initEventDefinitionsTable(container,tableId){
 
     });
 
+    table.on('load-success.bs.table',function(e,data,status){
+        updateRemoteDefinitionChecksum("event_template_definitions",data["rows"]);
+    })
+
 }
 
 function eventDefinitionInputs(container){
