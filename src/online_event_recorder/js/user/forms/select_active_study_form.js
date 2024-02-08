@@ -15,14 +15,16 @@ function showSelectActiveStudyForm(container){
 
     studySelect.append(study_select_dropdow);
     selectForm.append(studySelect)
-    selectForm.append($("<button/>").addClass("col-sm-3  btn btn-outline-dark").attr("type","subbmit").html("Mark as Active Study"));
+
+    var select_btn = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","subbmit").html("Mark as Active Study")
+    selectForm.append($("<div/>").addClass("col-sm-3 ").append(select_btn));
     selectActiveStudyForm.append(selectForm);
 
     //TODO current study info (if availabel)
     if(statusInStorage("activeStudy")){
         selectActiveStudyForm.find("#formTitle").html("Choose new active study");
 
-        currentStudyInfoBlock.html(createFlatDefInfoBlock("Active study's info","studies","StudyID",statusFromStorage("activeStudy")));
+        currentStudyInfoBlock.append(createFlatDefInfoBlock("Active study's info","studies","StudyID",statusFromStorage("activeStudy"),2000));
     }
 
 
@@ -38,7 +40,11 @@ function showSelectActiveStudyForm(container){
 
     selectActiveStudyForm.find("#selectedStudy").on("change",function(e){
         if($(this).val()!=-1){
-            selectedStudyInfoBlock.html(createFlatDefInfoBlock("Selected study's info","studies","StudyID",JSON.parse($(this).val())));
+            selectedStudyInfoBlock.empty();
+            selectedStudyInfoBlock.addClass("row mb-3 mx-1")
+            var selected_info_content = createFlatDefInfoBlock("Selected study's info","studies","StudyID",JSON.parse($(this).val()));
+  
+            selectedStudyInfoBlock.append(selected_info_content);
         }
     })
 
@@ -48,7 +54,8 @@ function showSelectActiveStudyForm(container){
         let formData = $(this).serializeArray();
 
         let selectedID = JSON.parse($(this).find("#selectedStudy").val());
-        currentStudyInfoBlock.html(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID));
+        currentStudyInfoBlock.empty();
+        currentStudyInfoBlock.append(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID,2000));
 
         $.each(formData, function( index, element ) {
             statusToUrl(element.name,element.value)
@@ -56,6 +63,6 @@ function showSelectActiveStudyForm(container){
         }); 
 
         selectActiveStudyForm[0].reset();
-        selectedStudyInfoBlock.empty();
+        selectedStudyInfoBlock.empty().removeClass("row mb-3 mx-1");
     });
 }

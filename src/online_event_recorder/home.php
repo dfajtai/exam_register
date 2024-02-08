@@ -58,7 +58,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/definition_handler.js"></script>
 	<script defer src="js/common/status_handler.js"></script>
 
-	<script defer src="js/common/flat_def_info_block.js"></script>
+	<script defer src="js/user/core/flat_def_info_block.js"></script>
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
 	<script defer src="js/common/additional_functions.js"></script>
@@ -91,7 +91,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 
 					<li class="nav-item">
-					<a class="nav-link active" href = "#" onclick="show_study_subjects()">Show aimals</a>
+					<a class="nav-link active" href = "#" onclick="show_study_subjects()">Show animals</a>
 					</li>
 					
 					<li class="nav-item">
@@ -131,7 +131,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 
-			  var idleTime = 0;
+			var idleTime = 0;
 			var idleInterval = null;
 			$(document).ready(function () {
 				// Increment the idle time counter every minute.

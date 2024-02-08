@@ -320,7 +320,6 @@ function createSubjectTable(container,table_id, simplify = false){
     table.attr("data-toolbar-align","left");
     
 
-    table.attr("data-pagination","false");
     table.attr("data-show-pagination-switch","false");
     table.attr("data-page-list","[10, 25, 50, 100, all]");
 
@@ -379,10 +378,10 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'Box', field : 'Container', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Location', field : 'Location', align:'center', sortable:true, searchable:true, formatter: "locationFormatter",forceExport: true},
                 {title: 'Status', field : 'Status', align:'center', sortable:true, searchable:true, formatter: "subjectStatusFormatter",forceExport: true},
-                {title: 'Age', field : 'Age', align:'center', sortable:true, searchable:false,forceExport: true},
-                {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter",forceExport: true},
-                {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true},
-                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true},
+                {title: 'Age', field : 'Age', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
+                {title: 'Sex', field : 'Sex', align:'center', sortable:true, searchable:true, formatter: "sexFormatter",forceExport: true, visible:false},
+                {title: 'Weight', field : 'Weight', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
+                {title: 'Height', field : 'Height', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
                 {title: 'Comment', field : 'Comment', align:'center', sortable:true, searchable:false,forceExport: true, visible:false},
                 {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter", visible:false},
             ],
@@ -556,7 +555,7 @@ function show_subject_modal_edit(container, table, index){
     }
     var entry = table.bootstrapTable('getData')[index];
 
-    setLock("subjects",[entry["SubjectIndex"]]);
+    setLock("subjects",[entry["SubjectIndex"]],update_subject_locks);
     
     container.find("#"+modal_id).remove();
 
@@ -586,7 +585,7 @@ function show_subject_modal_edit(container, table, index){
 
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["edit"]);
-        releaseLock("subjects");
+        releaseLock("subjects",update_subject_locks);
     })
 
     function init_fields(form,entry){
@@ -666,7 +665,7 @@ function show_subject_batch_modal_edit(container, table){
     }
 
     var candidate_indices = getCol(selected,"SubjectIndex");
-    setLock("subjects",candidate_indices);
+    setLock("subjects",candidate_indices,update_subject_locks);
 
 
     container.find("#"+modal_id).remove();
@@ -693,7 +692,8 @@ function show_subject_batch_modal_edit(container, table){
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["batch_edit"]);
         form[0].reset();
-        releaseLock("subjects");
+        releaseLock("subjects",update_subject_locks);
+        
     })
 
     modal_footer.find("#clear_form").click(function(){

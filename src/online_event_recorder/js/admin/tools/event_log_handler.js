@@ -806,7 +806,7 @@ function show_eventlog_modal_edit(container, table, index){
     var entry = table.bootstrapTable('getData')[index];
     // console.log(entry);
 
-    setLock("event_log",[entry["EventIndex"]]);
+    setLock("event_log",[entry["EventIndex"]],update_eventlog_locks);
 
     container.find("#"+modal_id).remove();
 
@@ -925,7 +925,7 @@ function show_eventlog_modal_edit(container, table, index){
 
     $(modal).on('hidden.bs.modal',function(){
         // $( document ).trigger("_release",["edit"]);
-        releaseLock("event_log");
+        releaseLock("event_log",update_eventlog_locks);
         form[0].reset();
     });
 
@@ -1045,7 +1045,7 @@ function show_eventlog_batch_edit(container, table){
     }
 
     var candidate_indices = getCol(selected,"EventIndex");
-    setLock("event_log",candidate_indices);
+    setLock("event_log",candidate_indices,update_eventlog_locks);
 
     container.find("#"+modal_id).remove();
 
@@ -1261,7 +1261,7 @@ function show_eventlog_batch_edit(container, table){
 
     $(modal).on('hidden.bs.modal',function(){
         form[0].reset();
-        releaseLock("event_log");
+        releaseLock("event_log",update_eventlog_locks);
     });
 
     modal.modal('show');

@@ -361,7 +361,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
   			});
 			
-
+			var idleTime = 0;
+			var idleInterval = null;
 			$(document).ready(function () {
 				// Increment the idle time counter every minute.
 				clearInterval();
