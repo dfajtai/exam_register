@@ -1,7 +1,7 @@
 <?php 
 session_start();
 if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
-	if($_SESSION['isAdmin']===1){
+	if($_SESSION['adminMode']===1){
 		header("Location: admin_home.php?". $_SERVER["QUERY_STRING"]);
 		exit;
 	}
@@ -99,7 +99,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 
 				</ul>
-				<div class="d-flex ">
+				<div class="d-flex ms-3">
+					<?php if($_SESSION['isAdmin']){
+						echo('<a class="nav-item btn btn-outline-light me-2" href="#" id="become_admin_button">ADMIN mode</a>');
+					}?>
 					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
 				</div>
 			</div>
@@ -122,6 +125,20 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		}
 
 		$(document).ready(function() {
+			$("#become_admin_button").click(function(){
+				clearAllStatusFromUrl();
+
+				$.ajax({
+					type: "POST",
+					url: 'php/admin_mode_switch.php',
+					dataType: "json",
+					success: function (result) {
+						// console.log(result);
+						window.location = "home.php";
+					}});
+			});
+
+
 			$(document).click(function (event) {
 				var clickover = $(event.target);
 				if(!$($(clickover).parent()).hasClass("nav-item")){

@@ -170,8 +170,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 				</ul>
-				<div class="d-flex ">
-					<a class="nav-item btn btn-outline-light ms-3 me-2" href="#" id="become_user_button" >USER mode</a>
+				<div class="d-flex ms-3">
+					<a class="nav-item btn btn-outline-light me-2" href="#" id="become_user_button" >USER mode</a>
 					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
 				</div>
 			</div>
@@ -346,7 +346,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 				$.ajax({
 					type: "POST",
-					url: 'php/admin_user_mode.php',
+					url: 'php/admin_mode_switch.php',
 					dataType: "json",
 					success: function (result) {
 						// console.log(result);

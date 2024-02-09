@@ -48,6 +48,7 @@ if(isset($_POST['uname']) &&
                $_SESSION['uname'] = $uname;
                $_SESSION['fname'] = $fname;
                $_SESSION['isAdmin'] = $user['IsAdmin'];
+               $_SESSION['adminMode'] = $user['IsAdmin'];
                
                $database -> update("users",["LastLogin"=>Medoo::raw('NOW()')],
 										[ "UserName" => $uname]);
