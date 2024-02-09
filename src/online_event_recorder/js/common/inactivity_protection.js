@@ -1,9 +1,24 @@
-var idleTime = 0;
+var idleConter = 0;
 var idleInterval = null;
 
+function startIncativityTimer(){
+    idleConter = 0;
+    if(idleInterval!=null)  clearInterval(idleInterval);
+    idleInterval = null;
+    idleInterval = setInterval(inactivityLogout, 5000); // 5 second
+
+    // Zero the idle timer on mouse movement.
+    $(this).mousemove(function (e) {
+        idleConter = 0;
+    });
+    $(this).keypress(function (e) {
+        idleConter = 0;
+    });
+}
+
 function inactivityLogout() {
-    idleTime = idleTime + 1;
-    if (idleTime > 1) { // 10 minutes
+    idleConter = idleConter + 1;
+    if (idleConter > 120) { // 10 minutes
         clearInterval(idleInterval);
 
         $.ajax({

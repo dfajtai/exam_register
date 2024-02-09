@@ -361,23 +361,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
   			});
 			
-			idleTime = 0;
-			idleInterval = null;
 			$(document).ready(function () {
-				// Increment the idle time counter every minute.
-				clearInterval();
-				idleInterval = setInterval(inactivityLogout, 60000); // 1 minute
-
-				// Zero the idle timer on mouse movement.
-				$(this).mousemove(function (e) {
-					idleTime = 0;
-				});
-				$(this).keypress(function (e) {
-					idleTime = 0;
-				});
+				startIncativityTimer();
 			});
-
-		
 
 			// updateRemoteDefinitionChecksums();
 			updateLocalDefinitionDatabase(function(){
