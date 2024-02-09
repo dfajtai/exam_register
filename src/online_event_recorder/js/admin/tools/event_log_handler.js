@@ -197,7 +197,7 @@ window.eventlog_operate_events = {
         // $( document ).trigger( "_lock", [ "edit"] );
     },
     'click .remove': function (e, value, row, index) {
-        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var entry = $('#'+eventlog_table_id).bootstrapTable('getData')[index];
         var candidate_index = entry.EventIndex;
 
         eventlog_lock_check([entry],[candidate_index],function(){
@@ -211,7 +211,7 @@ window.eventlog_operate_events = {
 
     },
     'click .restore': function (e, value, row, index) {
-        var entry = $('#'+subject_table_id).bootstrapTable('getData')[index];
+        var entry = $('#'+eventlog_table_id).bootstrapTable('getData')[index];
         var candidate_index = entry.EventIndex;
         eventlog_lock_check([entry],[candidate_index],function(){
             eventlog_update_ajax(event_index = parse_val(row["EventIndex"]),
@@ -384,6 +384,7 @@ function eventlog_status_filter(row, filters, visible_status = null){
     // console.log(filters);
     if(visible_status == null) return true;
     if(!isArray(visible_status)) return true;
+    if(row["EventStatus"] == null) return true;
     if(!visible_status.includes(row["EventStatus"])) return false;
     return true;
 }

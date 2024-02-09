@@ -4,7 +4,7 @@ var idleInterval = null;
 function startIncativityTimer(){
     idleConter = 0;
     if(idleInterval!=null)  clearInterval(idleInterval);
-    idleInterval = null;
+
     idleInterval = setInterval(inactivityLogout, 5000); // 5 second
 
     // Zero the idle timer on mouse movement.

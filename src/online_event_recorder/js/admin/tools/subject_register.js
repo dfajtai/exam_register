@@ -262,6 +262,7 @@ function subjects_status_filter(row, filters, visible_status = null){
     // console.log(filters);
     if(visible_status == null) return true;
     if(!isArray(visible_status)) return true;
+    if(row["Status"] == null) return true;
     if(!visible_status.includes(row["Status"])) return false;
     return true;
 }
