@@ -8,7 +8,7 @@ if(isset($_POST['resource']) && isset($_POST['resource_id'])  && isset($_SESSION
     $user = $_SESSION['id'];
 
     $resource_id = json_encode($_POST['resource_id']);
-    $valid = Medoo::raw("(NOW() + INTERVAL 5 MINUTE)");
+    $valid = Medoo::raw("(NOW() + INTERVAL 3 MINUTE)");
     // $valid = Medoo::raw('NOW()');
     
     global $database;

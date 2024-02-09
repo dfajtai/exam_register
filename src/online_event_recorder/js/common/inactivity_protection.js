@@ -3,7 +3,7 @@ var idleInterval = null;
 
 function inactivityLogout() {
     idleTime = idleTime + 1;
-    if (idleTime > 9) { // 10 minutes
+    if (idleTime > 1) { // 10 minutes
         clearInterval(idleInterval);
 
         $.ajax({
