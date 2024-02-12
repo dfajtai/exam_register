@@ -85,6 +85,8 @@ function eventlog_update_ajax(event_index, event_info, callback = null, return_a
 
 
 function update_eventlog_locks(){
+    var $table = $('#'+eventlog_table_id);
+
     getLocks("event_log",function(locked_indices,locks){
         var resource_lock_info = {};
         $.each(locked_indices,function(index,resource_id){
@@ -105,7 +107,9 @@ function update_eventlog_locks(){
             active_eventlog_locks = locked_indices;
             active_eventlog_lock_info = resource_lock_info;
 
-            $('#'+eventlog_table_id).bootstrapTable('filterBy',{});
+            var options = $table.bootstrapTable("getOptions");
+            var page_number = options.pageNumber;
+            $table.bootstrapTable('selectPage', page_number);
         }
     })
 }

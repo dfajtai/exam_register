@@ -73,14 +73,15 @@ function subject_update_ajax(subject_index,subject_info,callback,return_ajax = f
 
 
 function update_subject_locks(){
+    var $table = $('#'+subject_table_id);
     // getLocksFast("subjects",function(locks){
     //     if(!isEqual(locks,active_subject_locks)){
     //         active_subject_locks = locks;
-    //         // $('#'+subject_table_id).trigger($.Event("load-success.bs.table"),[]);
-    //         // $('#'+subject_table_id).bootstrapTable('resetView');
-    //         // $('#'+subject_table_id).bootstrapTable('refreshOptions',{});
-    //         $('#'+subject_table_id).bootstrapTable('filterBy',{});
-    //         // $('#'+subject_table_id).bootstrapTable('resetSearch');
+    //         // $table.trigger($.Event("load-success.bs.table"),[]);
+    //         // $table.bootstrapTable('resetView');
+    //         // $table.bootstrapTable('refreshOptions',{});
+    //         $table.bootstrapTable('filterBy',{});
+    //         // $table.bootstrapTable('resetSearch');
             
     //     }       
     // });
@@ -105,7 +106,40 @@ function update_subject_locks(){
             active_subject_locks = locked_indices;
             active_subject_lock_info = resource_lock_info;
 
-            $('#'+subject_table_id).bootstrapTable('filterBy',{});
+            // $table.bootstrapTable('filterBy',{});
+
+            var options = $table.bootstrapTable("getOptions");
+            var page_number = options.pageNumber;
+            $table.bootstrapTable('selectPage', page_number);
+
+            // efforts to change specific cell on demand
+
+            // var cols = [];
+            // $.each($($table.find("thead")[0]).find("th"),function(index,col_dom){
+            //     console.log($(col_dom));
+            //     cols.push($(col_dom).attr("data-field"))
+            // })
+
+            // var operate_col_index = cols.indexOf("operate");
+            // var locked_col_index = cols.indexOf("locked");
+
+            // var options = $table.bootstrapTable("getOptions");
+            // var page_size = options.pageSize;
+            // var page_number = options.pageNumber;
+
+            // var data = $table.bootstrapTable("getData").slice((page_number-1)*page_size,(page_number*page_size));
+            // if(data.length==0) return;
+
+            // var tbody = $table.find("tbody")
+            // var rows = tbody.find("tr");
+            // $.each(data,function(index,entry){
+            //     var row = rows[index];
+            //     if(!active_subject_locks.includes(entry["SubjectIndex"])) return true;
+            //     var cells = $(row).find("td");
+            //     $(cells[operate_col_index]).html(subjectOperateFormatter(null,entry,null));
+            //     $(cells[locked_col_index]).html(subject_lock_formatter(null,entry,null));
+
+            // })
         }
     })
 }
@@ -241,7 +275,7 @@ function subject_register_subject_formatter(subject_entry){
     return res;
 }
 
-function subject_lock_formatter(value,row){
+function subject_lock_formatter(value,row, index){
     if(active_subject_locks.includes(row["SubjectIndex"])){
         var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
         var _info = active_subject_lock_info[row["SubjectIndex"]];
@@ -345,6 +379,10 @@ function createSubjectTable(container,table_id, simplify = false){
     }
     
     table.attr("data-search","true");
+
+    // table.attr("data-searchable","true"); // server-side
+    // table.attr("data-side-pagination","server"); // server-side
+
     table.attr("data-regex-search","true");
     table.attr("data-visible-search","true");
     table.attr("data-search-highlight","true");
@@ -387,6 +425,7 @@ function createSubjectTable(container,table_id, simplify = false){
                 {title: 'Changed @', field : 'LastChange', align:'center', sortable:true, searchable:false,forceExport: true, formatter:"datetimeFormatter", visible:false},
             ],
             pagination:true,
+
             checkboxHeader:true,
             smartDisplay:true,
             detailFormatter: function(index,row){return detail_as_table_formatter(index,row,subject_register_subject_formatter)},
