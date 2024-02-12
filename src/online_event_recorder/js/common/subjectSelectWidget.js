@@ -1,5 +1,5 @@
 
-function subjectSelectWidget(container, study_id = null, callback = null){
+function subjectSelectWidget(container, study_id = null, callback = null, single_select = false){
     var subject_select_widget_debug = false;
 
     var lastSelectedIndices = [];
@@ -18,7 +18,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         if(subject_select_widget_debug) console.log(JSON.stringify(_lastSelectedIndices) + " -> " + JSON.stringify(_new_indices));
         if(subject_select_widget_debug) console.log(JSON.stringify(_lastSelectedInfo) + " -> " + JSON.stringify(_new_info));
 
-        if((_new_indices!=_lastSelectedIndices)&&(_new_info!=_lastSelectedInfo)){
+        if(!isEqual(_new_indices,_lastSelectedIndices)&&!isEqual(_new_info,_lastSelectedInfo)){
             lastSelectedIndices = new_indices;
             lastSelectedInfo = new_info;
             if(callback!=null){
@@ -41,7 +41,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         type: "GET",
         url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({table_name: "subjects",where_not:{"Status":subject_deleted_status}}),
+        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex"], where_not:{"Status":subject_deleted_status}}),
         // data: ({table_name: "subjects",where:{"Status[!]":subject_deleted_status}}),
         success: function (result) {
             callback(result);
@@ -56,7 +56,7 @@ function subjectSelectWidget(container, study_id = null, callback = null){
         type: "GET",
         url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({table_name: "subjects", where:{"StudyID":params.study_id}, where_not:{'Status':subject_deleted_status}}),
+        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex"], where:{"StudyID":params.study_id}, where_not:{'Status':subject_deleted_status}}),
         success: function (result) {
             callback(result);
         }});
@@ -310,6 +310,9 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
     $(subject_selector).find("#clearSubject").on("click",function(){
         $(subject_input).val("");
+        regulated_callback([],[]);
+        show_selected_subjects(result_bar,null);
+        $(filter_switch).prop("checked",false).trigger('change');
     })
 
     reset_widget.on("click",function(){
@@ -363,9 +366,14 @@ function subjectSelectWidget(container, study_id = null, callback = null){
 
         $(modal).on('show.bs.modal',function(){
             createSubjectTable(subject_container,subject_selector_table_id,true);
+            // $(form.find("#studySelect")[0]).trigger("change");
+            // $(form.find("#studySelect")[0]).trigger("change");
             var subject_table = form.find("#"+subject_selector_table_id);
-            subject_table.bootstrapTable("resetView");
-            subject_table.bootstrapTable('hideColumn', ['operate','LastChange']);
+            subject_table.bootstrapTable("refresh");
+            if(single_select){
+
+            }
+            subject_table.bootstrapTable('hideColumn', ['operate','locked','LastChange']);
             
         });
 

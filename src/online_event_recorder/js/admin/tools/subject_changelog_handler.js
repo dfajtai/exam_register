@@ -44,7 +44,7 @@ function subject_changelog_retrieve_subjects_ajax(params) {
         })            
     },
     error: function (er) {
-        params.error(er);
+        // params.error(er);
         subject_changelog_visible_subject_indices = [];
         update_subject_changelog_final_status(function(){
             params.error(er);
@@ -133,7 +133,7 @@ function update_subject_changelog_final_status(callback = null){
     // console.log(subject_changelog_visible_subject_indices);
     if(subject_changelog_visible_subject_indices.length==0){
         if(callback !== null){
-            callback();
+            return callback();
         }
     }
 

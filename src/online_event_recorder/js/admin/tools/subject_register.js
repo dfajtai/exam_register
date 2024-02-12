@@ -310,9 +310,10 @@ function createSubjectTable(container,table_id, simplify = false){
     var pre_selected = null;
 
     if(simplify){
-        var toolbar_content = $("<div/>").addClass("input-group col-md-12");
+        var toolbar_content = $("<div/>").addClass("input-group w-100");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
-        study_dropdown.append($("<option/>").html("All").prop('selected',true).attr("value","all"));
+        study_dropdown.append($("<option/>").html("Select scope...").prop("disabled",true).prop('selected',true).attr("value",""));
+        study_dropdown.append($("<option/>").html("All").attr("value","all"));
         showAllDefs(study_dropdown,"studies","StudyID","StudyName","StudyName");
         toolbar_content.append($("<span/>").attr("for","studySelect").html("Filter by study: ").addClass("input-group-text"))
         toolbar_content.append(study_dropdown);
@@ -451,7 +452,12 @@ function createSubjectTable(container,table_id, simplify = false){
         }
 
         if(pre_selected==null){
-            $(toolbar.find("#status_filter_widget").find("input")[0]).trigger("change");
+            var status_select_widgets = toolbar.find("#status_filter_widget").find("input");
+            if(status_select_widgets.length == 0) table.bootstrapTable('refreshOptions',options);
+            else{
+                $(status_select_widgets[0]).trigger("change");
+            }
+            
         }
         else{
             table.bootstrapTable('uncheckAll');

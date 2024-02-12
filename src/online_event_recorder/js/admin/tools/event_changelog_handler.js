@@ -70,7 +70,7 @@ function event_changelog_retrieve_event_by_index_ajax(params) {
         })            
     },
     error: function (er) {
-        params.error(er);
+        // params.error(er);
         event_changelog_visible_event_indices = [];
         update_event_changelog_final_status(function(){
             params.error(er);
@@ -166,7 +166,7 @@ function update_event_changelog_final_status(callback = null){
     // console.log(event_changelog_visible_event_indices);
     if(event_changelog_visible_event_indices.length==0){
         if(callback !== null){
-            callback();
+            return callback();
         }
     }
 
