@@ -70,6 +70,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
+	<script defer src="js/user/tools/subject_handler.js" ></script>
 		
 
 </head>
@@ -124,6 +125,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			showSelectActiveStudyForm($("#main_container"));
 		}
 
+		function show_study_subjects(){
+			$('.navbar-collapse').collapse('hide');
+			show_subject_handler_tool($("#main_container"));
+		}
+
 		$(document).ready(function() {
 			$("#become_admin_button").click(function(){
 				clearAllStatusFromUrl();
@@ -150,7 +156,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 			$(document).ready(function () {
-				startIncativityTimer()
+				startIncativityTimer();
+
+
 			});
 			
 
@@ -165,7 +173,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				else{
 					syncStatusFromStorageToUrl("activeStudy");
 				}
+
+				subject_deleted_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","deleted","StatusID");
+				subject_planned_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","planned","StatusID");
+				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
+
 			});
+
+
 
 			
 
