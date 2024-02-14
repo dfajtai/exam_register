@@ -13,7 +13,7 @@ if(isset($_POST['resource'])  && isset($_SESSION['id']) && isset($_SESSION['fnam
         global $database;
     }
 
-    $res = $database -> update("resource_lock", 
+    $res = $database -> update("resource_locks", 
                                 ["resource_id"=>$resource_id, "valid"=>NULL], 
                                 ["AND"=>["resource"=>$resource,"user"=>$user]]);
 

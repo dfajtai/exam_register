@@ -17,7 +17,7 @@ if(isset($_POST['resource']) && isset($_POST['resource_id'])  && isset($_SESSION
         global $database;
     }
 
-    $res = $database -> update("resource_lock", 
+    $res = $database -> update("resource_locks", 
                                 ["resource_id"=>$resource_id, "valid"=>$valid], 
                                 ["AND"=>["resource"=>$resource,"user"=>$user]]);
 

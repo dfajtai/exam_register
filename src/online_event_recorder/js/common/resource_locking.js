@@ -11,7 +11,7 @@ function getLocks(resource_name, callback = null){
            type: "GET",
             url: 'php/retrieve_table_where.php',
             dataType: "json",
-            data: {table_name: "resource_lock", where:{resource:resource_name}},
+            data: {table_name: "resource_locks", where:{resource:resource_name}},
             success: function(result){
                 var locked_indices = [];
                 var locks = [];
@@ -36,7 +36,7 @@ function getLocksFast(resource_name, callback = null){
            type: "GET",
             url: 'php/retrieve_table_where.php',
             dataType: "json",
-            data: {table_name: "resource_lock", columns:["resource_id"], where:{resource:resource_name}},
+            data: {table_name: "resource_locks", columns:["resource_id"], where:{resource:resource_name}},
             success: function(result){
                 var locked_indices = [];
                 $.each(result,function(index,row){

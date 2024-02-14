@@ -86,7 +86,7 @@ function parse_val(val, dummy = false){
     if(dummy) return val;
 
     if(val==null) return null;
-    if(val=="") return null;
+    if(val==="") return null;
     var num_val = parseInt(val);
 
     if(String(val)!=String(num_val)){

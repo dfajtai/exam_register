@@ -95,6 +95,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/event_log_handler.js"></script>
 	<script defer src="js/admin/tools/event_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/subject_changelog_handler.js"></script>
+	<script defer src="js/admin/tools/resource_handler.js"></script>
 
 	<script defer src="js/common/inactivity_protection.js"></script>
 
@@ -126,6 +127,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 							</li>
 							<li>
 								<a class="dropdown-item" href="#" onclick="show_table('studies')">Define studies</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="#" onclick="show_resouce_handler_tool()">Manage locks</a>
 							</li>
 						</ul>
 					</li>
@@ -340,6 +344,25 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
+		function show_resouce_handler_tool(){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Manage locks"));
+				main_container.append(_title);
+
+				show_resource_handler(main_container);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","ResouceLocks");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
+		}
+
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
 				clearAllStatusFromUrl();
@@ -397,6 +420,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="EventLog") show_event_log_tool();
 					if(tool=="EventChangeLog") show_event_change_log_tool();
 					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
+					if(tool=="ResouceLocks") show_resouce_handler_tool();
 				}
 				else{
 					show_table("users");
