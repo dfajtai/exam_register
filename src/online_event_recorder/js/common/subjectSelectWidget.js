@@ -41,7 +41,8 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
         type: "GET",
         url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex"], where_not:{"Status":subject_deleted_status}}),
+        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex","StudyID"], 
+                where_not:{"Status":subject_deleted_status}}),
         // data: ({table_name: "subjects",where:{"Status[!]":subject_deleted_status}}),
         success: function (result) {
             callback(result);
@@ -56,7 +57,9 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
         type: "GET",
         url: 'php/retrieve_table_where.php',
         dataType: "json",
-        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex"], where:{"StudyID":params.study_id}, where_not:{'Status':subject_deleted_status}}),
+        data: ({table_name: "subjects",columns:["Name","SubjectID","SubjectIndex","StudyID"], 
+                where:{"StudyID":params.study_id}, 
+                where_not:{'Status':subject_deleted_status}}),
         success: function (result) {
             callback(result);
         }});

@@ -73,6 +73,29 @@ function getOwnLocks(callback = null){
     });
 }
 
+function getOwnLockForResource(resource, callback = null){
+    if(callback === null){
+        callback = function(){
+        };
+    }
+    return ajax = $.ajax({
+        type: "POST",
+        url: 'php/resource_lock_get_own.php',
+        dataType: "json",
+        data: {'resource':resource},
+        success: function(result){
+            var lock = null;
+            if(result.length==1){
+                var res = result[0];
+                var resource_ids = nullify_array(JSON.parse(res["resource_id"]));
+                resource_ids = resource_ids==null?[]:resource_ids;
+                lock = {resource_ids:resource_ids, valid:res["valid"]};
+            }            
+            callback(lock);
+        }
+    });
+}
+
 
 function setLock(resource_name, resource_id, callback = null){
     if(callback === null){
@@ -105,4 +128,21 @@ function releaseLock(resource_name, callback = null){
             callback();
         }
     });
+}
+
+function checkOwnLock(resource_name, resource_id, success_callback = null, failure_callback = null){
+    // function planned to be used to ckeck if a lock is still valid
+    getOwnLockForResource(resource_name,function(lock){
+        if(lock==null){
+            if(failure_callback!=null) failure_callback();
+        }
+        else{
+            if(lock["resource_ids"].includes(resource_id)){
+                if(success_callback!=null) success_callback();
+            }
+            else{
+                if(failure_callback!=null) failure_callback();
+            }
+        }
+    })
 }

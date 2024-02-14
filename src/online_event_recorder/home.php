@@ -70,7 +70,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
-	<script defer src="js/user/tools/subject_handler.js" ></script>
+	<script defer src="js/user/tools/users_subject_handler.js" ></script>
 		
 
 </head>
@@ -127,7 +127,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		function show_study_subjects(){
 			$('.navbar-collapse').collapse('hide');
-			show_subject_handler_tool($("#main_container"));
+			show_users_subject_handler_tool($("#main_container"));
 		}
 
 		$(document).ready(function() {

@@ -11,10 +11,22 @@ if(isset($_SESSION['id']) && isset($_SESSION['fname'])){
         require_once 'db_conn.php';
         global $database;
     }
+
     $now = Medoo::raw('NOW()');
-    $res = $database -> select("resource_lock",
-                                ["resource","resource_id"],
-                                ["AND" => ["valid[>=]"=>date("Y-m-d H:i:s"),"user"=>$user]]);    
-    unset($_POST['resource']);
+
+    if(isset($_GET['resource'])){
+        $res = $database -> select("resource_lock",
+        ["resource","resource_id"],
+        ["AND" => ["valid[>=]"=>date("Y-m-d H:i:s"),"user"=>$user,"resource"=>$_GET['resource']]]);   
+    }
+    else{
+        $res = $database -> select("resource_lock",
+        ["resource","resource_id"],
+        ["AND" => ["valid[>=]"=>date("Y-m-d H:i:s"),"user"=>$user]]);    
+    }
+
+
+    
+
     echo json_encode($res);
 }

@@ -360,10 +360,9 @@ function createSubjectTable(container,table_id, simplify = false){
     table.attr("data-page-list","[10, 25, 50, 100, all]");
 
     table.attr("data-show-footer","false");
+    table.attr("data-show-refresh","true");
 
     if(!simplify){
-        table.attr("data-show-refresh","true");
-
         table.attr("data-auto-refresh","true");
         table.attr("data-auto-refresh-status","false");
         table.attr("data-show-auto-refresh","true");
@@ -644,12 +643,7 @@ function show_subject_modal_edit(container, table, index){
         $(form).find("textarea[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                if(name.includes("JSON")){
-                    $(this).val(entry[name]);
-                }
-                else{
-                    $(this).val(entry[name]);
-                }
+                $(this).val(entry[name]);
             }
         });
         
@@ -679,8 +673,7 @@ function show_subject_modal_edit(container, table, index){
         }
 
         var values = {};
-
-        $.each($(this).serializeArray(), function(i, field) {
+        $.each($(form).serializeArray(), function(i, field) {
             var entries = $(form).find("[name='"+field.name+"'][data-value]");
             if(entries.length>0){
                 var _entry = entries[0];
@@ -692,9 +685,22 @@ function show_subject_modal_edit(container, table, index){
             }
         });
 
-        subject_update_ajax(entry["SubjectIndex"],values,function(){table.bootstrapTable('refresh')});
-        modal.modal('hide');
-        form[0].reset();
+        checkOwnLock("event_log",entry["SubjectIndex"],
+                function(){
+
+
+                    subject_update_ajax(entry["SubjectIndex"],values,function(){
+                        table.bootstrapTable('refresh');
+                        modal.modal('hide');
+                        form[0].reset();
+                });
+                },
+                function(){
+                    var message = 'Resource lock has expired or taken.'
+                    bootbox.alert(message);
+                }
+                )
+
     });
 
     modal.modal('show');
@@ -1130,6 +1136,7 @@ function show_subject_register(container){
     // table.on('all.bs.table',function(args,name){
     //     console.log(name)
     // })
+    
 
     table.on('load-success.bs.table',function(args,name){
         update_subject_locks();

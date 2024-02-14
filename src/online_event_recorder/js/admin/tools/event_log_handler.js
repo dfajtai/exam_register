@@ -320,17 +320,22 @@ function eventlog_detail_view_formatter(index, row) {
 
     detail_view_data_form.on('submit',function(e){
         e.preventDefault();
-        
-        var event_data = {};
-        $.each($(this).serializeArray(), function(i, field) {
-            // console.log(field);
-            event_data[field.name] = get_readable_value(detail_view_data_form,field.name,field.value);
-        });
 
-        event_data = nullify_obj(event_data);
-        eventlog_update_ajax(event_index = parse_val( parse_val(row["EventIndex"])),
-            event_info = {"EventData":event_data},
-            function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+        var entry = row;
+        var candidate_index = row.EventIndex;
+        eventlog_lock_check([entry],[candidate_index],function(){
+            var event_data = {};
+            $.each($(this).serializeArray(), function(i, field) {
+                // console.log(field);
+                event_data[field.name] = get_readable_value(detail_view_data_form,field.name,field.value);
+            });
+    
+            event_data = nullify_obj(event_data);
+            eventlog_update_ajax(event_index = parse_val( parse_val(row["EventIndex"])),
+                event_info = {"EventData":event_data},
+                function(){$('#'+eventlog_table_id).bootstrapTable('refresh')});
+        })
+                
     })
 
     // show values
@@ -505,9 +510,9 @@ function create_eventlog_table(container, table_id, simplify = false){
 
     table.attr("data-show-footer","false");
 
-    if(!simplify){
-        table.attr("data-show-refresh","true");
+    table.attr("data-show-refresh","true");
 
+    if(!simplify){
         table.attr("data-auto-refresh","true");
         table.attr("data-auto-refresh-status","false");
         table.attr("data-show-auto-refresh","true");
@@ -937,6 +942,11 @@ function show_eventlog_modal_edit(container, table, index){
     form.on('submit',function(e, as_copy=false){
         e.preventDefault();
 
+        if(! form[0].checkValidity()){
+            form[0].reportValidity();
+            return;
+        }
+
         var event_data = {};
         var event_params = {};
         var event_def_keys = ["EventTemplate","EventName","EventStatus","EventPlannedTime","EventComment","EventStudy","EventSubject","EventLocation"];
@@ -961,15 +971,31 @@ function show_eventlog_modal_edit(container, table, index){
         // console.log(event_params);
 
         if(as_copy){
-            eventlog_insert_ajax(event_params,function(){table.bootstrapTable('refresh')});
+            eventlog_insert_ajax(event_params,function(){
+                table.bootstrapTable('refresh');
+                modal.modal('hide');
+            });
         }
         else{
-            eventlog_update_ajax(event_index = parse_val(entry["EventIndex"]),
-            event_info = event_params,
-            function(){table.bootstrapTable('refresh')});
+            checkOwnLock("event_log",entry["EventIndex"],
+                function(){
+                    eventlog_update_ajax(event_index = parse_val(entry["EventIndex"]),
+                    event_info = event_params,
+                    function(){
+                        table.bootstrapTable('refresh');
+                        modal.modal('hide');
+                    
+                });
+                },
+                function(){
+                    var message = 'Resource lock has expired or taken.'
+                    bootbox.alert(message);
+                }
+                )
+            
         }
 
-        modal.modal('hide');
+        
     });
 
     modal_footer.find("#clear_form").click(function(){
@@ -1322,9 +1348,9 @@ function show_event_log_handler(container){
     //     console.log(options);
     // })
 
-    // table.on('refresh.bs.table',function(params){
-    //     console.log(params);
-    // })
+    table.on('load-success.bs.table',function(params){
+        update_eventlog_locks();
+    })
 
     var toolbar = container.find(".fixed-table-toolbar");
 

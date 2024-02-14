@@ -3,7 +3,7 @@ var active_subject_lock_info_user = {};
 
 var subjects_lock_interval_user = null;
 
-function update_subject_locks_user(callback){
+function users_update_subject_locks(callback){
     getLocks("subjects",function(locked_indices,locks){
         var resource_lock_info = {};
         $.each(locked_indices,function(index,resource_id){
@@ -27,7 +27,7 @@ function update_subject_locks_user(callback){
     })
 }
 
-function subject_update_ajax_user(subject_index,subject_info,callback,return_ajax = false) {
+function users_subject_update_ajax(subject_index,subject_info,callback,return_ajax = false) {
     if(callback === null){
         callback = function(){};
     }
@@ -71,29 +71,9 @@ function subject_card_inputs(container){
     // })
 }
 
-function init_fields(form,entry){
-    $(form).find("input[name]").each(function(){
-        var name = $(this).attr("name");
-        if(name in entry){
-            $(this).val(entry[name]).trigger("change");
-        }
-    });
-    $(form).find("textarea[name]").each(function(){
-        var name = $(this).attr("name");
-        if(name in entry){
-            $(this).val(entry[name]);
-        }
-    });
-    
-    $(form).find("select[name]").each(function(){
-        var name = $(this).attr("name");
-        if(name in entry){
-            $(this).val(entry[name]);
-        }
-    });
-}
 
-function init_subject_handler(container){
+
+function init_users_subject_handler(container){
 
     container.empty();
 
@@ -108,7 +88,28 @@ function init_subject_handler(container){
 }
 
 
-function subject_handler_view_subject(container, subject_index, subject_id){
+function users_subject_handler_view_subject(container, subject_index, subject_id){
+    function init_fields(form,entry){
+        $(form).find("input[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                $(this).val(entry[name]).trigger("change");
+            }
+        });
+        $(form).find("textarea[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                $(this).val(entry[name]);
+            }
+        });
+        
+        $(form).find("select[name]").each(function(){
+            var name = $(this).attr("name");
+            if(name in entry){
+                $(this).val(entry[name]);
+            }
+        });
+    }
 
     container.empty();
     var subject_card_title = $("<div/>").append($("<span/>").addClass("d-block p-2 bg-dark text-white fs-3 mb-3").html("Subject "+subject_id));                
@@ -159,14 +160,11 @@ function subject_handler_view_subject(container, subject_index, subject_id){
     });
 }
 
-function show_subject_handler_tool(container){
+function show_users_subject_handler_tool(container){
     container.empty();
 
-    
-    init_subject_handler(container);
-    subject_handler_view_subject($($.find(".subject-handler-content")[0]),38,"asdasdasdas");
-
-    
+    init_users_subject_handler(container);
+    users_subject_handler_view_subject($($.find(".subject-handler-content")[0]),38,"asdasdasdas");   
 
 }
 
