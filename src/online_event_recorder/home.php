@@ -87,25 +87,24 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			<div class="collapse navbar-collapse" id="navbarNavDropdown">
 				<ul class="navbar-nav">
-					<li class="nav-item">
+					<li class="nav-item me-3">
 					<a class="nav-link active" href = "#" onclick="study_select()">Select study</a>
 					</li>
 
-					<li class="nav-item">
+					<li class="nav-item me-3">
 					<a class="nav-link active" href = "#" onclick="show_study_subjects()">Show animals</a>
 					</li>
 					
-					<li class="nav-item">
+					<li class="nav-item me-3">
 					<a class="nav-link active"  href = "#" onclick="show_study_events()">Show events</a>
+					</li>
+					<?php if($_SESSION['isAdmin']){
+					echo('<li class="nav-item me-3"><a class = "nav-link active" href="#" id="become_admin_button">ADMIN mode</a></li>');}?>
+					<li class="nav-item me-3">
+						<a class="nav-link active" href="logout.php" >Logout</a>
 					</li>
 
 				</ul>
-				<div class="d-flex ms-3">
-					<?php if($_SESSION['isAdmin']){
-						echo('<a class="nav-item btn btn-outline-light me-2" href="#" id="become_admin_button">ADMIN mode</a>');
-					}?>
-					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
-				</div>
 			</div>
 		</div>
 

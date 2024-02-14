@@ -171,13 +171,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						</ul>
 					</li>
 
-
-
+					<li class="nav-item me-3">
+						<a class="nav-link active" href="#" id="become_user_button" >USER mode</a>
+					</li>
+					<li class="nav-item me-3">
+						<a class="nav-link active" href="logout.php" >Logout</a>
+					</li>
 				</ul>
-				<div class="d-flex ms-3">
-					<a class="nav-item btn btn-outline-light me-2" href="#" id="become_user_button" >USER mode</a>
-					<a class="nav-item btn btn-outline-light " href="logout.php" >Logout</a>
-				</div>
+
 			</div>
 
 		</div>

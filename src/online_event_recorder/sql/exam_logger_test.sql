@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 09, 2024 at 02:03 PM
+-- Generation Time: Feb 14, 2024 at 05:08 PM
 -- Server version: 8.0.36-0ubuntu0.22.04.1
 -- PHP Version: 8.2.15
 
@@ -22,17 +22,6 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `exam_logger_test` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `exam_logger_test`;
-
-DELIMITER $$
---
--- Procedures
---
-DROP PROCEDURE IF EXISTS `release_resource`$$
-CREATE DEFINER=`debian-sys-maint`@`localhost` PROCEDURE `release_resource` ()  BEGIN
-UPDATE resource_lock SET resource_id = '[]', valid = NULL WHERE valid < CURRENT_TIME;
-END$$
-
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -233,7 +222,7 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2024-02-01 14:46:02', 'd0e0bfd'),
 (15, 'event_template_definitions', '2024-01-17 10:48:26', 'd5e5b178'),
-(16, 'studies', '2024-02-06 14:18:21', '7ab364c8');
+(16, 'studies', '2024-02-14 11:14:20', '702d49c2');
 
 -- --------------------------------------------------------
 
@@ -450,11 +439,11 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `resource_lock`
+-- Table structure for table `resource_locks`
 --
 
-DROP TABLE IF EXISTS `resource_lock`;
-CREATE TABLE `resource_lock` (
+DROP TABLE IF EXISTS `resource_locks`;
+CREATE TABLE `resource_locks` (
   `lock_id` int NOT NULL,
   `user` int NOT NULL,
   `resource` enum('subjects','event_log') NOT NULL,
@@ -463,12 +452,12 @@ CREATE TABLE `resource_lock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `resource_lock`
+-- Dumping data for table `resource_locks`
 --
 
-INSERT INTO `resource_lock` (`lock_id`, `user`, `resource`, `resource_id`, `valid`) VALUES
-(2, 4, 'event_log', '[]', NULL),
-(4, 4, 'subjects', '[]', NULL);
+INSERT INTO `resource_locks` (`lock_id`, `user`, `resource`, `resource_id`, `valid`) VALUES
+(2, 0, 'event_log', '[]', NULL),
+(4, 0, 'subjects', '[]', NULL);
 
 -- --------------------------------------------------------
 
@@ -577,7 +566,7 @@ CREATE TABLE `studies` (
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
 (1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 0),
 (2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 7),
-(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 6);
+(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 8);
 
 --
 -- Triggers `studies`
@@ -837,8 +826,17 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(4, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-02-09 14:02:51', 0, '2023-11-16 11:21:08', 1, 1),
-(16, 'Fajtai Dániel', 'daniel.fajtai@sic.medicopus.hu', 'daniuser', '$2y$10$UYtF6XlUM5wptdt1mE8yFuPee63lJ3IIxw7hK2sKhrpIr4JWzcaa.', '2024-01-31 09:07:08', '2024-02-09 09:56:25', 0, '2024-01-31 10:07:08', 0, 1);
+(0, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-02-14 14:51:34', 0, '2023-11-16 11:21:08', 1, 1);
+
+--
+-- Triggers `users`
+--
+DROP TRIGGER IF EXISTS `register_new_user`;
+DELIMITER $$
+CREATE TRIGGER `register_new_user` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO resource_lock(user, resource,resource_id) VALUES (new.UserID, "subjects","[]"),
+(new.UserID, "event_log","[]")
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
@@ -933,9 +931,9 @@ ALTER TABLE `location_definitions`
   ADD UNIQUE KEY `LocationName` (`LocationName`);
 
 --
--- Indexes for table `resource_lock`
+-- Indexes for table `resource_locks`
 --
-ALTER TABLE `resource_lock`
+ALTER TABLE `resource_locks`
   ADD PRIMARY KEY (`lock_id`),
   ADD UNIQUE KEY `lock_id` (`lock_id`),
   ADD UNIQUE KEY `user` (`user`,`resource`);
@@ -1081,10 +1079,10 @@ ALTER TABLE `location_definitions`
   MODIFY `LocationID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `resource_lock`
+-- AUTO_INCREMENT for table `resource_locks`
 --
-ALTER TABLE `resource_lock`
-  MODIFY `lock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `resource_locks`
+  MODIFY `lock_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `sex_definitions`
@@ -1138,7 +1136,7 @@ ALTER TABLE `unit_type_definitions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `UserID` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -1190,10 +1188,10 @@ ALTER TABLE `event_template_definitions`
   ADD CONSTRAINT `event_template_definitions_ibfk_1` FOREIGN KEY (`EventType`) REFERENCES `event_type_definitions` (`EventTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Constraints for table `resource_lock`
+-- Constraints for table `resource_locks`
 --
-ALTER TABLE `resource_lock`
-  ADD CONSTRAINT `resource_lock_ibfk_1` FOREIGN KEY (`user`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `resource_locks`
+  ADD CONSTRAINT `resource_locks_ibfk_1` FOREIGN KEY (`user`) REFERENCES `users` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `subjects`
@@ -1219,17 +1217,6 @@ ALTER TABLE `subject_change_log`
 --
 ALTER TABLE `unit_definitions`
   ADD CONSTRAINT `unit_definitions_ibfk_1` FOREIGN KEY (`UnitType`) REFERENCES `unit_type_definitions` (`UnitTypeID`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
-DELIMITER $$
---
--- Events
---
-DROP EVENT IF EXISTS `release_resource_event`$$
-CREATE DEFINER=`debian-sys-maint`@`localhost` EVENT `release_resource_event` ON SCHEDULE EVERY 1 MINUTE STARTS '2024-02-01 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN 
-CALL release_resource();
-END$$
-
-DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
