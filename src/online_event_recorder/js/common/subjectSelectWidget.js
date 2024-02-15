@@ -67,17 +67,21 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
 
     var all_subject = null;
 
-    var widget = $("<div/>").addClass("mb-3 mt-3 row");
+    var widget = $("<div/>").addClass("mb-3 mt-3 d-flex flex-lg-row flex-md-column flex-column");
 
-    var subject_selector = $("<div/>").addClass("input-group").attr("id","subjectSelector");
-
-    var filter_switch_group = $("<div/>").addClass("form-check form-switch");
+    var subject_selector = $("<div/>").addClass("input-group h-100").attr("id","subjectSelector");
     
     var filter_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","filterSwitch");
-    filter_switch_group.append(filter_switch);
-    filter_switch_group.append($("<label/>").addClass("form-check-label").attr("for","filterSwitch").html("Select all subject"));
-    subject_selector.append($("<div/>").addClass("input-group-text").append(filter_switch_group));
-    
+    if(!single_select){
+        var filter_switch_group = $("<div/>").addClass("form-check form-switch");
+        filter_switch_group.append(filter_switch);
+        filter_switch_group.append($("<label/>").addClass("form-check-label").attr("for","filterSwitch").html("Select all subject"));
+        subject_selector.append($("<div/>").addClass("input-group-text filter-switch-group").append(filter_switch_group));
+    }else{
+        subject_selector.append($("<div/>").addClass("input-group-text").html("Subject"));
+        subject_selector.append(filter_switch.prop("hidden",true));
+    }
+
     var subject_input = $("<input/>").addClass("form-control flexdatalist");
     subject_input.attr("placeholder","Type to search single subject...").attr("id","subjectSelect").attr("type","text");
    
@@ -93,48 +97,22 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
     study_selector.append($("<label/>").attr("for","studySelect").html("Filter by study").addClass("input-group-text"))
     study_selector.append(study_dropdown);
 
-    var advanced_search = $("<button/>").addClass("btn btn-outline-dark col-sm-12").html("Advanced search")
-    var reset_widget = $("<button/>").addClass("btn btn-outline-dark col-sm-12").html("Reset")
+    var advanced_search = $("<button/>").addClass("btn btn-outline-dark w-100 h-100").html("Advanced search")
+    var reset_widget = $("<button/>").addClass("btn btn-outline-dark w-100 h-100").html("Reset")
 
-    var result_bar = $("<div/>").addClass("mb-3 mt-3 row");
+    var result_bar = $("<div/>");
 
     function show_widget(){
         widget.empty();
-        // console.log($(window).width());
-        if ($(container).width() < 1200 & $(container).width() >= 576) {
-            widget.append($("<div/>").addClass("mb-2").append(subject_selector));
-            widget.append($("<div/>").addClass("mb-2").append(study_selector));
-            var buttons = $("<div/>").addClass("row");
-            buttons.append($("<div/>").addClass("col-sm-6").append(reset_widget));
-            buttons.append($("<div/>").addClass("col-sm-6").append(advanced_search));
-
-            widget.append($("<div/>").addClass("mb-2").append(buttons));
-         }
-         else if ($(container).width() < 576) {
-            widget = widget.removeClass("row").addClass("container");
-            widget.append($("<div/>").addClass("col mb-2").append(subject_selector));
-            widget.append($("<div/>").addClass("col mb-2").append(study_selector));
-            
-            var xs_widget_container = $("<div/>").addClass("row row-cols-2");
-            xs_widget_container.append($("<div/>").addClass("col mb-2").append(reset_widget));
-            xs_widget_container.append($("<div/>").addClass("col mb-2").append(advanced_search));
-            widget.append(xs_widget_container);
-
-         }
-         else {
-            widget.append($("<div/>").addClass("col-md-5").append(subject_selector));
-            widget.append($("<div/>").addClass("col-md-4").append(study_selector));
-            widget.append($("<div/>").addClass("col-md-1").append(reset_widget));
-            widget.append($("<div/>").addClass("col-md-2").append(advanced_search));
-        }
-        container.empty();
-        container.append(widget);
-        container.append(result_bar);
+        widget.append($("<div/>").addClass("col-lg-5 pe-lg-1 pe-xl-2 mb-1 mb-lg-0").append(subject_selector));
+        widget.append($("<div/>").addClass("col-lg-4 pe-lg-1 pe-xl-2 mb-1 mb-lg-0").append(study_selector));
+        widget.append($("<div/>").addClass("col-lg-1 pe-lg-1 pe-xl-2 mb-1 mb-lg-0").append(reset_widget));
+        widget.append($("<div/>").addClass("col-lg-2 mb-md-1 mb-lg-0").append(advanced_search));
     }
         
 
     function show_selected_subjects(container,selected_subjects){
-        container.empty();
+        container.empty().removeClass();
         if(selected_subjects==null){
             return;
         }
@@ -149,6 +127,8 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
         if(text_list.length==0){
             return;
         }
+
+
 
         var results_dom = $("<div/>").addClass("input-group").attr("id","selectedSubjects");
         if(selected_subjects.length>1){
@@ -167,7 +147,7 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
 
         $(selected_subj).html(text_list.join(", "));
 
-        container.append($("<div/>").addClass("col-md-12").append(results_dom));
+        container.addClass("mb-3 mt-3 row").append($("<div/>").addClass("col-md-12").append(results_dom));
     }
 
 
@@ -372,9 +352,9 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
             // $(form.find("#studySelect")[0]).trigger("change");
             // $(form.find("#studySelect")[0]).trigger("change");
             var subject_table = form.find("#"+subject_selector_table_id);
-            subject_table.bootstrapTable("refresh");
+            // subject_table.bootstrapTable("refresh");
             if(single_select){
-
+                subject_table.bootstrapTable('refreshOptions',{'singleSelect':true});
             }
             subject_table.bootstrapTable('hideColumn', ['operate','locked','LastChange']);
             
@@ -408,7 +388,7 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
 
 
     if(study_id!=null){
-        $(study_dropdown).val(study_id);
+        $(study_dropdown).val(study_id).trigger('change');
     }
         
 
@@ -417,7 +397,10 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
         //     subjectSelectWidget(container,study_id,callback);
         // });
     
+        container.empty();
         show_widget();
+        container.append(widget);
+        container.append(result_bar);
         $(study_dropdown).trigger("change");
     })
 

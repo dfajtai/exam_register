@@ -77,18 +77,51 @@ function init_users_subject_handler(container){
 
     container.empty();
 
-    var subject_handler_toolbar = $("<div/>").addClass("row").attr("id","subject_handler_toolbar");
+    var subject_handler_toolbar = $("<div/>").addClass("row col-md-12").attr("id","subject_handler_toolbar");
     var subject_search_tool_btn = $("<button/>").addClass("btn btn-outline-dark").html("Search");
-    subject_handler_toolbar.append($("<div/>").addClass("col-md-3").append(subject_search_tool_btn.addClass("w-100")))
+    subject_search_tool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#search_collapse");
+    subject_handler_toolbar.append($("<div/>").addClass("col-md-3").append(subject_search_tool_btn.addClass("w-100")));
     
+
+    var search_collapse = $("<div/>").addClass("collapse").attr("id","search_collapse");
+    var search_collapse_card = $("<div/>").addClass("card card-body");
+    var search_collapse_card_content = $("<div/>");
+
+    search_collapse.append(search_collapse_card.append(search_collapse_card_content));
+    subject_handler_toolbar.append(search_collapse);
+
+
     subject_handler_content = $("<div/>").addClass("subject-handler-content").addClass("container shadow px-2 py-2 my-2 mx-2");;
 
     container.append(subject_handler_toolbar);
     container.append(subject_handler_content);
+
+    subjectSelectWidget(search_collapse_card_content,
+                        statusFromStorage("activeStudy"),
+                        function(new_indices,new_info){
+                            if(new_indices.length>0){
+                                let name = new_info[0].Name;
+                                let id = new_info[0].SubjectID;
+                                let index = new_info[0].SubjectIndex;
+                                if(name==null){
+                                    var title = $("<div/>").html("Subject " + id);
+                                    var subtitle = $("<div/>").html("<small><i>nr."+index+"</i></small>");
+                                }else{
+                                    var title = $("<div/>").html("Subject "+name +" ["+ id+"]");
+                                    var subtitle = $("<div/>").html("<small><i>nr."+index+"</i></small>");
+                                }
+                                users_subject_handler_view_subject($(subject_handler_content),new_indices[0],title,subtitle);
+
+                                statusToUrl("subjectIndex",index);
+                                $(search_collapse).toggle(false);
+                            }
+                        },
+                        true
+    )
 }
 
 
-function users_subject_handler_view_subject(container, subject_index, subject_id){
+function users_subject_handler_view_subject(container, subject_index, title, subtitle){
     function init_fields(form,entry){
         $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
@@ -112,7 +145,8 @@ function users_subject_handler_view_subject(container, subject_index, subject_id
     }
 
     container.empty();
-    var subject_card_title = $("<div/>").append($("<span/>").addClass("d-block p-2 bg-dark text-white fs-3 mb-3").html("Subject "+subject_id));                
+    var subject_card_title = $("<div/>").addClass("d-flex justify-content-between p-2 bg-dark text-white fs-3 mb-3");
+    subject_card_title.append(title).append(subtitle);
     container.append(subject_card_title);
     var main_accordion = $("<div/>").addClass("accordion").attr("id","main_accordion");    
     var subject_card_accordion = $("<div/>").addClass("accordion-item");
@@ -164,7 +198,6 @@ function show_users_subject_handler_tool(container){
     container.empty();
 
     init_users_subject_handler(container);
-    users_subject_handler_view_subject($($.find(".subject-handler-content")[0]),38,"asdasdasdas");   
-
+    
 }
 

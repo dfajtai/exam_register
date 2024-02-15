@@ -20,6 +20,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.css" rel="stylesheet" type="text/css">
 
 	<link rel="stylesheet" href="css/my_styles.css">
 
@@ -67,6 +68,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/dynamic_form.js"></script>
 	<script defer src="js/common/formatters.js"></script>
 
+	<script defer src="js/admin/tools/subject_register.js"></script>
+	<script defer src="js/common/subjectSelectWidget.js"></script>
+
 	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
@@ -77,9 +81,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
 			<a class="navbar-brand" href="#">ExamRegister</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -110,12 +111,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	</nav>
 
-	<div class="container mt-3">
-		<div class="col-md-12">
-			<div id="main_container"></div>
-		</div>
-
-
+	<div class="container mt-3" id="main_container">
 	</div>
 
 	<script>
