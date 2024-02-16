@@ -48,20 +48,28 @@ function dynamicLongTextInput(container,name,label){
 function dynamicDateInput(container,name,label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
 
-    var group_container = $("<div/>").addClass("input-group");
-    var current = $("<span/>").addClass("input-group-text w-40").attr("id","currentTime");
-    group_container.append(current);
+    var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
+
+    var part_1 = $("<div/>").addClass("input-group d-flex flex-fill mb-xl-0 mb-1 me-xl-2");
+    var part_2 = $("<div/>").addClass("input-group d-flex flex-fill");
+
+    group_container.append(part_1);
+    group_container.append(part_2);
+
+    var current = $("<span/>").addClass("input-group-text flex-grow-1").attr("id","currentTime");
+    part_1.append(current);
 
     var fa_span =$("<i/>").addClass("fa fa-arrow-right update-date");
-    group_container.append($("<span/>").addClass("btn-outline-dark btn update-date").append(fa_span));
+    part_1.append($("<span/>").addClass("btn-outline-dark btn update-date").append(fa_span));
 
-    var _input = $("<input/>").addClass("form-control").attr("type","date").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
+
+    var _input = $("<input/>").addClass("form-control flex-grow-1").attr("type","date").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
 
     _input.val(moment().format("YYYY-MM-DD"));
-    group_container.append(_input)
+    part_2.append(_input)
 
     var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
-    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
+    part_2.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
 
     current.html(moment().format("YYYY-MM-DD"));
 
@@ -81,19 +89,26 @@ function dynamicDateInput(container,name,label){
 function dynamicTimeInput(container,name,label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
 
-    var group_container = $("<div/>").addClass("input-group");
-    var current = $("<span/>").addClass("input-group-text w-40").attr("id","currentTime");
-    group_container.append(current);
+    var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
+
+    var part_1 = $("<div/>").addClass("input-group d-flex flex-fill mb-xl-0 mb-1 me-xl-2");
+    var part_2 = $("<div/>").addClass("input-group d-flex flex-fill");
+
+    group_container.append(part_1);
+    group_container.append(part_2);
+
+    var current = $("<span/>").addClass("input-group-text flex-grow-1").attr("id","currentTime");
+    part_1.append(current);
 
     var fa_span =$("<span/>").addClass("fa fa-arrow-right update-date");
-    group_container.append($("<i/>").addClass("btn-outline-dark btn update-date").append(fa_span));
-    var _input = $("<input/>").addClass("form-control").attr("type","time").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
+    part_1.append($("<i/>").addClass("btn-outline-dark btn update-date").append(fa_span));
+    var _input = $("<input/>").addClass("form-control flex-grow-1").attr("type","time").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
 
     _input.val(moment().format("HH:mm:ss"));
-    group_container.append(_input);
+    part_2.append(_input);
 
     var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
-    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
+    part_2.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
 
     current.html(moment().format("HH:mm:ss"));
     setInterval(function(){current.html(moment().format("HH:mm:ss"));},1000);
@@ -113,19 +128,28 @@ function dynamicTimeInput(container,name,label){
 function dynamicDatetimeInput(container,name,label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
 
-    var group_container = $("<div/>").addClass("input-group");
-    var current = $("<span/>").addClass("input-group-text w-40").attr("id","currentDateTime");
-    group_container.append(current);
+    var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
+
+    var part_1 = $("<div/>").addClass("input-group d-flex flex-fill mb-xl-0 mb-1 me-xl-2");
+    var part_2 = $("<div/>").addClass("input-group d-flex flex-fill");
+
+    group_container.append(part_1);
+    group_container.append(part_2);
+
+    var current = $("<div/>").addClass("input-group-text flex-grow-1").attr("id","currentDateTime");
+    part_1.append(current);
 
     var fa_span =$("<span/>").addClass("fa fa-arrow-right update-datetime");
-    group_container.append($("<i/>").addClass("btn-outline-dark btn update-datetime").append(fa_span));
-    var _input = $("<input/>").addClass("form-control").attr("type","datetime-local").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
+    part_1.append($("<div/>").addClass("btn-outline-dark btn update-datetime").append(fa_span));
+        
+    var _input = $("<input/>").addClass("form-control flex-grow-1").attr("type","datetime-local").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("step","1");
 
     // _input.val(moment().format("YYYY-MM-DD HH:mm:ss"));
-    group_container.append(_input)
+    part_2.append(_input)
 
     var clear_span =$("<span/>").addClass("fa fa-x clear-datetime");
-    group_container.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
+    part_2.append($("<i/>").addClass("btn-outline-dark btn clear-datetime").append(clear_span));
+    
 
     current.html(moment().format("YYYY-MM-DD HH:mm:ss"));
     setInterval(function(){current.html(moment().format("YYYY-MM-DD HH:mm:ss"));},1000);
@@ -249,14 +273,16 @@ function dynamicLocationSelect(container, name, label){
 
 function dynamicBodypartSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+
+    container.addClass("d-flex");
     
-    var side_select_div  = $("<div/>").addClass("col-md-4");
+    var side_select_div  = $("<div/>").addClass("col-md-4 d-none d-xl-block");
     var _select_1 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select");
     _select_1.append($("<option/>").html("Choose side...").prop('selected',true).attr("value",""));
     showAllDefs(_select_1,"side_definitions","SideID","SideName","SideName");
     side_select_div.append(_select_1)
 
-    var bodpart_select_div = $("<div/>").addClass("col-md-5");
+    var bodpart_select_div = $("<div/>").addClass("col-md-5 flex-fill");
     var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_2.append($("<option/>").html("Choose bodypart...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"bodypart_definitions","BodypartName","BodypartName","BodypartName");
@@ -273,13 +299,15 @@ function dynamicBodypartSelect(container, name, label){
 function dynamicConsumableSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
     
-    var constype_select_div  = $("<div/>").addClass("col-md-4");
+    container.addClass("d-flex");
+
+    var constype_select_div  = $("<div/>").addClass("col-md-4 d-none d-xl-block");
     var _select_1 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select");
     _select_1.append($("<option/>").html("Choose consumable type...").prop('selected',true).attr("value",""));
     showAllDefs(_select_1,"consumable_type_definitions","ConsumableTypeID","ConsumableTypeName","ConsumableTypeName");
     constype_select_div.append(_select_1)
 
-    var cons_select_div = $("<div/>").addClass("col-md-5");
+    var cons_select_div = $("<div/>").addClass("col-md-5 flex-fill");
     var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_2.append($("<option/>").html("Choose consumable...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"consumable_definitions","ConsumableName","ConsumableName","ConsumableName");
@@ -295,14 +323,16 @@ function dynamicConsumableSelect(container, name, label){
 
 function dynamicEventSelect(container, name, label){
     var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+
+    container.addClass("d-flex");
     
-    var type_select_div  = $("<div/>").addClass("col-md-4");
+    var type_select_div  = $("<div/>").addClass("col-md-4 d-none d-xl-block");
     var _select_1 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select");
     _select_1.append($("<option/>").html("Choose event type...").prop('selected',true).attr("value",""));
     showAllDefs(_select_1,"event_type_definitions","EventTypeID","EventTypeName","EventTypeName");
     type_select_div.append(_select_1)
 
-    var event_select_div = $("<div/>").addClass("col-md-5");
+    var event_select_div = $("<div/>").addClass("col-md-5 flex-fill");
     var _select_2 = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_2.append($("<option/>").html("Choose event...").prop('selected',true).attr("value",""));
     showAllDefs(_select_2,"event_template_definitions","EventTemplateID","EventName","EventName");
