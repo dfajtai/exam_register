@@ -74,7 +74,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
-	<script defer src="js/user/tools/users_subject_handler.js" ></script>
+	<script defer src="js/user/tools/users_main_tool.js" ></script>
 		
 
 </head>
@@ -89,16 +89,17 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			<div class="collapse navbar-collapse" id="navbarNavDropdown">
 				<ul class="navbar-nav">
 					<li class="nav-item me-3">
-					<a class="nav-link active" href = "#" onclick="study_select()">Select study</a>
+						<a class="nav-link active" href = "#" onclick="show_users_home()">Home</a>
 					</li>
-
-					<li class="nav-item me-3">
-					<a class="nav-link active" href = "#" onclick="show_study_subjects()">Show animals</a>
+					<li class="nav-item dropdown me-3">
+						<a class="nav-link dropdown-toggle active" href="#" 
+						id="navbarConfigLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configuration</a>
+						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarConfigLink">
+							<li><a class="nav-link active" href = "#" onclick="study_select()">Select study</a></li>
+							<li><a class="nav-link active" href = "#" onclick="subject_pool()">Config subject pool</a></li>
+						</ul>
 					</li>
 					
-					<li class="nav-item me-3">
-					<a class="nav-link active"  href = "#" onclick="show_study_events()">Show events</a>
-					</li>
 					<?php if($_SESSION['isAdmin']){
 					echo('<li class="nav-item me-3"><a class = "nav-link active" href="#" id="become_admin_button">ADMIN mode</a></li>');}?>
 					<li class="nav-item me-3">
@@ -120,9 +121,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			showSelectActiveStudyForm($("#main_container"));
 		}
 
-		function show_study_subjects(){
+		function show_users_home(){
 			$('.navbar-collapse').collapse('hide');
-			show_users_subject_handler_tool($("#main_container"));
+			show_users_main_tool($("#main_container"));
 		}
 
 		$(document).ready(function() {
@@ -152,13 +153,17 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			$(document).ready(function () {
 				startIncativityTimer();
-
-
 			});
 			
 
 			// updateRemoteDefinitionChecksums();
 			updateLocalDefinitionDatabase(function(){
+				subject_deleted_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","deleted","StatusID");
+				subject_planned_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","planned","StatusID");
+				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
+				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
+
+
 				if(statusInUrl("activeStudy")){
 					syncStatusFromUrlToStorage("activeStudy");
 				}
@@ -167,13 +172,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else{
 					syncStatusFromStorageToUrl("activeStudy");
-				}
-
-				subject_deleted_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","deleted","StatusID");
-				subject_planned_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","planned","StatusID");
-				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
-				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
-
+					show_users_main_tool($("#main_container"));
+				}	
 			});
 
 
