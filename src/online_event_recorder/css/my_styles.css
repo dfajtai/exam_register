@@ -30,3 +30,12 @@
 #instruction_textarea {
     resize: none;
 }
+
+body {
+    height: 100vh
+}
+
+.main-container{
+    height: 100%;
+
+}

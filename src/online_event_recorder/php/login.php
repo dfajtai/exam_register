@@ -16,11 +16,11 @@ if(isset($_POST['uname']) &&
     
     if(empty($uname)){
     	$em = "User name is required";
-    	header("Location: ../login.php?error=$em&$data");
+    	header("Location: ../index.php?error=$em&$data");
 	    exit;
     }else if(empty($pass)){
     	$em = "Password is required";
-    	header("Location: ../login.php?error=$em&$data");
+    	header("Location: ../index.php?error=$em&$data");
 	    exit;
     }else {
       global $database;
@@ -38,7 +38,7 @@ if(isset($_POST['uname']) &&
          $id =  $user['UserID'];
          if(! $isActivated){
             $em = "This account is not activated or had been disactivated.";
-            header("Location: ../login.php?error=$em&$data");
+            header("Location: ../index.php?error=$em&$data");
             exit;
          }
 
@@ -57,25 +57,25 @@ if(isset($_POST['uname']) &&
                exit;
             }else {
             $em = "Incorect User name or password";
-            header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
+            header("Location: ../index.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
             exit;
          }
 
          }else {
             $em = "Incorect User name or password";
-            header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
+            header("Location: ../index.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
             exit;
          }
 
       }else {
          $em = "Incorect User name or password";
-         header("Location: ../login.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
+         header("Location: ../index.php?error=$em&$data&". $_SERVER["QUERY_STRING"]);
          exit;
       }
     }
 
 
 }else {
-	header("Location: ../login.php?error=error&". $_SERVER["QUERY_STRING"]);
+	header("Location: ../index.php?error=error&". $_SERVER["QUERY_STRING"]);
 	exit;
 }

@@ -5,6 +5,6 @@ $uname =$_SESSION['uname'];
 session_unset();
 session_destroy();
 
-header("Location: login.php?uname=".$uname);
+header("Location: index.php?uname=".$uname);
 
 exit;

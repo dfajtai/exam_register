@@ -38,7 +38,7 @@ function inactivityLogout() {
                     },
                 callback: function () {								
                     var searchParams = new URLSearchParams(window.location.search);
-                    var newRelativePathQuery = 'login.php' +'?' + searchParams.toString();
+                    var newRelativePathQuery = 'index.php' +'?' + searchParams.toString();
                     window.location= newRelativePathQuery;
                     $(this).find('[name=uname]').val(result);
                 }

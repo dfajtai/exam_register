@@ -57,10 +57,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
-	<script defer src="js/common/definition_handler.js"></script>
+	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
+	<script defer src="js/common/inactivity_protection.js"></script>
+	<script defer src="js/common/resource_locking.js"></script>
 
 	<script defer src="js/user/core/flat_def_info_block.js"></script>
+
 	<script defer src="js/common/filtered_select_from_defs.js"></script>
 	<script defer src="js/common/def_search.js"></script>
 	<script defer src="js/common/additional_functions.js"></script>
@@ -71,10 +74,12 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/admin/tools/subject_register.js"></script>
 	<script defer src="js/common/subjectSelectWidget.js"></script>
+	<script defer src="js/common/status_filter_widget.js"></script>
 
-	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<script defer src="js/user/forms/select_active_study_form.js" ></script>
+
+	<script defer src="js/user/core/users_event_log_handler.js" ></script>
 	<script defer src="js/user/tools/users_main_tool.js" ></script>
 		
 
@@ -190,6 +195,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 </html>
 
 <?php }else {
-	header("Location: login.php?" . $_SERVER["QUERY_STRING"]);
+	header("Location: index.php?" . $_SERVER["QUERY_STRING"]);
 	exit;
 } ?>
