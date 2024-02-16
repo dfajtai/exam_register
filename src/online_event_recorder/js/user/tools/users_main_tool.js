@@ -2,7 +2,28 @@ var users_main_tool_content = null;
 
 var users_event_content = null;
 
+function users_subject_retrieve_ajax(subject_index,callback,error_calback) {
+    if(callback === null){
+        callback = function(){};
+    }
 
+    if(error_calback === null){
+        error_calback = function(){};
+    }
+
+    $.ajax({
+        type: "GET",
+        url: 'php/retrieve_table_where.php',
+        dataType: "json",
+        data: ({table_name:"subjects",where:{"SubjectIndex": subject_index}}),
+        success: function (result) {
+            callback(result);
+        },
+        error: function(er){
+            error_calback()
+        }
+    });
+}
 
 function users_subject_update_ajax(subject_index,subject_info,callback,return_ajax = false) {
     if(callback === null){
@@ -201,6 +222,45 @@ function users_subject_card(container,entry){
     })
     resource_edit_switch.trigger("change");
 
+    $(form).on("submit",function(e){
+        e.preventDefault();
+
+        if(! form[0].checkValidity()){
+            form[0].reportValidity();
+            return;
+        }
+
+        var values = {};
+        $.each($(form).serializeArray(), function(i, field) {
+            var entries = $(form).find("[name='"+field.name+"'][data-value]");
+            if(entries.length>0){
+                var _entry = entries[0];
+                var data_val = $(_entry).prop("data-value");
+                values[field.name] = parse_val(data_val==""?null:data_val);
+            }
+            else{
+                values[field.name] = parse_val(field.value==""?null:field.value);
+            }
+        });
+
+        checkOwnLock("subjects",entry["SubjectIndex"],
+                function(){
+                    users_subject_update_ajax(entry["SubjectIndex"],values,function(){
+                        // what to do when update is succesful...?
+                        releaseLock("subjects",function(){
+                            resource_edit_switch.prop("checked",false).trigger("change");
+                        })
+                        
+                    });
+                },
+                function(){
+                    var message = 'Resource lock has expired or taken.'
+                    bootbox.alert(message);
+                }
+                )
+
+
+    })
 }
 
 function users_events_card(container, subject_info){
@@ -219,84 +279,78 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
     main_accordion.append(subject_card_accordion);
     main_accordion.append(event_card_accordion);
 
+    users_subject_retrieve_ajax(subject_index,function(result){
+        if(result.length==1){
+            subject_title.empty();
 
-    $.ajax({
-        type: "GET",
-        url: 'php/retrieve_table_where.php',
-        dataType: "json",
-        data: ({table_name:"subjects",where:{"SubjectIndex": subject_index}}),
-        success: function (result) {
-            if(result.length==1){
-                subject_title.empty();
+            var entry = result[0];
+            var titles = users_subject_title(entry);     
 
-                var entry = result[0];
-                var titles = users_subject_title(entry);     
+            if(titles[0]!=null) subject_title.append(titles[0]);
+            if(titles[1]!=null) subject_title.append(titles[1]);
+            subject_title.append(users_clear_content_btn());
 
-                if(titles[0]!=null) subject_title.append(titles[0]);
-                if(titles[1]!=null) subject_title.append(titles[1]);
-                subject_title.append(users_clear_content_btn());
+            // subject data handling
+            var subject_card_accordion_header = $("<h2/>").addClass("accordion-header").attr("id","subject_card_accordion_header");
+            var subject_card_accordion_header_content = $("<button/>").addClass("accordion-button collapsed").attr("type","button").attr("data-bs-toggle","collapse");
+            subject_card_accordion_header_content.attr("data-bs-target","#subject_card_accordion_content").attr("aria-expanded","false");
+            subject_card_accordion_header_content.html("Subject data");
 
-                // subject data handling
-                var subject_card_accordion_header = $("<h2/>").addClass("accordion-header").attr("id","subject_card_accordion_header");
-                var subject_card_accordion_header_content = $("<button/>").addClass("accordion-button collapsed").attr("type","button").attr("data-bs-toggle","collapse");
-                subject_card_accordion_header_content.attr("data-bs-target","#subject_card_accordion_content").attr("aria-expanded","false");
-                subject_card_accordion_header_content.html("Subject data");
+            subject_card_accordion_header.append(subject_card_accordion_header_content);
 
-                subject_card_accordion_header.append(subject_card_accordion_header_content);
+            var subject_card_accordion_content_container = $("<div/>").addClass("accordion-collapse collapse");
+            subject_card_accordion_content_container.attr("id","subject_card_accordion_content").attr("data-bs-parent","#main_accordion");
+            
+            subject_card_accordion.append(subject_card_accordion_header);
+            subject_card_accordion.append(subject_card_accordion_content_container);
+            
+            var subject_card_accordion_content = $("<div/>").addClass("accordion-body");
+            
+            subject_card_accordion_content_container.append(subject_card_accordion_content);
 
-                var subject_card_accordion_content_container = $("<div/>").addClass("accordion-collapse collapse");
-                subject_card_accordion_content_container.attr("id","subject_card_accordion_content").attr("data-bs-parent","#main_accordion");
-                
-                subject_card_accordion.append(subject_card_accordion_header);
-                subject_card_accordion.append(subject_card_accordion_content_container);
-                
-                var subject_card_accordion_content = $("<div/>").addClass("accordion-body");
-                
-                subject_card_accordion_content_container.append(subject_card_accordion_content);
+            // subject data resource status bar
+            users_subject_card(subject_card_accordion_content,entry);
+            
+            // subject's events handling
 
-                // subject data resource status bar
-                users_subject_card(subject_card_accordion_content,entry);
-                
-                // subject's events handling
+            var event_card_accordion_header = $("<h2/>").addClass("accordion-header").attr("id","event_card_accordion_header");
+            var event_card_accordion_header_content = $("<button/>").addClass("accordion-button collapsed").attr("type","button").attr("data-bs-toggle","collapse");
+            event_card_accordion_header_content.attr("data-bs-target","#event_card_accordion_content").attr("aria-expanded","false");
+            event_card_accordion_header_content.html("Event list");
 
-                var event_card_accordion_header = $("<h2/>").addClass("accordion-header").attr("id","event_card_accordion_header");
-                var event_card_accordion_header_content = $("<button/>").addClass("accordion-button collapsed").attr("type","button").attr("data-bs-toggle","collapse");
-                event_card_accordion_header_content.attr("data-bs-target","#event_card_accordion_content").attr("aria-expanded","false");
-                event_card_accordion_header_content.html("Event list");
+            event_card_accordion_header.append(event_card_accordion_header_content);
 
-                event_card_accordion_header.append(event_card_accordion_header_content);
+            var event_card_accordion_content_container = $("<div/>").addClass("accordion-collapse collapse");
+            event_card_accordion_content_container.attr("id","event_card_accordion_content").attr("data-bs-parent","#main_accordion");
+            
+            event_card_accordion.append(event_card_accordion_header);
+            event_card_accordion.append(event_card_accordion_content_container);
+            
+            var event_card_accordion_content = $("<div/>").addClass("accordion-body");
+            
+            event_card_accordion_content_container.append(event_card_accordion_content);
 
-                var event_card_accordion_content_container = $("<div/>").addClass("accordion-collapse collapse");
-                event_card_accordion_content_container.attr("id","event_card_accordion_content").attr("data-bs-parent","#main_accordion");
-                
-                event_card_accordion.append(event_card_accordion_header);
-                event_card_accordion.append(event_card_accordion_content_container);
-                
-                var event_card_accordion_content = $("<div/>").addClass("accordion-body");
-                
-                event_card_accordion_content_container.append(event_card_accordion_content);
+            event_card_accordion_content_container.on('show.bs.collapse', function () {
+                if(users_event_content==null){
+                    users_events_card(event_card_accordion_content,entry);
+                }
+            });
+            
 
-                event_card_accordion_content_container.on('show.bs.collapse', function () {
-                    if(users_event_content==null){
-                        users_events_card(event_card_accordion_content,entry);
-                    }
-                });
-                
-
-                container.append(main_accordion);
-            }
-            else{
-                subject_title.empty();
-                if(title!=null) subject_title.append(title);
-                if(subtitle!=null) subject_title.append(subtitle);
-                subject_title.append(users_clear_content_btn());
-            }
-        },
-        error: function(er){
-            init_users_main_tool(container);
-            // unable to load subject ...
+            container.append(main_accordion);
         }
+        else{
+            subject_title.empty();
+            if(title!=null) subject_title.append(title);
+            if(subtitle!=null) subject_title.append(subtitle);
+            subject_title.append(users_clear_content_btn());
+        }
+    },
+    function(){
+        init_users_main_tool(container);
+            // unable to load subject ...
     });
+
 }
 
 function show_users_main_tool(container){
