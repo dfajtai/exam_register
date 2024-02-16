@@ -62,7 +62,7 @@ function subject_card_inputs(container){
     {"FieldName":"Status","FieldLabel":"Status","FieldType":"select","FieldSource":"subject_status","FieldDefaultValue":subject_planned_status}
     ]
 
-    showCustomArgs(container,params);
+    showCustomArgs(container,params,true);
 
     // var disabled_fields = ["SubjectID","StudyID"];
     // $.each(disabled_fields,function(index,field_name){
@@ -235,8 +235,10 @@ function users_subject_view(container, subject_index, title = null, subtitle = n
                 // subject data resource status bar
 
                 var subject_card_accordion_toolbar = $("<div/>").addClass("d-flex flex-column flex-lg-row mb-2");
-                var resource_lock_indicator = $("<div/>").addClass("input-group-text flex-lg-fill me-lg-2 mb-lg-0 mb-2").append($("<div/>").append("Subject can be edited"));
-                subject_card_accordion_toolbar.append(resource_lock_indicator);
+                var resource_lock_indicator_group = $("<div/>").addClass("input-group-text flex-lg-fill me-lg-2 mb-lg-0 mb-2").append($("<div/>").append("Write protection"));
+                var resource_lock_indicator = $("<div/>").addClass("ms-3");
+                resource_lock_indicator_group.append(resource_lock_indicator)
+                subject_card_accordion_toolbar.append(resource_lock_indicator_group);
 
                 var resource_edit_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","subjectEditSwitch");
                 var resource_edit_switch_group = $("<div/>").addClass("form-check form-switch");

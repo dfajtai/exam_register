@@ -14,5 +14,6 @@
             "username": "exam_logger_user",
             "password": "asdfqwer1234"
         }
-    ]
+    ],
+    "compile-hero.disable-compile-files-on-did-save-code": false
 }

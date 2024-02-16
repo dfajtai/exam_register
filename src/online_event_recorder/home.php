@@ -23,6 +23,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.css" rel="stylesheet" type="text/css">
 
 	<link rel="stylesheet" href="css/my_styles.css">
+	<link rel="stylesheet" href="css/my_sizing.css">
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.6/underscore-min.js"></script>

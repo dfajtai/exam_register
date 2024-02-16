@@ -454,10 +454,21 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
 }
 
 
-function showCustomArgs(container,custom_args){
+function showCustomArgs(container,custom_args, flex = false){
     var content = $("<div/>");
+    if(flex){
+        content.addClass("d-flex flex-column flex-lg-row flex-lg-wrap justify-content-evenly");
+    }
+
     $.each(custom_args,function(index,arg){
         var arg_row = $("<div/>").addClass("row mb-2 dynamic-field");
+        if(flex){
+            arg_row.addClass("w-lg-50");
+            if(index%2==0){
+                arg_row.addClass("me-lg-2");
+            }
+        }
+        
         try {
             var name = arg.FieldName;
             var label = arg.FieldLabel;
