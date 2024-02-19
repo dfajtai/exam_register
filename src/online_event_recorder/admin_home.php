@@ -98,7 +98,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/subject_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/resource_handler.js"></script>
 
-	<script defer src="js/common/inactivity_protection.js"></script>
 
 	<!-- <script defer src="js/common/file_upload.js"></script> -->
 
@@ -433,6 +432,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 </html>
 
 <?php }else {
-	header("Location: login.php?". $_SERVER["QUERY_STRING"]);
+	header("Location: index.php?". $_SERVER["QUERY_STRING"]);
 	exit;
 } ?>

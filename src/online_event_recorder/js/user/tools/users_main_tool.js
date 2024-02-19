@@ -1,6 +1,13 @@
 var users_main_tool_content = null;
 
+var users_subject_card_content = null;
 var users_event_content = null;
+
+var users_current_subject = null;
+var users_subject_refresh_interval = null;
+var users_subject_lock_interval = null;
+
+var users_current_subjects_lock = null;
 
 function users_subject_retrieve_ajax(subject_index,callback,error_calback) {
     if(callback === null){
@@ -41,6 +48,9 @@ function users_subject_update_ajax(subject_index,subject_info,callback,return_aj
     if(return_ajax) return ajax;
     $.when(ajax);
 }
+
+
+
 
 function subject_card_inputs(container){
     var params =  [
@@ -160,6 +170,69 @@ function init_users_main_tool(container){
 
 }
 
+function users_update_subject_lock_indicator(){ 
+    checkLock("subjects",users_current_subject,
+    // resource is free
+    function(){
+        users_subject_lock_indicator_free();
+
+        var new_lock = null;
+        if(!isEqual(new_lock,users_current_subjects_lock)){
+            users_current_subjects_lock = new_lock;
+            $(users_subject_card_content).trigger("lock_change");
+        }     
+    },
+    // locked by others
+    function(lock){
+        if(lock["user"]==current_user){
+            users_subject_lock_indicator_used_by_user(lock);
+        }
+        else{
+            users_subject_lock_indicator_used_by_other(lock);
+        }
+
+        var new_lock = parse_val(lock["user"]);
+        if(!isEqual(new_lock,users_current_subjects_lock)){
+            users_current_subjects_lock = new_lock;
+            $(users_subject_card_content).trigger("lock_change");
+        }
+    })
+}
+
+function users_subject_lock_indicator_free(){
+    var indicator = $(users_subject_card_content).find(".resource-indicator").first();
+    indicator.empty();
+
+    var content = $("<span/>").addClass("bi bi-unlock-fill text-success opacity-100");
+    content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right");
+    content.attr("title","Subject can be edited.");
+
+
+    indicator.append(content);
+}
+
+function users_subject_lock_indicator_used_by_other(lock){
+    var indicator = $(users_subject_card_content).find(".resource-indicator").first();
+    indicator.empty();
+
+    var content = $("<span/>").addClass("bi bi-lock-fill text-danger opacity-100");
+    content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right");
+    content.attr("title","Subject has been locked by '"+ userFormatter(lock["user"]) +"' until "+ lock["valid"] +".");
+
+
+    indicator.append(content);
+}
+
+function users_subject_lock_indicator_used_by_user(lock){
+    var indicator = $(users_subject_card_content).find(".resource-indicator").first();
+    indicator.empty();
+    var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
+    content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right");
+    content.attr("title","Subject has been locked by you until "+ lock["valid"] +".");
+
+    indicator.append(content);
+}
+
 function users_subject_card(container,entry){
     function init_fields(form,entry){
         $(form).find("input[name]").each(function(){
@@ -185,20 +258,63 @@ function users_subject_card(container,entry){
         $(form).find("input,select,textarea").each(function(){$(this).addClass("subject-resource")});
     }
 
+    function refresh_subject(){
+        users_subject_retrieve_ajax(users_current_subject,function(result){
+            if(result.length==1){    
+                var entry = result[0];
+                init_fields(form,entry);
+                resource_edit_switch.prop("checked",false).trigger("change");
+            }
+            else{
+                container.empty();
+            }
+        })
+
+    }
 
     container.empty();
 
-    var toolbar = $("<div/>").addClass("d-flex flex-column flex-lg-row mb-2");
-    var resource_lock_indicator_group = $("<div/>").addClass("input-group-text flex-lg-fill me-lg-2 mb-lg-0 mb-2").append($("<div/>").append("Write protection"));
-    var resource_lock_indicator = $("<div/>").addClass("ms-3");
+    users_subject_card_content = container;
+
+    var toolbar = $("<div/>").addClass("toolbar d-flex flex-column flex-xl-row mb-2");
+    
+    var edit_group = $("<div/>").addClass("d-flex flex-fill flex-row mb-2 w-xl-50");
+    
+    var resource_lock_indicator_group = $("<div/>").addClass("input-group-text me-2 mb-xl-0 mb-2");
+    var resource_lock_indicator = $("<div/>").addClass("resource-indicator");
+    resource_lock_indicator.append($("<span/>").addClass("bi bi-unlock-fill text-success opacity-0"));
     resource_lock_indicator_group.append(resource_lock_indicator);
-    toolbar.append(resource_lock_indicator_group);
+    edit_group.append(resource_lock_indicator_group);
+
 
     var resource_edit_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","subjectEditSwitch");
     var resource_edit_switch_group = $("<div/>").addClass("form-check form-switch");
     resource_edit_switch_group.append(resource_edit_switch);
     resource_edit_switch_group.append($("<label/>").addClass("form-check-label").attr("for","subjectEditSwitch").html("Edit subject data"));
-    toolbar.append($("<div/>").addClass("input-group-text flex-lg-fill").append(resource_edit_switch_group));               
+    edit_group.append($("<div/>").addClass("input-group-text flex-grow-1 flex-xl-fill me-xl-2 mb-xl-0 mb-2").append(resource_edit_switch_group));
+    
+    toolbar.append(edit_group);
+
+
+    var refresh_group = $("<div/>").addClass("d-flex flex-fill flex-row mb-2 w-xl-50");
+
+    var refresh_btn = $("<button/>").addClass("btn btn-outline-dark refresh");
+    refresh_btn.html($("<i/>").addClass("fa fa-arrows-rotate").attr("aria-hidden","true"));
+    refresh_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Refresh data.");
+    refresh_group.append($("<div/>").addClass("me-2").append(refresh_btn));
+
+    var auto_refresh_switch = $("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","autoRefreshSwitch");
+    var auto_refresh_switch_group = $("<div/>").addClass("form-check form-switch");
+    auto_refresh_switch_group.append(auto_refresh_switch);
+    auto_refresh_switch_group.append($("<label/>").addClass("form-check-label").attr("for","autoRefreshSwitch").html("Auto refresh data"));
+    refresh_group.append($("<div/>").addClass("flex-grow-1 input-group-text").append(auto_refresh_switch_group)); 
+
+    toolbar.append(refresh_group);
+
+    refresh_btn.on("click",function(){
+        refresh_subject();
+    })
+
 
     container.append(toolbar)
     
@@ -208,19 +324,28 @@ function users_subject_card(container,entry){
     init_fields(form,entry);
     var submit_subject_data_btn = $("<button/>").attr("type","submit").addClass("btn btn-outline-dark w-100").html("Update data");
     form.append(submit_subject_data_btn);
-    
+
     resource_edit_switch.on("change",function(){
         var checked = $(this).prop("checked");
         if(checked){
             $(form).find(".subject-resource").each(function(){$(this).prop("disabled",false)});
             $(submit_subject_data_btn).prop("disabled",false);
+            setLock("subjects",[users_current_subject],function(){
+                users_update_subject_lock_indicator();
+            });
+            
         }
         else{
             $(form).find(".subject-resource").each(function(){$(this).prop("disabled",true)});
             $(submit_subject_data_btn).prop("disabled",true);
+            releaseLock("subjects",function(){
+                users_update_subject_lock_indicator();
+            });
         }
     })
     resource_edit_switch.trigger("change");
+
+    
 
     $(form).on("submit",function(e){
         e.preventDefault();
@@ -247,9 +372,7 @@ function users_subject_card(container,entry){
                 function(){
                     users_subject_update_ajax(entry["SubjectIndex"],values,function(){
                         // what to do when update is succesful...?
-                        releaseLock("subjects",function(){
-                            resource_edit_switch.prop("checked",false).trigger("change");
-                        })
+                        resource_edit_switch.prop("checked",false).trigger("change");
                         
                     });
                 },
@@ -258,9 +381,58 @@ function users_subject_card(container,entry){
                     bootbox.alert(message);
                 }
                 )
-
-
     })
+
+    $(users_subject_card_content).on("lock_change", function(){
+        if(users_current_subjects_lock===null){
+            // current subject can be edited
+
+            resource_edit_switch.prop("disabled",false);
+            auto_refresh_switch.prop("disabled",false);
+            refresh_btn.prop("disabled",false);
+
+            if(resource_edit_switch.prop("checked")){
+                var message = 'Resource lock has expired or taken.';
+                bootbox.alert(message);
+                resource_edit_switch.prop("checked",false).trigger("change");
+            }
+
+            return;
+        }
+        if(users_current_subjects_lock == current_user){
+            if(resource_edit_switch.prop("checked")==false){
+                resource_edit_switch.prop("checked",true).trigger("change");
+            }
+
+            // can be released
+            resource_edit_switch.prop("disabled",false);
+
+            refresh_btn.prop("disabled",true);
+            auto_refresh_switch.prop("disabled",true);
+
+            if(auto_refresh_switch.prop("checked")){
+                auto_refresh_switch.prop("checked",true).trigger("change");
+            }
+        }
+        else{
+            // cant be edited
+            resource_edit_switch.prop("disabled",true);
+            auto_refresh_switch.prop("disabled",false);
+            refresh_btn.prop("disabled",false);
+
+            if(resource_edit_switch.prop("checked")){
+                var message = 'Resource lock has expired or taken.';
+                bootbox.alert(message);
+                resource_edit_switch.prop("checked",false).trigger("change");
+            }
+        }
+    })
+
+
+    if(subjects_lock_interval!=null){
+        clearInterval(subjects_lock_interval)
+    }
+    subjects_lock_interval = setInterval(users_update_subject_lock_indicator, 5000);
 }
 
 function users_events_card(container, subject_info){
@@ -270,6 +442,9 @@ function users_events_card(container, subject_info){
 
 function users_main_tools_view(container, subject_index, title = null, subtitle = null){
     container.empty();
+
+    users_current_subject = subject_index;
+
     var subject_title = $("<div/>").addClass("d-flex p-2 bg-dark text-white fs-3 mb-3");
     
     container.append(subject_title);
@@ -341,9 +516,15 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
         }
         else{
             subject_title.empty();
+            users_subject_card_content = null;
+
             if(title!=null) subject_title.append(title);
             if(subtitle!=null) subject_title.append(subtitle);
             subject_title.append(users_clear_content_btn());
+
+            if(subjects_lock_interval!=null){
+                clearInterval(subjects_lock_interval)
+            }
         }
     },
     function(){

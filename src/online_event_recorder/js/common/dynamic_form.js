@@ -497,6 +497,9 @@ function showCustomArgs(container,custom_args, flex = false){
             if(index%2==0){
                 arg_row.addClass("me-lg-2");
             }
+            else{
+                arg_row.addClass("g-lg-0 ps-lg-2");
+            }
         }
         
         try {

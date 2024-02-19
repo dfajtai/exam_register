@@ -1,6 +1,7 @@
 var defs = Object();
 
 var users = {};
+var current_user = null;
 
 function simpleChecksum(input){
     return (CRC32.str(JSON.stringify(input))>>>0).toString(16);
@@ -220,5 +221,13 @@ function updateLocalDefinitionDatabase(callback){
             users[data["UserID"]] = data["UserName"];
         })
         // console.log(users);
+    }});
+
+    $.ajax({type:"GET",
+    url:"php/get_own_id.php",
+    dataType:"json",
+    data:{},
+    success:function(result){
+        current_user = result;
     }});
 }

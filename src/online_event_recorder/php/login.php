@@ -52,7 +52,7 @@ if(isset($_POST['uname']) &&
                
                $database -> update("users",["LastLogin"=>Medoo::raw('NOW()')],
 										[ "UserName" => $uname]);
-               
+
                header("Location: ../home.php?" . $_SERVER["QUERY_STRING"]);
                exit;
             }else {

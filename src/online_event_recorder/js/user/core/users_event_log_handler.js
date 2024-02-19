@@ -5,14 +5,10 @@ var users_eventlog_visible_subjects = null;
 var users_eventlog_visible_subjects_info = null;
 var users_eventlog_subject_string_lookup = {};
 
-
 var active_users_eventlog_locks = [];
 var active_users_eventlog_lock_info = {};
 
 var users_eventlog_lock_interval = null;
-
-
-
 
 function users_eventlog_retrieve_subjects_ajax(params) {
     // console.log("retrieve some subj");
@@ -404,7 +400,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
                 events: window.users_eventlog_operate_events, formatter: users_eventlog_operate_formatter, forceHide:true},
                 {title: '#', field : 'EventIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
                 {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "users_eventlog_subjectFormatter"},
-                {title: 'Study', field : 'EventStudy', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true},
+                {title: 'Study', field : 'EventStudy', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true, visible:false},
                 {title: 'Event Name', field : 'EventName', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
                 {title: 'Template', field : 'EventTemplate', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "eventFormatter",},

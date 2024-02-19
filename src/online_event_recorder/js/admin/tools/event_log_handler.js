@@ -1139,7 +1139,7 @@ function show_eventlog_batch_edit(container, table){
     
     var modal_body_btns = $("<div/>").addClass("row");
     var btn_batch_duplicate = $("<button/>").addClass("btn btn-outline-dark w-100").attr("id","batch_duplicate").attr("aria-label","Duplicate events with new parameters").html($("<i/>").addClass("fa fa-copy me-2").attr("aria-hidden","true")).append("Duplicate events with new parameters");
-    var btn_batch_update =$("<button/>").addClass("btn btn-outline-dark w-100").attr("id","batch_update").attr("aria-label","Update selected events").html($("<i/>").addClass("fa fa-arrows-spin me-2").attr("aria-hidden","true")).append("Update selected events");
+    var btn_batch_update =$("<button/>").addClass("btn btn-outline-dark w-100").attr("id","batch_update").attr("aria-label","Update selected events").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Update selected events");
     modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_duplicate));
     modal_body_btns.append($("<div/>").addClass("col-md-6").append(btn_batch_update));
     modal_body.append($("<div/>").append(modal_body_btns));

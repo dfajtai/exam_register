@@ -26,6 +26,29 @@ function getLocks(resource_name, callback = null){
         });
 }
 
+function getOthersLocks(resource_name, callback = null){
+    if(callback === null){
+        callback = function(){
+        };
+    }
+    return ajax = $.ajax({
+        type: "POST",
+        url: 'php/resource_lock_get_others.php',
+        dataType: "json",
+        data: {'resource':resource_name},
+        success: function(result){
+            var locks = [];
+            $.each(result,function(index,row){
+                var resource_ids = nullify_array(JSON.parse(row["resource_id"]));
+                resource_ids = resource_ids==null?[]:resource_ids;
+                locks.push({resource:row["resource_id"], resource_ids:resource_ids, user:row["user"], valid:row["valid"]});
+            })
+            
+            callback(locks);
+        }
+    });
+}
+
 function getLocksFast(resource_name, callback = null){
     if(callback === null){
         callback = function(){
@@ -144,5 +167,55 @@ function checkOwnLock(resource_name, resource_id, success_callback = null, failu
                 if(failure_callback!=null) failure_callback();
             }
         }
+    })
+}
+
+function checkOthersLock(resource_name, resource_id, free_callback = null, locked_callback = null){
+    getOthersLocks(resource_name,function(locks){
+        var lock = null;
+        $.each(locks,function(index, lock_info){
+            if(lock_info["resource_ids"].includes(resource_id)){
+                lock = lock_info;
+                return false;
+            }
+        })
+
+
+        if(lock != null){
+            if(locked_callback!=null){
+                locked_callback(lock);
+            }
+        }
+        else{
+            free_callback();
+        }
+
+    })
+}
+
+function checkLock(resource_name, resource_id, free_callback = null, locked_callback = null){
+    resource_id = parse_val(resource_id);
+
+    getLocks(resource_name,function(locked_indices,locks){
+        if(locked_indices.includes(resource_id)){
+            var lock = null;
+            $.each(locks,function(index, lock_info){
+                if(lock_info["resources"].includes(resource_id)){
+                    lock = lock_info;
+                    return false;
+                }
+            })
+
+            if(lock != null){
+                if(locked_callback!=null){
+                    locked_callback(lock);
+                }
+            }  
+        }
+
+        else{
+            free_callback();
+        }
+
     })
 }
