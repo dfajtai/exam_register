@@ -267,7 +267,12 @@ function users_subject_card(container,entry){
             if(name in entry){
                 if($(this).attr("data-value")!=undefined){
                     //this is a range input
-                    $(this).val(entry[name])
+                    if(entry[name]===null){
+                        $(this).val(entry[name]);
+                    }
+                    else{
+                        $(this).val(entry[name]).trigger("change");
+                    }
                 }
                 else{
                     $(this).val(entry[name]).trigger("change");

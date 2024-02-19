@@ -639,8 +639,13 @@ function show_subject_modal_edit(container, table, index){
             var name = $(this).attr("name");
             if(name in entry){
                 if($(this).attr("data-value")!=undefined){
-                    //this is a range input
-                    $(this).val(entry[name])
+                     //this is a range input
+                    if(entry[name]===null){
+                        $(this).val(entry[name]);
+                    }
+                    else{
+                        $(this).val(entry[name]).trigger("change");
+                    }
                 }
                 else{
                     $(this).val(entry[name]).trigger("change");

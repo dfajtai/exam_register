@@ -212,6 +212,7 @@ function dynamicRangeInput(container,name,label,arg){
 
     $(current).on("change",function(){
         $(_input).val($(this).val());
+        $(_input).prop("data-value",$(this).val());
     })
 
     $(_input).on("input",function(){
