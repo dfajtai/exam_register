@@ -263,7 +263,6 @@ function users_subject_card(container,entry){
             if(result.length==1){    
                 var entry = result[0];
                 init_fields(form,entry);
-                resource_edit_switch.prop("checked",false).trigger("change");
             }
             else{
                 container.empty();
@@ -345,7 +344,20 @@ function users_subject_card(container,entry){
     })
     resource_edit_switch.trigger("change");
 
-    
+    auto_refresh_switch.on("change",function(){
+        var checked = $(this).prop("checked");
+        if(checked){
+            users_subject_refresh_interval = setInterval(refresh_subject,5000);
+        }
+        else{
+            if(users_subject_refresh_interval!=null){
+
+                clearInterval(users_subject_refresh_interval);
+                users_subject_refresh_interval=null;
+            }
+        }
+    })
+    auto_refresh_switch.trigger("change");
 
     $(form).on("submit",function(e){
         e.preventDefault();
@@ -382,6 +394,8 @@ function users_subject_card(container,entry){
                 }
                 )
     })
+
+
 
     $(users_subject_card_content).on("lock_change", function(){
         if(users_current_subjects_lock===null){
@@ -523,7 +537,8 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
             subject_title.append(users_clear_content_btn());
 
             if(subjects_lock_interval!=null){
-                clearInterval(subjects_lock_interval)
+                clearInterval(subjects_lock_interval);
+                subjects_lock_interval = null;
             }
         }
     },
