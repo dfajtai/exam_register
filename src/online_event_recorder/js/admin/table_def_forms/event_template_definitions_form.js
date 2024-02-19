@@ -121,6 +121,7 @@ function initEventDefinitionsTable(container,tableId){
         event_args_modal(container, modal_id, "Event form preview");
 
         var modal = container.find("#"+modal_id);
+
         var modal_body = modal.find(".modal-body");
         var form = $("<form>").addClass("needs-validation");
         var modal_footer = modal.find(".modal-footer");

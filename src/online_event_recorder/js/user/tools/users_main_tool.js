@@ -102,7 +102,10 @@ function users_clear_content_btn(){
 
     $(clear_btn).on("click",function(){
         $(users_main_tool_content).empty().prop("hidden",true);
-
+        users_subject_card_content = null;
+        users_event_content = null;
+        stop_users_subjectlock_timer();
+        stop_users_eventlog_lock_timer();
     })
     return $("<div/>").addClass("ms-3").append(clear_btn);
 }
@@ -111,7 +114,11 @@ function users_clear_content_btn(){
 
 function init_users_main_tool(container){
     container.empty();
+
+    users_subject_card_content = null;
     users_event_content = null;
+    stop_users_subjectlock_timer();
+    stop_users_eventlog_lock_timer();
 
     var subject_handler_toolbar = $("<div/>").addClass("d-flex flex-column flex-lg-row justify-content-evenly").attr("id","subject_handler_toolbar");
     
@@ -130,9 +137,14 @@ function init_users_main_tool(container){
     search_collapse.append(search_collapse_card.append(search_collapse_card_content));
 
     subjectSelectWidget(search_collapse_card_content,
-        statusFromStorage("activeStudy"),
+        statusToUrl("activeStudy"),
         function(new_indices,new_info){
             if(new_indices.length>0){
+                users_subject_card_content = null;
+                users_event_content = null;
+                stop_users_subjectlock_timer();
+                stop_users_eventlog_lock_timer();
+            
                 var titles = users_subject_title(new_info[0]);
                 $(users_main_tool_content).prop("hidden",false);
                 users_main_tools_view($(users_main_tool_content),new_indices[0],titles[0],titles[1]);
@@ -253,7 +265,14 @@ function users_subject_card(container,entry){
         $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                $(this).val(entry[name]).trigger("change");
+                if($(this).attr("data-value")!=undefined){
+                    //this is a range input
+                    $(this).val(entry[name])
+                }
+                else{
+                    $(this).val(entry[name]).trigger("change");
+                }
+                
             }
         });
         $(form).find("textarea[name]").each(function(){
@@ -391,8 +410,8 @@ function users_subject_card(container,entry){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                // values[field.name] = parse_val(field.value==""?null:field.value);
-                values[field.name] = get_readable_value(form,field.name,field.value);
+                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = get_readable_value(form,field.name,field.value);
             }
         });
 

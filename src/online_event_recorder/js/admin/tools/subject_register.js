@@ -573,8 +573,8 @@ function show_subject_modal_add(container, table){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                // values[field.name] = parse_val(field.value==""?null:field.value);
-                values[field.name] = get_readable_value(form,form,field.name,field.value);
+                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = get_readable_value(form,form,field.name,field.value);
             }
             
         });
@@ -638,7 +638,14 @@ function show_subject_modal_edit(container, table, index){
         $(form).find("input[name]").each(function(){
             var name = $(this).attr("name");
             if(name in entry){
-                $(this).val(entry[name]).trigger("change");
+                if($(this).attr("data-value")!=undefined){
+                    //this is a range input
+                    $(this).val(entry[name])
+                }
+                else{
+                    $(this).val(entry[name]).trigger("change");
+                }
+                
             }
         });
         $(form).find("textarea[name]").each(function(){
@@ -682,8 +689,8 @@ function show_subject_modal_edit(container, table, index){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                // values[field.name] = parse_val(field.value==""?null:field.value);
-                values[field.name] = get_readable_value(form,form,field.name,field.value);
+                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = get_readable_value(form,form,field.name,field.value);
             }
         });
 
