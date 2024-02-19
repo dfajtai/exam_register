@@ -119,115 +119,139 @@ function updateRemoteDefinitionChecksum(table_name=null, current_data = null){
 
 function updateLocalDefinitionDatabase(callback){
     $.ajax({type:"GET",
-            url:"php/retrieve_table.php",
-            dataType:"json",
-            data:({table_name:"definition_tables"}),
-            success:function(result){
-                if (localStorage.getItem("definition_tables")===null){
-                    localStorage.setItem("definition_tables",JSON.stringify(result));
-                    var local_definition_tables = result;
-                }
-                else{
-                    var local_definition_tables = JSON.parse(localStorage.getItem("definition_tables"));
-                }
-                
-                let local_version = Object.fromEntries(local_definition_tables.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
-                let remote_version = Object.fromEntries(result.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
-                
-                // console.log(local_version);
-                // console.log(remote_version);
-
-                $.each(remote_version, function(table_name, table_info){
-                    if(localStorage.getItem(table_name) === null){
-                        // table not exists in local storage
-                        $.ajax({type:"GET",
-                                url:"php/retrieve_table.php",
-                                dataType:"json",
-                                data:({table_name:table_name}),
-                                success:function(_result){
-                                    localStorage.setItem(table_name,JSON.stringify(_result));
-                                    defs[table_name] = _result;
-
-                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
-                                    localStorage.setItem("definition_tables",JSON.stringify(result));
-                                }});
-                        return;
-                    }
-
-                    try {
-                        var local_version_checksum = simpleChecksum(JSON.parse(localStorage.getItem(table_name)));
-                    } catch (error) {
-                        var local_version_checksum ="";
-                    }
-                    
-
-                    if(!local_version.hasOwnProperty(table_name)){
-                        // local definition tables missing the entry
-                        $.ajax({type:"GET",
-                                url:"php/retrieve_table.php",
-                                dataType:"json",
-                                data:({table_name:table_name}),
-                                success:function(_result){
-                                    localStorage.setItem(table_name,JSON.stringify(_result));
-                                    defs[table_name] = _result;
-
-                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
-                                    localStorage.setItem("definition_tables",JSON.stringify(result));
-                                }});
-                        return;
-                    }
-                    else if(moment(table_info.timestamp).isAfter(local_version[table_name].timestamp)){
-                        // local version is outdated
-                        $.ajax({type:"GET",
-                                url:"php/retrieve_table.php",
-                                dataType:"json",
-                                data:({table_name:table_name}),
-                                success:function(_result){
-                                    localStorage.setItem(table_name,JSON.stringify(_result));
-                                    defs[table_name] = _result;
-
-                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
-                                    localStorage.setItem("definition_tables",JSON.stringify(result));
-                                }})
-                        return;
-                    }
-                    else if(table_info.checksum!= local_version_checksum){
-                        // local version is altered
-                        $.ajax({type:"GET",
-                                url:"php/retrieve_table.php",
-                                dataType:"json",
-                                data:({table_name:table_name}),
-                                success:function(_result){
-                                    localStorage.setItem(table_name,JSON.stringify(_result));
-                                    defs[table_name] = _result;
-
-                                    console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
-                                    localStorage.setItem("definition_tables",JSON.stringify(result));
-                                }})
-                        return;
-                    }
-                    defs[table_name] = JSON.parse(localStorage.getItem(table_name));
-                });
-                if (callback != null) callback();
+        url:"php/retrieve_table.php",
+        dataType:"json",
+        data:({table_name:"definition_tables"}),
+        success:function(result){
+            if (localStorage.getItem("definition_tables")===null){
+                localStorage.setItem("definition_tables",JSON.stringify(result));
+                var local_definition_tables = result;
             }
-        })
+            else{
+                var local_definition_tables = JSON.parse(localStorage.getItem("definition_tables"));
+            }
+            
+            let local_version = Object.fromEntries(local_definition_tables.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
+            let remote_version = Object.fromEntries(result.map(x=>[x.TableName,{timestamp:x.LastChange,checksum:x.Checksum}]));
+            
+            // console.log(local_version);
+            // console.log(remote_version);
 
-    $.ajax({type:"GET",
-    url:"php/retrieve_table_where.php",
-    dataType:"json",
-    data:({table_name:"users",columns:["UserID","UserName"]}),
-    success:function(result){
-        $.each(result,function(index,data){
-            users[data["UserID"]] = data["UserName"];
-        })
-        // console.log(users);
-    }});
+            
+            var promises = [];
 
-    $.ajax({type:"GET",
-    url:"php/get_own_id.php",
-    dataType:"json",
-    data:{},
-    success:function(result){
-        current_user = result;
-    }});
+            $.each(remote_version,function(table_name,table_info){
+                if(localStorage.getItem(table_name) === null){
+                    // table not exists in local storage
+                    var request = $.ajax({type:"GET",
+                            url:"php/retrieve_table.php",
+                            dataType:"json",
+                            data:({table_name:table_name}),
+                            success:function(_result){
+                                localStorage.setItem(table_name,JSON.stringify(_result));
+                                defs[table_name] = _result;
+
+                                console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                localStorage.setItem("definition_tables",JSON.stringify(result));
+
+                                defs[table_name] = JSON.parse(localStorage.getItem(table_name));
+                            }});
+
+                    promises.push(request);
+                    return true;
+                }
+
+                try {
+                    var local_version_checksum = simpleChecksum(JSON.parse(localStorage.getItem(table_name)));
+                } catch (error) {
+                    var local_version_checksum ="";
+                }
+                
+
+                if(!local_version.hasOwnProperty(table_name)){
+                    // local definition tables missing the entry
+                    var request = $.ajax({type:"GET",
+                            url:"php/retrieve_table.php",
+                            dataType:"json",
+                            data:({table_name:table_name}),
+                            success:function(_result){
+                                localStorage.setItem(table_name,JSON.stringify(_result));
+                                defs[table_name] = _result;
+
+                                console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                localStorage.setItem("definition_tables",JSON.stringify(result));
+
+                                defs[table_name] = JSON.parse(localStorage.getItem(table_name));
+                            }});
+
+                    promises.push(request);
+                    return true;
+                }
+                else if(moment(table_info.timestamp).isAfter(local_version[table_name].timestamp)){
+                    // local version is outdated
+                    var request = $.ajax({type:"GET",
+                            url:"php/retrieve_table.php",
+                            dataType:"json",
+                            data:({table_name:table_name}),
+                            success:function(_result){
+                                localStorage.setItem(table_name,JSON.stringify(_result));
+                                defs[table_name] = _result;
+
+                                console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                localStorage.setItem("definition_tables",JSON.stringify(result));
+
+                                defs[table_name] = JSON.parse(localStorage.getItem(table_name));
+                            }})
+                    promises.push(request);
+                    return true;
+                }
+                else if(table_info.checksum!= local_version_checksum){
+                    // local version is altered
+                    var request = $.ajax({type:"GET",
+                            url:"php/retrieve_table.php",
+                            dataType:"json",
+                            data:({table_name:table_name}),
+                            success:function(_result){
+                                localStorage.setItem(table_name,JSON.stringify(_result));
+                                defs[table_name] = _result;
+
+                                console.log("Table '"+ table_name + "' updated to its '"+ table_info.timestamp + "' version.");
+                                localStorage.setItem("definition_tables",JSON.stringify(result));
+
+                                defs[table_name] = JSON.parse(localStorage.getItem(table_name));
+                            }})
+                    promises.push(request);
+                    return true;
+                }
+            })
+
+            var users_request = $.ajax({type:"GET",
+                url:"php/retrieve_table_where.php",
+                dataType:"json",
+                data:({table_name:"users",columns:["UserID","UserName"]}),
+                success:function(result){
+                    $.each(result,function(index,data){
+                        users[data["UserID"]] = data["UserName"];
+                    })
+                    // console.log(users);
+                }})
+            promises.push(users_request);
+
+            var current_user_request = $.ajax({type:"GET",
+                url:"php/get_own_id.php",
+                dataType:"json",
+                data:{},
+                success:function(result){
+                    current_user = result;
+                }})
+            promises.push(current_user_request);
+            
+
+            $.when.apply(null,promises).done(function(){
+                if(callback != null){
+                    callback();
+                }
+            })
+            
+        }})        
 }
