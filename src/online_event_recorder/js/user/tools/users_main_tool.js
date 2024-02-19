@@ -137,7 +137,7 @@ function init_users_main_tool(container){
     search_collapse.append(search_collapse_card.append(search_collapse_card_content));
 
     subjectSelectWidget(search_collapse_card_content,
-        statusToUrl("activeStudy"),
+        statusFromUrl("activeStudy"),
         function(new_indices,new_info){
             if(new_indices.length>0){
                 users_subject_card_content = null;

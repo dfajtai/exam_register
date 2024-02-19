@@ -55,7 +55,7 @@ function showSelectActiveStudyForm(container){
 
         let selectedID = JSON.parse($(this).find("#selectedStudy").val());
         currentStudyInfoBlock.empty();
-        currentStudyInfoBlock.append(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID,2000));
+        currentStudyInfoBlock.append(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID,1000));
 
         $.each(formData, function( index, element ) {
             statusToUrl(element.name,element.value)
