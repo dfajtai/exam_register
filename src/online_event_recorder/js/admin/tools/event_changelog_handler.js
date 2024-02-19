@@ -616,6 +616,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
                         table.bootstrapTable("resetSearch");
                         table.bootstrapTable("refreshOptions",{"filterOptions": {'filterAlgorithm':function(){return true}}});
                         table.bootstrapTable("filterBy",{});
+                        table.bootstrapTable('sortBy', {field: 'EventChangeLogIndex', sortOrder: 'desc'});
                     }
                     else{
                         table.bootstrapTable("resetSearch");
@@ -623,6 +624,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
                             return row["EventIndex"]==event_filter_text;
                         }}});
                         table.bootstrapTable("filterBy",{});
+                        table.bootstrapTable('sortBy', {field: 'EventChangeLogIndex', sortOrder: 'desc'});
                     }
                 })
                 _filter_group.find("#clear").on("click",function(){
@@ -658,6 +660,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 
             table.bootstrapTable('refreshOptions',options);
             table.bootstrapTable("filterBy",{});
+            table.bootstrapTable('sortBy', {field: 'EventChangeLogIndex', sortOrder: 'desc'});
 
             event_changelog_subject_string_lookup = {};
             $.each(event_changelog_visible_subjects_info,function(index,val){

@@ -362,7 +362,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
-				clearAllStatusFromUrl();
+				// clearAllStatusFromUrl();
 
 				$.ajax({
 					type: "POST",
@@ -382,6 +382,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
   			});
 			
 			$(document).ready(function () {
+				clearStatusFromUrl("uname");
 				startIncativityTimer();
 			});
 

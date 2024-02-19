@@ -53,8 +53,8 @@ if(isset($_POST['uname']) &&
                $database -> update("users",["LastLogin"=>Medoo::raw('NOW()')],
 										[ "UserName" => $uname]);
 
-               // header("Location: ../home.php?" . $_SERVER["QUERY_STRING"]);
-               header("Location: ../home.php?");
+               header("Location: ../home.php?" . $_SERVER["QUERY_STRING"]);
+               // header("Location: ../home.php?");
                exit;
             }else {
             $em = "Incorect User name or password";

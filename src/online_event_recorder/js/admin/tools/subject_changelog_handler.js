@@ -512,6 +512,7 @@ function create_subject_changelog_table(container, table_id, simplify = false, s
 
             table.bootstrapTable('refreshOptions',options);
             table.bootstrapTable("filterBy",{});
+            table.bootstrapTable('sortBy', {field: 'SubjectChangeLogIndex', sortOrder: 'desc'});
 
         });
         container.append(subject_selector_container);
@@ -573,7 +574,7 @@ function create_subject_changelog_table(container, table_id, simplify = false, s
                 events: window.subject_changelog_operate_events, formatter: subject_changelog_operate_formatter, forceHide:true},
                 {title: '#', field : 'SubjectChangeLogIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
 
-                {title: 'Version', field : 'OldLastChange', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "subject_changelog_version_timestamp_formatter", visible:true},
+                {title: 'Version', field : 'OldLastChange', align:'center', sortable:true, searchable:true, forceExport: true, formatter: "subject_changelog_version_timestamp_formatter", visible:true},
                 
                 // timestamp of an entry in subject_change_log is the dateteime when the change occured - not the timestamp of the old version
                 {title: 'Changed @', field : 'Timestamp', align:'center', sortable:true, searchable:true,forceExport: false, formatter: "datetimeFormatter",visible:false},
@@ -615,6 +616,8 @@ function create_subject_changelog_table(container, table_id, simplify = false, s
                                                                 return params
                                                             }, 
                                                 ajax: subject_changelog_retrieve_subjects_ajax});
+
+        table.bootstrapTable('sortBy', {field: 'SubjectChangeLogIndex', sortOrder: 'desc'})
 
         
     }

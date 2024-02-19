@@ -124,7 +124,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script>
 		function study_select(){
 			$('.navbar-collapse').collapse('hide');
-			showSelectActiveStudyForm($("#main_container"));
+			showSelectActiveStudyForm($("#main_container"),function(){
+						setTimeout(show_users_home,500);
+					});
 		}
 
 		function show_users_home(){
@@ -134,7 +136,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		$(document).ready(function() {
 			$("#become_admin_button").click(function(){
-				clearAllStatusFromUrl();
+				// clearAllStatusFromUrl();
 
 				$.ajax({
 					type: "POST",
@@ -158,6 +160,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 			$(document).ready(function () {
+				clearStatusFromUrl("uname");
 				startIncativityTimer();
 			});
 			

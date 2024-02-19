@@ -1,4 +1,4 @@
-function showSelectActiveStudyForm(container){
+function showSelectActiveStudyForm(container,callback= null){
     var selectActiveStudyForm = $("<form>").attr("id","selectActiveStudy").addClass("container mb-3 shadow");
     
     var currentStudyInfoBlock = $("<div/>");
@@ -64,5 +64,8 @@ function showSelectActiveStudyForm(container){
 
         selectActiveStudyForm[0].reset();
         selectedStudyInfoBlock.empty().removeClass("row mb-3 mx-1");
+        if(callback!=null){
+            callback()
+        }
     });
 }
