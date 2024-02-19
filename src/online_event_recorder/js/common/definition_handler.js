@@ -223,6 +223,8 @@ function updateLocalDefinitionDatabase(callback){
                     promises.push(request);
                     return true;
                 }
+
+                defs[table_name] = JSON.parse(localStorage.getItem(table_name));
             })
 
             var users_request = $.ajax({type:"GET",

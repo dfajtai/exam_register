@@ -152,7 +152,7 @@ function subjectStatusFormatter(value,row){
 
     var name = getDefEntryFieldWhere("subject_status_definitions","StatusID",value,"StatusName");
     if (name){return name}
-    else {return "Unknown location '" + String(value) + "'"}
+    else {return "Unknown status '" + String(value) + "'"}
 }
 
 
