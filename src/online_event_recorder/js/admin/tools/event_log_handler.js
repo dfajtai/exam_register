@@ -379,7 +379,10 @@ function eventlog_lock_formatter(value,row){
         content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Event has been locked by '"+ userFormatter(_info["user"]) +"' until "+ _info["valid"] +".")
         return content.prop("outerHTML");
     }
-    return $("<span/>").addClass("bi bi-unlock-fill text-success").prop("outerHTML");
+    var content = $("<span/>").addClass("bi bi-unlock-fill text-success");
+    content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Event can be edited.")
+
+    return content.prop("outerHTML");
 }
 
 function eventlog_checkbox_formatter(value,row, index){

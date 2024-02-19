@@ -573,7 +573,8 @@ function show_subject_modal_add(container, table){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = parse_val(field.value==""?null:field.value);
+                values[field.name] = get_readable_value(form,form,field.name,field.value);
             }
             
         });
@@ -681,7 +682,8 @@ function show_subject_modal_edit(container, table, index){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = parse_val(field.value==""?null:field.value);
+                values[field.name] = get_readable_value(form,form,field.name,field.value);
             }
         });
 

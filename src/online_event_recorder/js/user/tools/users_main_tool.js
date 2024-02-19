@@ -233,6 +233,21 @@ function users_subject_lock_indicator_used_by_user(lock){
     indicator.append(content);
 }
 
+function start_users_subjectlock_timer(){
+    if(users_subject_lock_interval!=null){
+        clearInterval(users_subject_lock_interval);
+    }
+    // users_update_subject_lock_indicator();
+    users_subject_lock_interval = setInterval(users_update_subject_lock_indicator, 5000);
+}
+
+function stop_users_subjectlock_timer(){
+    if(users_subject_lock_interval!=null){
+        clearInterval(users_subject_lock_interval);
+        users_subject_lock_interval = null;
+    }
+}
+
 function users_subject_card(container,entry){
     function init_fields(form,entry){
         $(form).find("input[name]").each(function(){
@@ -376,7 +391,8 @@ function users_subject_card(container,entry){
                 values[field.name] = parse_val(data_val==""?null:data_val);
             }
             else{
-                values[field.name] = parse_val(field.value==""?null:field.value);
+                // values[field.name] = parse_val(field.value==""?null:field.value);
+                values[field.name] = get_readable_value(form,field.name,field.value);
             }
         });
 
@@ -442,11 +458,7 @@ function users_subject_card(container,entry){
         }
     })
 
-
-    if(subjects_lock_interval!=null){
-        clearInterval(subjects_lock_interval)
-    }
-    subjects_lock_interval = setInterval(users_update_subject_lock_indicator, 5000);
+    start_users_subjectlock_timer();
 }
 
 function users_events_card(container, subject_info){
@@ -497,8 +509,20 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
             
             subject_card_accordion_content_container.append(subject_card_accordion_content);
 
+            subject_card_accordion_content_container.on('show.bs.collapse', function () {
+                if(users_subject_card_content==null){
+                    users_subject_card(subject_card_accordion_content,entry);
+                }
+                // users_update_subject_lock_indicator();
+                start_users_subjectlock_timer();
+            });
+
+            subject_card_accordion_content_container.on('hide.bs.collapse', function () {
+                stop_users_subjectlock_timer();
+            });
+
             // subject data resource status bar
-            users_subject_card(subject_card_accordion_content,entry);
+            
             
             // subject's events handling
 
@@ -523,8 +547,13 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
                 if(users_event_content==null){
                     users_events_card(event_card_accordion_content,entry);
                 }
+                start_users_eventlog_lock_timer();
             });
             
+            subject_card_accordion_content_container.on('hide.bs.collapse', function () {
+                stop_users_eventlog_lock_timer();
+
+            });
 
             container.append(main_accordion);
         }
@@ -536,10 +565,7 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
             if(subtitle!=null) subject_title.append(subtitle);
             subject_title.append(users_clear_content_btn());
 
-            if(subjects_lock_interval!=null){
-                clearInterval(subjects_lock_interval);
-                subjects_lock_interval = null;
-            }
+            stop_users_subjectlock_timer();
         }
     },
     function(){

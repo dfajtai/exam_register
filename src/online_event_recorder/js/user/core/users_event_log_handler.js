@@ -5,8 +5,8 @@ var users_eventlog_visible_subjects = null;
 var users_eventlog_visible_subjects_info = null;
 var users_eventlog_subject_string_lookup = {};
 
-var active_users_eventlog_locks = [];
-var active_users_eventlog_lock_info = {};
+var users_eventlog_locks = [];
+var users_eventlog_lock_info = {};
 
 var users_eventlog_lock_interval = null;
 
@@ -70,7 +70,7 @@ function users_eventlog_update_ajax(event_index, event_info, callback = null, re
 function update_users_eventlog_locks(){
     var $table = $('#'+users_eventlog_table_id);
 
-    getLocks("users_eventlog",function(locked_indices,locks){
+    getLocks("event_log",function(locked_indices,locks){
         var resource_lock_info = {};
         $.each(locked_indices,function(index,resource_id){
             var user = null;
@@ -86,9 +86,9 @@ function update_users_eventlog_locks(){
             resource_lock_info[resource_id] = {user:user,valid:valid};
         });
 
-        if(!isEqual(locked_indices,active_users_eventlog_locks)){
-            active_users_eventlog_locks = locked_indices;
-            active_users_eventlog_lock_info = resource_lock_info;
+        if(!isEqual(locked_indices,users_eventlog_locks)){
+            users_eventlog_locks = locked_indices;
+            users_eventlog_lock_info = resource_lock_info;
 
             var options = $table.bootstrapTable("getOptions");
             var page_number = options.pageNumber;
@@ -134,7 +134,7 @@ function users_eventlog_operate_formatter(value, row, index) {
     //     container.find("button").addClass("disabled");
     // }
 
-    if(active_users_eventlog_locks.includes(row["EventIndex"])){
+    if(users_eventlog_locks.includes(row["EventIndex"])){
         container.find(".lockable").prop("disabled",true);
     }
 
@@ -259,17 +259,21 @@ function users_eventlog_row_formatter(row){
 
 
 function users_eventlog_lock_formatter(value,row){
-    if(active_users_eventlog_locks.includes(row["EventIndex"])){
+    if(users_eventlog_locks.includes(row["EventIndex"])){
         var content = $("<span/>").addClass("bi bi-lock-fill text-danger");
-        var _info = active_users_eventlog_lock_info[row["EventIndex"]];
+        var _info = users_eventlog_lock_info[row["EventIndex"]];
         content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Event has been locked by '"+ userFormatter(_info["user"]) +"' until "+ _info["valid"] +".")
         return content.prop("outerHTML");
     }
-    return $("<span/>").addClass("bi bi-unlock-fill text-success").prop("outerHTML");
+
+    var content = $("<span/>").addClass("bi bi-unlock-fill text-success");
+    content.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Event can be edited.")
+
+    return content.prop("outerHTML");
 }
 
 function users_eventlog_checkbox_formatter(value,row, index){
-    if(active_users_eventlog_locks.includes(row["EventIndex"])){
+    if(users_eventlog_locks.includes(row["EventIndex"])){
         return {disabled: true, checked:false}
     }
     return {disabled: false};
@@ -815,6 +819,20 @@ function users_eventlog_modal(container, modal_id, title){
 }
 
 
+function start_users_eventlog_lock_timer(){
+    if(users_eventlog_lock_interval!= null){
+        clearInterval(users_eventlog_lock_interval)
+    }
+    users_eventlog_lock_interval = setInterval(update_users_eventlog_locks,5000);
+}    
+
+function stop_users_eventlog_lock_timer(){
+    if(users_eventlog_lock_interval!= null){
+        clearInterval(users_eventlog_lock_interval)
+        users_eventlog_lock_interval = null;
+    }
+}   
+
 function show_users_eventlog_handler(container, subject_info){
 
     create_users_eventlog_table(container,users_eventlog_table_id, subject_info);
@@ -848,5 +866,5 @@ function show_users_eventlog_handler(container, subject_info){
 
     toolbar.find(".needs-select").addClass("disabled");
 
-    users_eventlog_lock_interval = setInterval(update_users_eventlog_locks,5000);
+    // start_users_eventlog_lock_timer();
 }
