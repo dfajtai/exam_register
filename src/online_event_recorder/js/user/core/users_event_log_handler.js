@@ -10,6 +10,8 @@ var users_eventlog_lock_info = {};
 
 var users_eventlog_lock_interval = null;
 
+var user_eventlog_show_delete = true;
+
 function users_eventlog_retrieve_subjects_ajax(params) {
     // console.log("retrieve some subj");
     $.ajax({
@@ -117,15 +119,17 @@ function users_eventlog_operate_formatter(value, row, index) {
     edit_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Edit event");
     container.append(edit_btn);
 
-    if(row["EventStatus"]!=event_deleted_status){
-        var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
-        btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
-        container.append(btn_remove);
-    }
-    else{
-        var btn_resotre = $("<button/>").addClass("btn btn-outline-primary btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
-        btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
-        container.append(btn_resotre);
+    if(user_eventlog_show_delete){
+        if(row["EventStatus"]!=event_deleted_status){
+            var btn_remove = $("<button/>").addClass("btn btn-outline-danger btn-sm remove lockable").append($("<i/>").addClass("fa fa-trash"));
+            btn_remove.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'deleted'");
+            container.append(btn_remove);
+        }
+        else{
+            var btn_resotre = $("<button/>").addClass("btn btn-outline-primary btn-sm restore lockable").append($("<i/>").addClass("fa fa-trash-arrow-up"));
+            btn_resotre.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Set status to 'planned'");
+            container.append(btn_resotre);
+        }
     }
 
     // container.append($("<button/>").addClass("btn btn-outline-dark btn-sm status argeditor-lockable").append($("<i/>").addClass("fa fa-solid fa-signs-post")))

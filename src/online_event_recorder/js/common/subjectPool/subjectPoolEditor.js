@@ -212,7 +212,7 @@ function subject_pool_modal_submit(container,table){
     // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
     // modal_body.append(pool_readable_text);
 
-    var pool_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    var pool_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("disabled",true);
     modal_body.append(pool_text);
     var qrcode_dom = $("<div/>").attr("id","qrcode")
     modal_body.append(qrcode_dom);
@@ -315,7 +315,7 @@ function init_subject_pool_table(container, table_id, ){
             {field : 'state', checkbox: true, align:'center'},
             {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
             events: window.subject_pool_editor_events, formatter: subject_pool_oparate_formatter},
-            {title: '#', field : 'SubjectIndex', align:'center', sortable:false, searchable:true},
+            {title: '#', field : 'SubjectIndex', align:'center', sortable:false, searchable:true, visible:false},
             {title: 'ID', field : 'SubjectID', align:'center', sortable:false, searchable:true},
             {title: 'Name', field : 'Name', align:'center', sortable:false, searchable:true},
             {title: 'Study', field : 'StudyID', align:'center', sortable:false, searchable:true, formatter: studyFormatter},
