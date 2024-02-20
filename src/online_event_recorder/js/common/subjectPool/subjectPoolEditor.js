@@ -1,8 +1,8 @@
-var subject_pool_widget_table_id  = "subejctWidgetTable";
-var subject_pool_widget_modals  = {};
+var subject_pool_editor_table_id  = "subejctEditorTable";
+var subject_pool_editor_modals  = {};
 
 function insert_data(indices, callback = null){
-    var table = $("#"+subject_pool_widget_table_id);
+    var table = $("#"+subject_pool_editor_table_id);
 
     $.ajax({
         type: "GET",
@@ -12,10 +12,12 @@ function insert_data(indices, callback = null){
         success: function (result) {
             var ids = getCol(table.bootstrapTable("getData"),"SubjectIndex");
             var data = [];
-            $.each(result,function(index,entry){
-                if(!ids.includes(entry["SubjectIndex"])){
-                    data.push(entry);
-                    ids.push(entry["SubjectIndex"]);
+
+            var lookup = Object.fromEntries(result.map(x=>[x.SubjectIndex,x]));
+            $.each(indices,function(_index,index){
+                if(!ids.includes(index)){
+                    data.push(lookup[index]);
+                    ids.push(index);
                 }
             })
             table.bootstrapTable("append",data);
@@ -35,7 +37,7 @@ function insert_data(indices, callback = null){
 }
 
 function update_load_data(data, update = false){
-    var table = $("#"+subject_pool_widget_table_id);
+    var table = $("#"+subject_pool_editor_table_id);
 
     var indices = nullify_array(getCol(data,"SubjectIndex"));
     indices = indices === null? []:indices;
@@ -65,35 +67,35 @@ function update_load_data(data, update = false){
     }
 }
 
-window.subject_pool_widget_events = {
+window.subject_pool_editor_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+subject_pool_widget_table_id).bootstrapTable('getData');
+        var data = $('#'+subject_pool_editor_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+subject_pool_widget_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
+        $('#'+subject_pool_editor_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
 
 
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+subject_pool_widget_table_id).bootstrapTable('getData');
+        var data = $('#'+subject_pool_editor_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+subject_pool_widget_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
+        $('#'+subject_pool_editor_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
 
     },
     'click .remove': function (e, value, row, index) {
-        $('#'+subject_pool_widget_table_id).bootstrapTable('remove', {
+        $('#'+subject_pool_editor_table_id).bootstrapTable('remove', {
             field: '$index',
             values: [index]
             });
-        $('#'+subject_pool_widget_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-        $('#'+subject_pool_widget_table_id).bootstrapTable("uncheckAll");
+        $('#'+subject_pool_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+        $('#'+subject_pool_editor_table_id).bootstrapTable("uncheckAll");
     }
 }
 
@@ -118,7 +120,7 @@ function subject_pool_oparate_formatter(value, row, index){
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+subject_pool_widget_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+subject_pool_editor_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
@@ -131,9 +133,9 @@ function subject_pool_oparate_formatter(value, row, index){
 function subject_pool_modal_add(container){
     container.empty();
 
-    var modal_id = "subjectPoolWidgetModal";
-    var form_id = "subjectPoolWidgetForm";
-    var subject_selector_table_id = "ubjectPoolWidgetSubjectSelectorTable";
+    var modal_id = "subjectPoolEditorModal";
+    var form_id = "subjectPoolEditorForm";
+    var subject_selector_table_id = "ubjectPoolEditorSubjectSelectorTable";
     
     subject_modal(container,modal_id,"Advanced search");
     var modal = $(container).find("#"+modal_id);
@@ -194,11 +196,11 @@ function subject_pool_modal_add(container){
 function subject_pool_modal_submit(container,table){
     container.empty();
 
-    var modal_id = "subjectPoolWidgetModal";
+    var modal_id = "subjectPoolEditorModal";
     
 
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
-    var modal_dialog = $("<div/>").addClass("modal-dialog modal-lg");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-md");
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
@@ -222,25 +224,33 @@ function subject_pool_modal_submit(container,table){
     modal_dialog.html(modal_content);
     modal_root.html(modal_dialog);
 
+
+    var full_url = null;
+
     $(modal_root).on('show.bs.modal',function(){
-        // qrcode gen
-        var qrcode = new QRCode("qrcode");
-
-        $(pool_text).on("change",function(){
-            qrcode.makeCode($(this).val());
-            // $(pool_readable_text).val(new URL($(this).val()).searchParams.get('setSubjectPool'));
-        })
-
         var indices = getColUnique($(table).bootstrapTable("getData"),"SubjectIndex");
         var indices_text = JSON.stringify(indices);
         console.log(indices_text);
         var searchParams = new URLSearchParams();
         searchParams.set("setSubjectPool",indices_text);
-        var full_url =  window.location.host+'?' + searchParams.toString();
+        full_url =  window.location.host+'?' + searchParams.toString();
 
-        $(pool_text).val(full_url).trigger("change");
+        $(pool_text).val(full_url);
         subject_pool = indices;
-        
+    });
+
+    $(modal_root).on('shown.bs.modal',function(){
+        $(qrcode_dom).css({width:$(pool_text).width(),height:$(pool_text).width()});
+
+        // qrcode gen
+        var qrcode = new QRCode("qrcode",{
+            text: full_url,
+            width: $(pool_text).width(),
+            height: $(pool_text).width(),
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
     });
 
     container.append(modal_root);
@@ -262,7 +272,7 @@ function init_subject_pool_table(container, table_id, ){
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New subject"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the pool"));
     toolbar.append($("<button/>").attr("id","toolbar_load_data").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Load/refresh data"));
-    toolbar.append($("<button/>").attr("id","toolbar_set_as_pool").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-check-double me-2").attr("aria-hidden","true")).append("Submit"));
+    toolbar.append($("<button/>").attr("id","toolbar_set_as_pool").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));
 
     // table.attr("data-height",String(height));
 
@@ -304,7 +314,7 @@ function init_subject_pool_table(container, table_id, ){
         columns : [
             {field : 'state', checkbox: true, align:'center'},
             {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-            events: window.subject_pool_widget_events, formatter: subject_pool_oparate_formatter},
+            events: window.subject_pool_editor_events, formatter: subject_pool_oparate_formatter},
             {title: '#', field : 'SubjectIndex', align:'center', sortable:false, searchable:true},
             {title: 'ID', field : 'SubjectID', align:'center', sortable:false, searchable:true},
             {title: 'Name', field : 'Name', align:'center', sortable:false, searchable:true},
@@ -319,11 +329,11 @@ function init_subject_pool_table(container, table_id, ){
 }
 
 
-function showSubjectPoolWidget(container, initial_indices = null){
+function showSubjectPoolEditor(container, initial_indices = null){
     subject_pool_editor_content = container;
-    init_subject_pool_table(subject_pool_editor_content, subject_pool_widget_table_id);
+    init_subject_pool_table(subject_pool_editor_content, subject_pool_editor_table_id);
 
-    var table = $('#'+subject_pool_widget_table_id);
+    var table = $('#'+subject_pool_editor_table_id);
     var toolbar = container.find(".fixed-table-toolbar");
 
     if(initial_indices==null){
@@ -347,8 +357,8 @@ function showSubjectPoolWidget(container, initial_indices = null){
 
 
 
-    subject_pool_widget_modals  = $("<div/>");
-    container.append(subject_pool_widget_modals);
+    subject_pool_editor_modals  = $("<div/>");
+    container.append(subject_pool_editor_modals);
 
     toolbar.find(".needs-select").addClass("disabled");
 
@@ -377,8 +387,8 @@ function showSubjectPoolWidget(container, initial_indices = null){
                     table.bootstrapTable("remove",{field:"$index",values:indices});
                     statusToStorage("subjectPoolData",JSON.stringify(table.bootstrapTable('getData')));
 
-                    $('#'+subject_pool_widget_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-                    $('#'+subject_pool_widget_table_id).bootstrapTable("uncheckAll");
+                    $('#'+subject_pool_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+subject_pool_editor_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -387,7 +397,7 @@ function showSubjectPoolWidget(container, initial_indices = null){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        subject_pool_modal_add(subject_pool_widget_modals);
+        subject_pool_modal_add(subject_pool_editor_modals);
     })
 
     toolbar.find("#toolbar_load_data").on("click",function(e){
@@ -395,7 +405,7 @@ function showSubjectPoolWidget(container, initial_indices = null){
     })
 
     toolbar.find("#toolbar_set_as_pool").on("click",function(e){
-        subject_pool_modal_submit(subject_pool_widget_modals,table);
+        subject_pool_modal_submit(subject_pool_editor_modals,table);
     })
 
     table.on('all.bs.table',
@@ -413,12 +423,14 @@ function showSubjectPoolWidget(container, initial_indices = null){
 
     table.on('post-body.bs.table',function(event,data){
         // console.log(data);
-        statusToStorage("subjectPoolData",JSON.stringify(data));
+        if(table.bootstrapTable('getOptions').searchText==""){
+            statusToStorage("subjectPoolData",JSON.stringify(data));
+        }
     })
 
-    table.on('all.bs.table',function(args,name){
-        console.log(name)
-    })
+    // table.on('all.bs.table',function(args,name){
+    //     console.log(name)
+    // })
 
 
     container.append(subject_pool_editor_content);

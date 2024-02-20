@@ -91,7 +91,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
 	<script defer src="js/common/subjectPool/subjectPoolMain.js"></script>
-	<script defer src="js/common/subjectPool/subjectPoolWidget.js"></script>
+	<script defer src="js/common/subjectPool/subjectPoolEditor.js"></script>
 	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
 	
 
@@ -338,7 +338,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
 				main_container.append(_title);
 
-				showSubjectPoolWidget(main_container,init_indices);
+				showSubjectPoolEditor(main_container,init_indices);
 				
 				clearAllStatusFromUrl();
 				statusToUrl("tool","SubjectPool");
