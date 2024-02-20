@@ -408,7 +408,7 @@ function create_eventlog_table(container, table_id, simplify = false){
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
 
     var subject_selector_container = $("<div/>");
-    subjectSelectWidget(subject_selector_container,"all",
+    subjectSearchWidget(subject_selector_container,"all",
         function(subject_indices,subject_info){
             // console.log(subject_indices);
             // console.log(subject_info);

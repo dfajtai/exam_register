@@ -492,7 +492,7 @@ function create_subject_changelog_table(container, table_id, simplify = false, s
     var subject_selector_container = $("<div/>");
     
     if(subject_index==null){
-        subjectSelectWidget(subject_selector_container,"all",
+        subjectSearchWidget(subject_selector_container,"all",
         function(subject_indices,subject_info){
             // console.log(subject_indices);
             // console.log(subject_info);

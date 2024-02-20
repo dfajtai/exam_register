@@ -73,7 +73,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/formatters.js"></script>
 
 	<script defer src="js/admin/tools/subject_register.js"></script>
-	<script defer src="js/common/subjectSelectWidget.js"></script>
+	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
 
 
@@ -161,6 +161,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			$(document).ready(function () {
 				clearStatusFromUrl("uname");
+				clearStatusFromUrl("error");
 				startIncativityTimer();
 			});
 			

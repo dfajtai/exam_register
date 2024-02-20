@@ -35,8 +35,7 @@ window.event_planner_operate_events = {
         var data = table.bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index-1,row:row});
-        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index, row:upper_data});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
     },
     'click .move_down': function (e, value, row, index) {
         var data = $('#'+event_planner_table_id).bootstrapTable('getData');
@@ -45,8 +44,7 @@ window.event_planner_operate_events = {
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index+1,row:row});
-        $('#'+event_planner_table_id).bootstrapTable('updateRow',{index:index, row:lower_data});
+        $('#'+event_planner_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
     },
     'click .edit': function (e, value, row, index) {
         show_event_planner_modal_edit(event_planner_content,$("#"+event_planner_table_id),index);

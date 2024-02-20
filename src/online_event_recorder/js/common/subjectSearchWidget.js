@@ -1,5 +1,5 @@
 
-function subjectSelectWidget(container, study_id = null, callback = null, single_select = false){
+function subjectSearchWidget(container, study_id = null, callback = null, single_select = false){
     var subject_select_widget_debug = false;
 
     var lastSelectedIndices = [];
@@ -22,12 +22,12 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
             lastSelectedIndices = new_indices;
             lastSelectedInfo = new_info;
             if(callback!=null){
-                if(subject_select_widget_debug) console.log("SubjectSelectWidget callback called.")
+                if(subject_select_widget_debug) console.log("subjectSearchWidget callback called.")
                 callback(new_indices,new_info);
             }
         }
         else{
-            if(subject_select_widget_debug) console.log("SubjectSelectWidget callback skipped.")
+            if(subject_select_widget_debug) console.log("subjectSearchWidget callback skipped.")
         }
         
     }
@@ -394,7 +394,7 @@ function subjectSelectWidget(container, study_id = null, callback = null, single
 
     $(document).ready(function(){
         // $( window ).on( "resize", function() {
-        //     subjectSelectWidget(container,study_id,callback);
+        //     subjectSearchWidget(container,study_id,callback);
         // });
     
         container.empty();

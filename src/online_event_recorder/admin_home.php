@@ -58,6 +58,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
 	<script defer src="js/common/inactivity_protection.js"></script>
@@ -86,8 +88,12 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/common/dynamic_form.js"></script>
 
-	<script defer src="js/common/subjectSelectWidget.js"></script>
+	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
+	<script defer src="js/common/subjectPool/subjectPoolMain.js"></script>
+	<script defer src="js/common/subjectPool/subjectPoolWidget.js"></script>
+	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
+	
 
 	<script defer src="js/admin/tools/event_args_editor.js"></script>
 	<script defer src="js/admin/tools/event_planner.js"></script>
@@ -97,6 +103,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/event_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/subject_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/resource_handler.js"></script>
+
 
 
 	<!-- <script defer src="js/common/file_upload.js"></script> -->
@@ -151,6 +158,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarSubjectsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Subjects register</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool()">Subjects pool editor</a>
 							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
 					</li>
@@ -321,6 +329,24 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
+		function show_subject_pool_tool(init_indices = null){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+				main_container.append(_title);
+
+				showSubjectPoolWidget(main_container,init_indices);
+				
+				clearAllStatusFromUrl();
+				statusToUrl("tool","SubjectPool");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
+		}
 
 		function show_subject_change_log_tool(){
 			updateLocalDefinitionDatabase(
@@ -406,8 +432,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				subject_planned_status =  getDefEntryFieldWhere("subject_status_definitions","StatusName","planned","StatusID");
 				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
-
-				if (statusInUrl("def")){
+				
+				if(statusInUrl("setSubjectPool")){
+					show_subject_pool_tool(JSON.parse(statusFromUrl("setSubjectPool")));
+				}
+				else if(statusInUrl("def")){
 					show_table(statusFromUrl("def"));
 				}
 				else if(statusInUrl("tool")){
@@ -419,6 +448,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="EventChangeLog") show_event_change_log_tool();
 					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
 					if(tool=="ResouceLocks") show_resouce_handler_tool();
+					if(tool=="SubjectPool") show_subject_pool_tool();
 				}
 				else{
 					show_table("users");
