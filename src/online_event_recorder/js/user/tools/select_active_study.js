@@ -5,19 +5,25 @@ function showSelectActiveStudyForm(container,callback= null){
 
     selectActiveStudyForm.append($("<span/>").addClass("row d-block p-2 bg-dark text-white fs-3 mb-3").attr("id","formTitle").html("Select active study"));
     
-    var selectForm = $("<div/>").addClass("row mb-3 pb-3");
-    selectForm.append($("<label/>").addClass("col-sm-3 col-form-label").html("Studies"));
-    var studySelect = $("<div/>").addClass("col-sm-6");
+    var selectForm = $("<div/>").addClass("d-flex flex-column flex-lg-row mb-3 pb-3 align-items-center justify-content-start");
+
+
+    var studySelect = $("<div/>").addClass("d-flex mb-lg-0 mb-2 align-items-center w-100");
+    var label = $("<label/>").attr("for","selectedStudy").addClass("col-form-label").html("Studies");
+    studySelect.append($("<div/>").addClass("col-3").append(label));
     var study_select_dropdow = $("<select/>").addClass("form-select required").attr("type","text").attr("id","selectedStudy").attr("name","activeStudy").prop('required',true);
+    studySelect.append($("<div/>").addClass("col-9").append(study_select_dropdow));
+    selectForm.append(studySelect);
+
+    
     study_select_dropdow.append($("<option/>").html("Choose Active Study...").prop('selected',true).attr("value",-1).attr("disabled","disabled").attr("value",""));
 
     showAllDefs(study_select_dropdow,"studies","StudyID","StudyName");
 
-    studySelect.append(study_select_dropdow);
-    selectForm.append(studySelect)
+
 
     var select_btn = $("<button/>").addClass("btn btn-outline-dark w-100").attr("type","subbmit").html("Mark as Active Study")
-    selectForm.append($("<div/>").addClass("col-sm-3 ").append(select_btn));
+    selectForm.append($("<div/>").addClass("mb-lg-0 mb-2 ms-lg-2 flex-fill w-100 w-lg-25").append(select_btn));
     selectActiveStudyForm.append(selectForm);
 
     //TODO current study info (if availabel)

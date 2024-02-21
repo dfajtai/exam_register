@@ -77,7 +77,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/status_filter_widget.js"></script>
 
 
-	<script defer src="js/user/forms/select_active_study_form.js" ></script>
+	<script defer src="js/user/tools/select_active_study.js" ></script>
 
 	<script defer src="js/user/core/users_event_log_handler.js" ></script>
 	<script defer src="js/user/tools/users_main_tool.js" ></script>

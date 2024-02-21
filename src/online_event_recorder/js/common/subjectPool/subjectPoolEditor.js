@@ -212,7 +212,7 @@ function subject_pool_modal_submit(container,table){
     // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
     // modal_body.append(pool_readable_text);
 
-    var pool_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("disabled",true);
+    var pool_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
     modal_body.append(pool_text);
     var qrcode_dom = $("<div/>").attr("id","qrcode")
     modal_body.append(qrcode_dom);
