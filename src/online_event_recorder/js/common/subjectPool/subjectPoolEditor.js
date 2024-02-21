@@ -99,7 +99,7 @@ window.subject_pool_editor_events = {
     }
 }
 
-function subject_pool_oparate_formatter(value, row, index){
+function subject_pool_operate_formatter(value, row, index){
     var container = $("<div/>").addClass("lockable");
     var up_down_gorup = $("<div/>").addClass("btn-group me-3 ");
     var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
@@ -124,9 +124,6 @@ function subject_pool_oparate_formatter(value, row, index){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(event_args_lock_list.length>0){
-        container.find("button").addClass("disabled");
-    }
     return container.prop("outerHTML");
 }
 
@@ -236,7 +233,8 @@ function subject_pool_modal_export(container,table){
         full_url =  window.location.host+'?' + searchParams.toString();
 
         $(pool_url).val(full_url);
-        subject_pool = indices;
+        setSubjectPool(indices);
+
     });
 
     $(modal_root).on('shown.bs.modal',function(){
@@ -314,7 +312,7 @@ function init_subject_pool_table(container, table_id, ){
         columns : [
             {field : 'state', checkbox: true, align:'center'},
             {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-            events: window.subject_pool_editor_events, formatter: subject_pool_oparate_formatter},
+            events: window.subject_pool_editor_events, formatter: subject_pool_operate_formatter},
             {title: '#', field : 'SubjectIndex', align:'center', sortable:false, searchable:true, visible:false},
             {title: 'ID', field : 'SubjectID', align:'center', sortable:false, searchable:true},
             {title: 'Name', field : 'Name', align:'center', sortable:false, searchable:true},
@@ -328,6 +326,8 @@ function init_subject_pool_table(container, table_id, ){
         detailFormatter: function(index,row){return detail_as_table_formatter(index,row,subject_register_subject_formatter)},
     });
 }
+
+
 
 
 function showSubjectPoolEditor(container, initial_indices = null){
@@ -345,14 +345,13 @@ function showSubjectPoolEditor(container, initial_indices = null){
             if(indices.length>0){
                 insert_data(indices);
             }
-            subject_pool = indices;
+            setSubjectPool(indices);
         }
     }
     else{
-        var indices = nullify_array(initial_indices);
-        indices = indices === null? []:indices;
-        if(indices.length>0){
-            insert_data(indices);
+        setSubjectPool(initial_indices);
+        if(subject_pool.length>0){
+            insert_data(subject_pool);
         }
     }
 
@@ -426,6 +425,9 @@ function showSubjectPoolEditor(container, initial_indices = null){
         // console.log(data);
         if(table.bootstrapTable('getOptions').searchText==""){
             statusToStorage("subjectPoolData",JSON.stringify(data));
+            var indices = getColUnique(data,"SubjectIndex");
+            setSubjectPool(indices);
+
         }
     })
 

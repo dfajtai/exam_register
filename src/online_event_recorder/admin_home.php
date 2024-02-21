@@ -114,7 +114,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">ExamRegister</a>
+			<a class="navbar-brand" href="#" onclick="resolve_url_params()">ExamRegister</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -386,6 +386,31 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
+		function resolve_url_params(){
+			if(statusInUrl("setSubjectPool")){
+					setSubjectPool(JSON.parse(statusFromUrl("setSubjectPool")));
+					clearStatusFromUrl("setSubjectPool");
+				}
+				
+				if(statusInUrl("def")){
+					show_table(statusFromUrl("def"));
+				}
+				else if(statusInUrl("tool")){
+					var tool = statusFromUrl("tool");
+					if(tool=="EventArgEditor") show_event_args_editor_tool();
+					if(tool=="EventPlanner") show_event_planner_tool();
+					if(tool=="SubjectRegister") show_subject_register_tool();
+					if(tool=="EventLog") show_event_log_tool();
+					if(tool=="EventChangeLog") show_event_change_log_tool();
+					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
+					if(tool=="ResouceLocks") show_resouce_handler_tool();
+					if(tool=="SubjectPool") show_subject_pool_tool();
+				}
+				else{
+					show_table("users");
+				}
+		}
+
 		$(document).ready(function() {
 			$("#become_user_button").click(function(){
 				// clearAllStatusFromUrl();
@@ -433,26 +458,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 				
-				if(statusInUrl("setSubjectPool")){
-					show_subject_pool_tool(JSON.parse(statusFromUrl("setSubjectPool")));
-				}
-				else if(statusInUrl("def")){
-					show_table(statusFromUrl("def"));
-				}
-				else if(statusInUrl("tool")){
-					var tool = statusFromUrl("tool");
-					if(tool=="EventArgEditor") show_event_args_editor_tool();
-					if(tool=="EventPlanner") show_event_planner_tool();
-					if(tool=="SubjectRegister") show_subject_register_tool();
-					if(tool=="EventLog") show_event_log_tool();
-					if(tool=="EventChangeLog") show_event_change_log_tool();
-					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
-					if(tool=="ResouceLocks") show_resouce_handler_tool();
-					if(tool=="SubjectPool") show_subject_pool_tool();
-				}
-				else{
-					show_table("users");
-				}
+				resolve_url_params();
 			});
 		});
 

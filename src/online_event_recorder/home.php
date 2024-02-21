@@ -57,6 +57,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
 	<script defer src="js/common/inactivity_protection.js"></script>
@@ -76,6 +78,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
 
+	<script defer src="js/common/subjectPool/subjectPoolMain.js"></script>
+	<script defer src="js/common/subjectPool/subjectPoolEditor.js"></script>
+	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
+
 
 	<script defer src="js/user/tools/select_active_study.js" ></script>
 
@@ -87,7 +93,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">ExamRegister</a>
+			<a class="navbar-brand" href="#"  onclick="show_users_home()">ExamRegister</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -101,8 +107,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarConfigLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configuration</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarConfigLink">
-							<li><a class="nav-link active" href = "#" onclick="study_select()">Select study</a></li>
-							<li><a class="nav-link active" href = "#" onclick="subject_pool()">Config subject pool</a></li>
+							<li><a class="dropdown-item" href = "#" onclick="study_select()">Select study</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool()">Subjects pool editor</a>
 						</ul>
 					</li>
 					
@@ -131,7 +137,30 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		function show_users_home(){
 			$('.navbar-collapse').collapse('hide');
+
+			clearStatusFromUrl("tool");
+			statusToUrl("tool","usersMainTool");
+
 			show_users_main_tool($("#main_container"));
+		}
+
+		function show_subject_pool_tool(init_indices = null){
+			updateLocalDefinitionDatabase(
+				function(){
+				var main_container = $("#main_container");
+				$("#main_container").empty();
+
+				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+				main_container.append(_title);
+
+				showSubjectPoolEditor(main_container,init_indices);
+				
+				clearStatusFromUrl("tool");
+				statusToUrl("tool","SubjectPool");
+				
+				$('.navbar-collapse').collapse('hide');
+			})
+
 		}
 
 		$(document).ready(function() {
@@ -174,23 +203,30 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
 
+				if(statusInUrl("setSubjectPool")){
+					setSubjectPool(JSON.parse(statusFromUrl("setSubjectPool")));
+					clearStatusFromUrl("setSubjectPool");
+				}
+
 				if(statusInUrl("activeStudy")){
 					syncStatusFromUrlToStorage("activeStudy");
-				}
+					}
 				if(!statusInStorage("activeStudy")){
 					study_select();
 				}
 				else{
 					syncStatusFromStorageToUrl("activeStudy");
-					show_users_main_tool($("#main_container"));
-				}	
+					if(statusInUrl("tool")){
+						var tool = statusFromUrl("tool");
+						if(tool=="SubjectPool") show_subject_pool_tool();
+						if(tool=="usersMainTool") show_users_home();
+					}
+					else{
+						show_users_home();
+					}
+				}
+					
 			});
-
-
-
-			
-
-
 		});
 
 	</script>

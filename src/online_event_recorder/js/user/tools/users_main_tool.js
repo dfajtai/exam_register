@@ -137,7 +137,7 @@ function init_users_main_tool(container){
     search_collapse.append(search_collapse_card.append(search_collapse_card_content));
 
     subjectSearchWidget(search_collapse_card_content,
-        statusFromUrl("activeStudy"),
+        statusFromStorage("activeStudy"),
         function(new_indices,new_info){
             if(new_indices.length>0){
                 users_subject_card_content = null;
@@ -169,8 +169,6 @@ function init_users_main_tool(container){
     var select_collapse_card = $("<div/>").addClass("card card-body");
     var select_collapse_card_content = $("<div/>");
 
-
-
     var bs_select_collapse = new bootstrap.Collapse($(select_collapse), {
         toggle: false
     })
@@ -178,20 +176,24 @@ function init_users_main_tool(container){
     select_collapse.append(select_collapse_card.append(select_collapse_card_content));
 
 
+    subjectSelectFromPoolWidget(select_collapse_card_content,function(new_indices,new_info){})
+
+
     subject_handler_toolbar.append(subject_select_tool_btn);
 
     subject_search_tool_btn.on("click",function(){
-        bs_select_collapse.toggle();
+        bs_select_collapse.hide();
     })
 
     subject_select_tool_btn.on("click",function(){
-        bs_search_collapse.toggle();
+        bs_search_collapse.hide();
     })
     
     users_main_tool_content = $("<div/>").addClass("subject-handler-content").addClass("container shadow px-2 py-2").attr("hidden","true");
 
     container.append(subject_handler_toolbar);
     container.append(search_collapse);
+    container.append(select_collapse);
     container.append(users_main_tool_content);
 
 }

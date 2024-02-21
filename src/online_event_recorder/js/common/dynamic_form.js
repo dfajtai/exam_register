@@ -30,7 +30,7 @@ function customArgParserTest(container){
 }
 
 function dynamicTextInput(container,name,label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
     var _input = $("<input/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
 
     container.append(_label);
@@ -38,7 +38,7 @@ function dynamicTextInput(container,name,label){
 }
 
 function dynamicLongTextInput(container,name,label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
     var _input = $("<textarea/>").addClass("form-control").attr("type","text").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label).attr("rows",5);
 
     container.append(_label);
@@ -46,7 +46,7 @@ function dynamicLongTextInput(container,name,label){
 }
 
 function dynamicDateInput(container,name,label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
 
     var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
 
@@ -87,7 +87,7 @@ function dynamicDateInput(container,name,label){
 }
 
 function dynamicTimeInput(container,name,label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
 
     var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
 
@@ -126,7 +126,7 @@ function dynamicTimeInput(container,name,label){
 }
 
 function dynamicDatetimeInput(container,name,label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
 
     var group_container = $("<div/>").addClass("d-flex flex-xl-row flex-column justify-content-evenly");
 
@@ -167,7 +167,7 @@ function dynamicDatetimeInput(container,name,label){
 }
 
 function dynamicNumericInput(container,name,label,arg){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
 
     var group_container = $("<div/>").addClass("input-group");
     
@@ -187,7 +187,7 @@ function dynamicNumericInput(container,name,label,arg){
 }
 
 function dynamicRangeInput(container,name,label,arg){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Input").html(label);
 
     var group_container = $("<div/>").addClass("input-group");
     
@@ -263,7 +263,7 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
 
 
 function dynamicLocationSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose location...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"location_definitions","LocationID","LocationName","LocationName");
@@ -273,7 +273,7 @@ function dynamicLocationSelect(container, name, label){
 }
 
 function dynamicBodypartSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
 
     container.addClass("d-flex");
     
@@ -298,7 +298,7 @@ function dynamicBodypartSelect(container, name, label){
 
 
 function dynamicConsumableSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     
     container.addClass("d-flex");
 
@@ -323,7 +323,7 @@ function dynamicConsumableSelect(container, name, label){
 }
 
 function dynamicEventSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
 
     container.addClass("d-flex");
     
@@ -347,7 +347,7 @@ function dynamicEventSelect(container, name, label){
 }
 
 function dynamicAssetSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose asset...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"asset_definitions","AssetID","AssetName","AssetName");
@@ -357,7 +357,7 @@ function dynamicAssetSelect(container, name, label){
 }
 
 function dynamicConsumableTypeSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose consumable type...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"consumable_type_definitions","ConsumableTypeID","ConsumableTypeName","ConsumableTypeName");
@@ -367,7 +367,7 @@ function dynamicConsumableTypeSelect(container, name, label){
 }
 
 function dynamicEventTypeSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose event type...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"event_type_definitions","EventTypeID","EventTypeName","EventTypeName");
@@ -377,7 +377,7 @@ function dynamicEventTypeSelect(container, name, label){
 }
 
 function dynamicSideSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose side...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"side_definitions","SideID","SideName","SideName");
@@ -387,7 +387,7 @@ function dynamicSideSelect(container, name, label){
 }
 
 function dynamicUnitSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose unit...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"unit_definitions","UnitID","UnitUnit","UnitUnit");
@@ -397,7 +397,7 @@ function dynamicUnitSelect(container, name, label){
 }
 
 function dynamicUnitTypeSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose UnitType...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"unit_type_definitions","UnitTypeID","UnitTypeName","UnitTypeName");
@@ -407,7 +407,7 @@ function dynamicUnitTypeSelect(container, name, label){
 }
 
 function dynamicStudySelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose study...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"studies","StudyID","StudyName","StudyName");
@@ -418,7 +418,7 @@ function dynamicStudySelect(container, name, label){
 }
 
 function dynamicSexSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose sex...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"sex_definitions","SexID","SexName","SexName");
@@ -429,7 +429,7 @@ function dynamicSexSelect(container, name, label){
 }
 
 function dynamicEventStatusSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose event status...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"event_status_definitions","EventStatusID","EventStatusName","EventStatusName");
@@ -440,7 +440,7 @@ function dynamicEventStatusSelect(container, name, label){
 }
 
 function dynamicSubjectStatusSelect(container, name, label){
-    var _label =  $("<label/>").addClass("col-md-3 col-form-label").html(label);
+    var _label =  $("<label/>").addClass("col-md-3 col-form-label").attr("for",name+"Select").html(label);
     var _select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id",name+"Select").attr("name",name).attr("data-name",name).attr("data-label",label);
     _select_dropdow.append($("<option/>").html("Choose subject status...").prop('selected',true).attr("value",""));
     showAllDefs(_select_dropdow,"subject_status_definitions","StatusID","StatusName","StatusName");

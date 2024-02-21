@@ -798,7 +798,7 @@ function show_users_eventlog_modal_edit(container, table, index){
 
 function users_eventlog_modal(container, modal_id, title){
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
-    var modal_dialog = $("<div/>").addClass("modal-dialog modal-xl");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-xl modal-fullscreen-xl-down");
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");

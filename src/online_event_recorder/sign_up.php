@@ -23,7 +23,7 @@
 <body>
 	<div class="d-flex align-items-center justify-content-center">
 		<form
-			class="shadow p-5 needs-validation col-6" 
+			class="shadow p-5 needs-validation col-md-6 col-lg-4 col-sm-10 col-12 align-self-center" 
     	    action="php/signup.php" 
     	    method="post">
 			<h4 class="display-4 fs-1">SIGN UP</h4><br>
