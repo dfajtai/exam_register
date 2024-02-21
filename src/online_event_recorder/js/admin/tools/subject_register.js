@@ -339,6 +339,10 @@ function createSubjectTable(container,table_id, simplify = false){
         status_filter.addClass("admin-table-toolbar-btn");
         toolbar.append(status_filter);
 
+        var export_btn = $("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-solid fa-qrcode").attr("aria-hidden","true"));
+        export_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Export selected subjects.");
+        toolbar.append(export_btn);
+
         var study_selector = $("<div/>").addClass("row mt-3 mb-3");
         var study_dropdown = $("<select/>").addClass("form-control").attr("id","studySelect").attr("type","text");
         study_dropdown.append($("<option/>").html("Select scope...").prop("disabled",true).prop('selected',true).attr("value",""));
@@ -1073,6 +1077,70 @@ function show_subject_modal_import(container,table){
     modal.modal('show');
 }
 
+function subject_modal_export(container,table){
+    var modal_id = "subjectExportModal";
+    
+    container.find("#"+modal_id).remove();
+
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-md");
+    var modal_content = $("<div/>").addClass("modal-content");
+
+    var modal_header= $("<div/>").addClass("modal-header");
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject export"));
+    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
+
+    var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
+
+    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    // modal_body.append(pool_readable_text);
+
+    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(pool_url);
+    var qrcode_dom = $("<div/>").attr("id","qrcode")
+    modal_body.append(qrcode_dom);
+
+    
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+
+    modal_dialog.html(modal_content);
+    modal_root.html(modal_dialog);
+
+
+    var full_url = null;
+
+    $(modal_root).on('show.bs.modal',function(){
+
+        var indices = getColUnique($(table).bootstrapTable("getSelections"),"SubjectIndex");
+        var indices_text = JSON.stringify(indices);
+        console.log(indices_text);
+        var searchParams = new URLSearchParams();
+        searchParams.set("setSubjectPool",indices_text);
+        full_url =  window.location.host+'?' + searchParams.toString();
+        $(pool_url).val(full_url);
+    });
+
+    $(modal_root).on('shown.bs.modal',function(){
+        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
+
+        // qrcode gen
+        var qrcode = new QRCode("qrcode",{
+            text: full_url,
+            width: $(pool_url).width(),
+            height: $(pool_url).width(),
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    });
+
+    container.append(modal_root);
+
+    modal_root.modal("show");
+
+}
+
 function subjects_table_events(){
     var table = $('#'+subject_table_id);
     table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table refresh.bs.table reset-view.bs.table',
@@ -1144,6 +1212,10 @@ function show_subject_register(container){
         show_subject_modal_import(subject_content,table);
         // $(document).trigger("_lock",["import"]);
     });
+
+    toolbar.find("#toolbar_export").on("click",function(e){
+        subject_modal_export(subject_content,table);
+    })
 
     toolbar.find(".needs-select").addClass("disabled");
 

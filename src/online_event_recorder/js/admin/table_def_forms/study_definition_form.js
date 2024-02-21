@@ -95,9 +95,81 @@ function initStudyDefinitionsTable(container,tableId){
     container.find("#study_modal_add_new").find(".modal-dialog").addClass("modal-xl");
     container.find("#study_modal_edit_selected").find(".modal-dialog").addClass("modal-xl");
 
+    var toolbar = container.find('#'+table_id+'_toolbar').first();
+    var export_btn = $("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable needs-select").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export");
+    toolbar.append(export_btn);
+    
+    export_btn.on('click',function(){
+        study_export_modal(container,table);
+    })
+
     table.on('load-success.bs.table',function(e,data,status){
         updateRemoteDefinitionChecksum("studies",data["rows"]);
     })
+
+}
+
+function study_export_modal(container,table){
+    var modal_id = "studyExportModal";
+    
+    container.find("#"+modal_id).remove();
+
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-md");
+    var modal_content = $("<div/>").addClass("modal-content");
+
+    var modal_header= $("<div/>").addClass("modal-header");
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Study export"));
+    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
+
+    var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
+
+    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    // modal_body.append(pool_readable_text);
+
+    var study_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(study_url);
+    var qrcode_dom = $("<div/>").attr("id","qrcode")
+    modal_body.append(qrcode_dom);
+
+    
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+
+    modal_dialog.html(modal_content);
+    modal_root.html(modal_dialog);
+
+
+    var full_url = null;
+
+    $(modal_root).on('show.bs.modal',function(){
+        var indices = $(table).bootstrapTable("getSelections")[0]["StudyID"];
+        var indices_text = JSON.stringify(indices);
+        // console.log(indices_text);
+        var searchParams = new URLSearchParams();
+        searchParams.set("activeStudy",indices_text);
+        full_url =  window.location.host+'?' + searchParams.toString();
+
+        $(study_url).val(full_url);
+    });
+
+    $(modal_root).on('shown.bs.modal',function(){
+        $(qrcode_dom).css({width:$(study_url).width(),height:$(study_url).width()});
+
+        // qrcode gen
+        var qrcode = new QRCode("qrcode",{
+            text: full_url,
+            width: $(study_url).width(),
+            height: $(study_url).width(),
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    });
+
+    container.append(modal_root);
+
+    modal_root.modal("show");
 
 }
 

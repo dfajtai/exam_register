@@ -4,7 +4,7 @@ function createAdminTable(container, table_id, height){
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-    toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Edit Selected"));
+    toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square me-2").attr("aria-hidden","true")).append("Edit Selected"));
 
     var table = $("<table/>").attr("id",table_id);
     table.attr("data-toggle","table");

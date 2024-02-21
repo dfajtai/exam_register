@@ -59,7 +59,7 @@ function modalInsert(data_name, container, modal_id, table_id,
     var modal_body = $("<div/>").addClass("modal-body");
 
     var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
+    modal_footer.append($("<button/>").addClass("btn btn-outline-dark needs-select").attr("id","copy_selected").attr("aria-label","Copy Selected").html($("<i/>").addClass("fa fa-copy").attr("aria-hidden","true")).append(" Copy Selected"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("id","clear_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-eraser").attr("aria-hidden","true")).append(" Clear"));
     modal_footer.append($("<button/>").addClass("btn btn-outline-dark").attr("data-bs-dismiss","modal").attr("aria-label","Close").html("Close"));
 
@@ -79,6 +79,16 @@ function modalInsert(data_name, container, modal_id, table_id,
 
     modal_footer.find("#clear_form").click(function(){
         modal_body.find('#add_new_form')[0].reset();
+    })
+
+    $('#'+modal_id).on("shown.bs.modal",function(){
+        var selection =  table.bootstrapTable('getSelections');
+        if(selection.length>0){
+            modal_footer.find(".needs-select").removeClass("disabled");
+        }
+        else{
+            modal_footer.find(".needs-select").addClass("disabled");
+        }
     })
 
 
@@ -290,14 +300,14 @@ function modalUpdate(data_name, container, modal_id, table_id,
     function () {
         var selection =  table.bootstrapTable('getSelections');
         if(selection.length>0){
-            toolbar.find("#toolbar_edit").removeClass("disabled");
+            toolbar.find(".needs-select").removeClass("disabled");
         }
         else{
-            toolbar.find("#toolbar_edit").addClass("disabled");
+            toolbar.find(".needs-select").addClass("disabled");
         }
     });
 
-    toolbar.find("#toolbar_edit").addClass("disabled");
+    toolbar.find(".needs-select").addClass("disabled");
 
     toolbar.find("#toolbar_edit").click(function(){
         $('#'+modal_id).modal('show');

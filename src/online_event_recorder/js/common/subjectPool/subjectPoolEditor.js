@@ -193,7 +193,7 @@ function subject_pool_modal_add(container){
     modal.modal("show");
 }
 
-function subject_pool_modal_submit(container,table){
+function subject_pool_modal_export(container,table){
     container.empty();
 
     var modal_id = "subjectPoolEditorModal";
@@ -230,7 +230,7 @@ function subject_pool_modal_submit(container,table){
     $(modal_root).on('show.bs.modal',function(){
         var indices = getColUnique($(table).bootstrapTable("getData"),"SubjectIndex");
         var indices_text = JSON.stringify(indices);
-        console.log(indices_text);
+        // console.log(indices_text);
         var searchParams = new URLSearchParams();
         searchParams.set("setSubjectPool",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();
@@ -272,7 +272,7 @@ function init_subject_pool_table(container, table_id, ){
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New subject"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the pool"));
     toolbar.append($("<button/>").attr("id","toolbar_load_data").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Load/refresh data"));
-    toolbar.append($("<button/>").attr("id","toolbar_set_as_pool").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));
+    toolbar.append($("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));
 
     // table.attr("data-height",String(height));
 
@@ -404,8 +404,8 @@ function showSubjectPoolEditor(container, initial_indices = null){
         update_load_data(table.bootstrapTable("getData"),true);
     })
 
-    toolbar.find("#toolbar_set_as_pool").on("click",function(e){
-        subject_pool_modal_submit(subject_pool_editor_modals,table);
+    toolbar.find("#toolbar_export").on("click",function(e){
+        subject_pool_modal_export(subject_pool_editor_modals,table);
     })
 
     table.on('all.bs.table',
