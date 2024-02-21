@@ -1101,6 +1101,9 @@ function subject_modal_export(container,table){
     modal_body.append(qrcode_dom);
 
     
+    var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark mt-2 w-100").html("Show in subject pool editor");
+    modal_body.append(to_pool_btn);
+    
     modal_content.append(modal_header);
     modal_content.append(modal_body);
 
@@ -1119,7 +1122,14 @@ function subject_modal_export(container,table){
         searchParams.set("setSubjectPool",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();
         $(pool_url).val(full_url);
+
+        to_pool_btn.off("click").on("click",function(){
+            clearAllStatusFromUrl();
+            statusToUrl("setSubjectPool",indices_text);
+            window.location.reload();
+        });
     });
+
 
     $(modal_root).on('shown.bs.modal',function(){
         $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});

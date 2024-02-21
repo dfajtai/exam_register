@@ -212,8 +212,8 @@ function subject_pool_modal_export(container,table){
     // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
     // modal_body.append(pool_readable_text);
 
-    var pool_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
-    modal_body.append(pool_text);
+    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(pool_url);
     var qrcode_dom = $("<div/>").attr("id","qrcode")
     modal_body.append(qrcode_dom);
 
@@ -235,18 +235,18 @@ function subject_pool_modal_export(container,table){
         searchParams.set("setSubjectPool",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();
 
-        $(pool_text).val(full_url);
+        $(pool_url).val(full_url);
         subject_pool = indices;
     });
 
     $(modal_root).on('shown.bs.modal',function(){
-        $(qrcode_dom).css({width:$(pool_text).width(),height:$(pool_text).width()});
+        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
 
         // qrcode gen
         var qrcode = new QRCode("qrcode",{
             text: full_url,
-            width: $(pool_text).width(),
-            height: $(pool_text).width(),
+            width: $(pool_url).width(),
+            height: $(pool_url).width(),
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
@@ -324,7 +324,8 @@ function init_subject_pool_table(container, table_id, ){
         ],
         pagination:true,
         checkboxHeader:true,
-        smartDisplay:true
+        smartDisplay:true,
+        detailFormatter: function(index,row){return detail_as_table_formatter(index,row,subject_register_subject_formatter)},
     });
 }
 
