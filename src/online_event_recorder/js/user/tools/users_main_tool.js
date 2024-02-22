@@ -133,8 +133,134 @@ function init_users_main_tool(container){
 
     var subject_handler_toolbar = $("<div/>").addClass("d-flex flex-column flex-lg-row justify-content-evenly").attr("id","subject_handler_toolbar");
     
+    // select subject 
+    var subject_select_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0 me-lg-2 ").html("Select subject");
+    subject_select_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_collapse");
+
+    subject_handler_toolbar.append(subject_select_btn);
+
+    var select_collapse = $("<div/>").addClass("collapse").attr("id","select_collapse");
+    var select_collapse_card = $("<div/>").addClass("card card-body");
+    var select_collapse_card_content = $("<div/>").addClass("w-100 d-flex flex-column flex-lg-row");
+
+    var bs_select_collapse = new bootstrap.Collapse($(select_collapse), {
+        toggle: false
+    })
+
+    select_collapse.append(select_collapse_card.append(select_collapse_card_content));
+    select_collapse.on("show.bs.collapse",function(){
+        if(!statusInUrl("activeStudy")){
+            var message = 'Active study not selected.';
+            bootbox.alert(message);
+            select_collapse_card_content.empty();
+            setTimeout(function(){
+                bs_select_collapse.hide();
+            },500);
+            
+            return;
+        }
+        var study_id = JSON.parse(statusFromUrl("activeStudy"));
+
+        select_collapse_card_content.empty();
+        $.ajax({
+            type: "GET",
+            url: 'php/retrieve_table_where.php',
+            dataType: "json",
+            data: ({table_name: "subjects",columns:["SubjectID","Name","SubjectIndex"], 
+                    where:{"StudyID":study_id}, 
+                    where_not:{'Status':subject_deleted_status}}),
+            success: function (result) {
+                var subject_label =  $("<label/>").addClass("col-lg-3 col-form-label").html("Select a subject form the active study").attr("for","subjectSelect");
+                var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect");
+            
+                $.each(result,function(index,entry){
+                    if(!entry.hasOwnProperty("SubjectIndex")) return;
+                    let subject_index = entry["SubjectIndex"];
+                    let text = entry["SubjectID"] + (entry["Name"]==null ? "": " [" + entry["Name"]+"]");
+                    subject_select_dropdow.append($("<option/>").html(text).attr("value",subject_index));
+                });
+            
+                subject_select_dropdow.prepend($("<option/>").html("Choose subject...").prop('selected',true).attr("value","").attr("disabled",true));
+            
+                select_collapse_card_content.append(subject_label);
+                select_collapse_card_content.append($("<div/>").addClass("col-lg-9").append(subject_select_dropdow));
+
+                subject_select_dropdow.on("change",function(){
+                    var new_index =parse_val($(this).val());
+                    if(new_index!=null){
+                        setTimeout(function(){
+                            bs_select_collapse.hide();
+                        },500);
+                        select_collapse.on("hidden.bs.collapse",function(){
+                            users_subject_card_content = null;
+                            users_event_content = null;
+                            stop_users_subjectlock_timer();
+                            stop_users_eventlog_lock_timer();
+                            
+                            var new_info = getEntryWhere(result,"SubjectIndex",new_index);
+
+                            var titles = users_subject_title(new_info);
+                            $(users_main_tool_content).prop("hidden",false);
+                            users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
+             
+                            statusToUrl("subjectIndex",new_index);
+                            select_collapse.off("hidden.bs.collapse");
+                        })
+                    }
+                })
+
+        }});
+    })
+
+
+    // subject select from pool
+
+    var subject_select_from_pool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0 me-lg-2 ").html("Select from pool");
+    subject_select_from_pool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_from_pool_collapse");
+
+    var select_from_pool_collapse = $("<div/>").addClass("collapse").attr("id","select_from_pool_collapse");
+    var select_from_pool_collapse_card = $("<div/>").addClass("card card-body");
+    var select_from_pool_collapse_card_content = $("<div/>").addClass("w-100");
+
+    var bs_select_from_pool_collapse = new bootstrap.Collapse($(select_from_pool_collapse), {
+        toggle: false
+    })
+
+    select_from_pool_collapse.append(select_from_pool_collapse_card.append(select_from_pool_collapse_card_content));
+    select_from_pool_collapse.on("show.bs.collapse",function(){
+        subjectSelectFromPoolWidget(select_from_pool_collapse_card_content, function(new_index,new_info){
+            
+            if(new_index!==null){
+                setTimeout(function(){
+                    bs_select_from_pool_collapse.hide();
+                },500);
+                select_from_pool_collapse.on("hidden.bs.collapse",function(){
+                    users_subject_card_content = null;
+                    users_event_content = null;
+                    stop_users_subjectlock_timer();
+                    stop_users_eventlog_lock_timer();
+                
+                    var titles = users_subject_title(new_info);
+                    $(users_main_tool_content).prop("hidden",false);
+                    users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
+     
+                    statusToUrl("subjectIndex",new_index);
+                    select_from_pool_collapse.off("hidden.bs.collapse");
+                })
+            }
+        });
+    });   
+
+    select_from_pool_collapse.on("shown.bs.collapse",function(){
+        select_from_pool_collapse_card_content.trigger("show-indicator");
+    }); 
+
+
+    subject_handler_toolbar.append(subject_select_from_pool_btn);
+
+
     // subject search
-    var subject_search_tool_btn = $("<button/>").addClass("btn btn-outline-dark me-lg-2 px-5 flex-lg-fill mb-1 mb-lg-0").html("Search subject");
+    var subject_search_tool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0").html("Search subject");
     subject_search_tool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#search_collapse");
 
     var search_collapse = $("<div/>").addClass("collapse").attr("id","search_collapse");
@@ -173,58 +299,20 @@ function init_users_main_tool(container){
     )
 
     subject_handler_toolbar.append(subject_search_tool_btn);
-
-    // subject select from pool
-
-    var subject_select_tool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0").html("Select from pool");
-    subject_select_tool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_collapse");
-
-    var select_collapse = $("<div/>").addClass("collapse").attr("id","select_collapse");
-    var select_collapse_card = $("<div/>").addClass("card card-body");
-    var select_collapse_card_content = $("<div/>").addClass("w-100");
-
-    var bs_select_collapse = new bootstrap.Collapse($(select_collapse), {
-        toggle: false
-    })
-
-    select_collapse.append(select_collapse_card.append(select_collapse_card_content));
-    select_collapse.on("show.bs.collapse",function(){
-        subjectSelectFromPoolWidget(select_collapse_card_content, function(new_index,new_info){
-            
-            if(new_index!==null){
-                setTimeout(function(){
-                    bs_select_collapse.hide();
-                },500);
-                select_collapse.on("hidden.bs.collapse",function(){
-                    users_subject_card_content = null;
-                    users_event_content = null;
-                    stop_users_subjectlock_timer();
-                    stop_users_eventlog_lock_timer();
-                
-                    var titles = users_subject_title(new_info);
-                    $(users_main_tool_content).prop("hidden",false);
-                    users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
-     
-                    statusToUrl("subjectIndex",new_index);
-                    select_collapse.off("hidden.bs.collapse");
-                })
-            }
-        });
-    });   
-
-    select_collapse.on("shown.bs.collapse",function(){
-        select_collapse_card_content.trigger("show-indicator");
-    }); 
-
-
-    subject_handler_toolbar.append(subject_select_tool_btn);
-
+    
     subject_search_tool_btn.on("click",function(){
+        bs_select_from_pool_collapse.hide();
         bs_select_collapse.hide();
     })
 
-    subject_select_tool_btn.on("click",function(){
+    subject_select_from_pool_btn.on("click",function(){
         bs_search_collapse.hide();
+        bs_select_collapse.hide();
+    })
+
+    subject_select_btn.on("click",function(){
+        bs_search_collapse.hide();
+        bs_select_from_pool_collapse.hide();
     })
     
     users_main_tool_content = $("<div/>").addClass("subject-handler-content").addClass("container shadow px-2 py-2").attr("hidden","true");
@@ -232,6 +320,7 @@ function init_users_main_tool(container){
     container.append(subject_handler_toolbar);
     container.append(search_collapse);
     container.append(select_collapse);
+    container.append(select_from_pool_collapse);
     container.append(users_main_tool_content);
 
 }
