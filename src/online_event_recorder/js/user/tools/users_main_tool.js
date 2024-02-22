@@ -140,19 +140,22 @@ function init_users_main_tool(container){
         statusFromStorage("activeStudy"),
         function(new_indices,new_info){
             if(new_indices.length>0){
-                users_subject_card_content = null;
-                users_event_content = null;
-                stop_users_subjectlock_timer();
-                stop_users_eventlog_lock_timer();
-            
-                var titles = users_subject_title(new_info[0]);
-                $(users_main_tool_content).prop("hidden",false);
-                users_main_tools_view($(users_main_tool_content),new_indices[0],titles[0],titles[1]);
-                var index = new_info[0].SubjectIndex;
-                statusToUrl("subjectIndex",index);
+                search_collapse.on("hidden.bs.collapse",function(){
+                    users_subject_card_content = null;
+                    users_event_content = null;
+                    stop_users_subjectlock_timer();
+                    stop_users_eventlog_lock_timer();
+                
+                    var titles = users_subject_title(new_info[0]);
+                    $(users_main_tool_content).prop("hidden",false);
+                    users_main_tools_view($(users_main_tool_content),new_indices[0],titles[0],titles[1]);
+                    var index = new_info[0].SubjectIndex;
+                    statusToUrl("subjectIndex",index);
+                    search_collapse.off("hidden.bs.collapse");
+                })
                 setTimeout(function(){
-                    bs_search_collapse.toggle();
-                },500)
+                    bs_search_collapse.hide();
+                },500);
             }
         },
         true
@@ -162,21 +165,45 @@ function init_users_main_tool(container){
 
     // subject select from pool
 
-    var subject_select_tool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0").html("Select subject");
+    var subject_select_tool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0").html("Select from pool");
     subject_select_tool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_collapse");
 
     var select_collapse = $("<div/>").addClass("collapse").attr("id","select_collapse");
     var select_collapse_card = $("<div/>").addClass("card card-body");
-    var select_collapse_card_content = $("<div/>");
+    var select_collapse_card_content = $("<div/>").addClass("w-100");
 
     var bs_select_collapse = new bootstrap.Collapse($(select_collapse), {
         toggle: false
     })
 
     select_collapse.append(select_collapse_card.append(select_collapse_card_content));
+    select_collapse.on("show.bs.collapse",function(){
+        subjectSelectFromPoolWidget(select_collapse_card_content, function(new_index,new_info){
+            
+            if(new_index!==null){
+                setTimeout(function(){
+                    bs_select_collapse.hide();
+                },500);
+                select_collapse.on("hidden.bs.collapse",function(){
+                    users_subject_card_content = null;
+                    users_event_content = null;
+                    stop_users_subjectlock_timer();
+                    stop_users_eventlog_lock_timer();
+                
+                    var titles = users_subject_title(new_info);
+                    $(users_main_tool_content).prop("hidden",false);
+                    users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
+     
+                    statusToUrl("subjectIndex",new_index);
+                    select_collapse.off("hidden.bs.collapse");
+                })
+            }
+        });
+    });   
 
-
-    subjectSelectFromPoolWidget(select_collapse_card_content,function(new_indices,new_info){})
+    select_collapse.on("shown.bs.collapse",function(){
+        select_collapse_card_content.trigger("show-indicator");
+    }); 
 
 
     subject_handler_toolbar.append(subject_select_tool_btn);

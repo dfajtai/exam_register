@@ -1,4 +1,4 @@
-var subject_pool_current_index = 0;
+var subject_pool_current_index = null;
 var subject_pool = [];
 var subject_pool_data = [];
 
@@ -19,11 +19,27 @@ function setSubjectPool(initial_indices, update_data = false, callback=null){
     subject_pool_data = data;
 
     statusToStorage("subjectPoolData",JSON.stringify(data));
-    subject_pool_current_index = 0;
+    subject_pool_current_index = null;
 
     if(update_data){
         update_subject_pool_data(callback);
     }
+}
+
+function subjectPoolFromStorage(update_data = false, callback=null){
+    if(! statusInStorage("subjectPoolData")){
+        if(callback!=null) callback();
+        return;
+    }
+    else{
+        subject_pool_data =  JSON.parse(statusFromStorage("subjectPoolData"));
+        subject_pool = getCol(subject_pool_data,"SubjectIndex");
+        if(update_data){
+            update_subject_pool_data(callback);
+        }
+    }
+
+
 }
 
 function update_subject_pool_data(success_callback = null, error_callback = null){

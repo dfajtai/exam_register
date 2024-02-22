@@ -40,3 +40,13 @@ body {
 
 }
 
+.flex-even {
+    flex: 1;
+}
+
+
+.hidden {
+    position: absolute;
+    visibility: hidden;
+    display: block;
+}

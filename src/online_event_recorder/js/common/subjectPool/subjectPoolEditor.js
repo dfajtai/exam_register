@@ -134,7 +134,7 @@ function subject_pool_modal_add(container){
     var form_id = "subjectPoolEditorForm";
     var subject_selector_table_id = "ubjectPoolEditorSubjectSelectorTable";
     
-    subject_modal(container,modal_id,"Advanced search");
+    subject_modal(container,modal_id,"Select subject(s)");
     var modal = $(container).find("#"+modal_id);
 
     var dialog = modal.find(".modal-dialog");
@@ -149,10 +149,10 @@ function subject_pool_modal_add(container){
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
-    var subject_container = $("<div/>").attr("id","advancedSubjectSelector").addClass("mb-3 container");
+    var subject_container = $("<div/>").attr("id","subjectSelector").addClass("mb-3 container");
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
-    var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Choose selected subjects");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Add selected subject(s) to the pool");
     submitForm.append(submitButton);
 
     form.append(subject_container);
@@ -267,7 +267,7 @@ function init_subject_pool_table(container, table_id, ){
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
-    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New subject"));
+    toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New subject(s)"));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the pool"));
     toolbar.append($("<button/>").attr("id","toolbar_load_data").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Load/refresh data"));
     toolbar.append($("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));

@@ -405,6 +405,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
 					if(tool=="ResouceLocks") show_resouce_handler_tool();
 					if(tool=="SubjectPool") show_subject_pool_tool();
+					show_table("users");
 				}
 				else{
 					show_table("users");
@@ -434,6 +435,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			
 			$(document).ready(function () {
 				clearStatusFromUrl("uname");
+				clearStatusFromUrl("error");
 				startIncativityTimer();
 			});
 

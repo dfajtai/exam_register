@@ -160,7 +160,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				
 				$('.navbar-collapse').collapse('hide');
 			})
-
 		}
 
 		$(document).ready(function() {
@@ -202,15 +201,18 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
-
 				if(statusInUrl("setSubjectPool")){
-					setSubjectPool(JSON.parse(statusFromUrl("setSubjectPool")));
+					var pool_info = JSON.parse(statusFromUrl("setSubjectPool"));
+					setSubjectPool(pool_info);
 					clearStatusFromUrl("setSubjectPool");
+				}
+				else if(statusInStorage("subjectPoolData")){
+					subjectPoolFromStorage();
 				}
 
 				if(statusInUrl("activeStudy")){
 					syncStatusFromUrlToStorage("activeStudy");
-					}
+				}
 				if(!statusInStorage("activeStudy")){
 					study_select();
 				}
@@ -225,6 +227,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						show_users_home();
 					}
 				}
+
+				
+
+				
 					
 			});
 		});
