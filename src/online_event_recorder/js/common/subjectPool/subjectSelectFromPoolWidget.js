@@ -83,9 +83,10 @@ function subjectSelectFromPoolWidget(container, callback = null){
                     $(this).removeClass("btn-success bi-caret-right-fill").addClass("btn-outline-dark bi-caret-right")
                 });
                 indicator.removeClass("btn-outline-dark bi-caret-right").addClass("btn-success bi-caret-right-fill");
-                setTimeout(function(){
-                    if(callback!=null) callback(subject_index,subject_info);
-                },500);
+                // setTimeout(function(){
+                //     if(callback!=null) callback(subject_index,subject_info);
+                // },500);
+                if(callback!=null) callback(subject_index,subject_info);
             })
         })
 
@@ -123,10 +124,10 @@ function subjectSelectFromPoolWidget(container, callback = null){
 
 
             if(index%2==responsive_remainder){
-                responsive_row.css({"background-color":"#e9ecef"});
+                responsive_row.css({"background-color":"#f8f9fa"});
             } 
             else {
-                responsive_row.css({"background-color":"#ced4da"});
+                responsive_row.css({"background-color":"#e9ecef"});
             }
 
             if(index==0){

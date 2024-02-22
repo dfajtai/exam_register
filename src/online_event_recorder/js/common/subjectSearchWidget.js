@@ -180,7 +180,7 @@ function subjectSearchWidget(container, study_id = null, callback = null, single
                     searchIn:["SubjectID"],
                     visibleProperties: ["SubjectID"],
                     valueProperty: "SubjectIndex",
-                    textProperty: '[{SubjectID}]',
+                    textProperty: '{SubjectID}',
                     searchContain: true,
                     data: res
                 })
@@ -190,10 +190,10 @@ function subjectSearchWidget(container, study_id = null, callback = null, single
                     minLength: 0,
                     selectionRequired:true,
                     toggleSelected:true,
-                    searchIn:["Name","SubjectID"],
-                    visibleProperties: ["Name","SubjectID"],
+                    searchIn:["SubjectID","Name"],
+                    visibleProperties: ["SubjectID","Name"],
                     valueProperty: "SubjectIndex",
-                    textProperty: '{Name} [{SubjectID}]',
+                    textProperty: '{SubjectID} [{Name}]',
                     searchContain: true,
                     data: res
                 })
@@ -204,20 +204,20 @@ function subjectSearchWidget(container, study_id = null, callback = null, single
                 $.each(name_elements,function(index,element){
                     var name_html = $(element).html().trim();
                     if(name_html=="null"){
-                        $(element).html("<strong> ---- </strong>");
+                        $(element).html(" <small>[ ---- ]</small> ");
                     }
                     else{
-                        $(element).html("<strong>"+name_html+"</strong>");
+                        $(element).html(" <small>[ "+name_html+" ]</small> ");
                     }
                 })
                 var id_elements = $("#subjectSelect-flexdatalist-results").find("li").find(".item-SubjectID");
                 $.each(id_elements,function(index,element){
                     var id_html = $(element).html().trim();
                     if(id_html=="null"){
-                        $(element).html("[<small> ---- </small>]");
+                        $(element).html(" <strong> ---- </strong> ");
                     }
                     else{
-                        $(element).html("[<small>"+id_html+"</small>]");
+                        $(element).html(" <strong> "+id_html+" </strong> ");
                     }
                 })
 

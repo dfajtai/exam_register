@@ -87,11 +87,22 @@ function users_subject_title(entry){
     let name = entry.Name;
     let id = entry.SubjectID;
     let index = entry.SubjectIndex;
-    if(name==null){
-        title = $("<div/>").addClass("flex-grow-1").html("Subject " + id);
-    }else{
-        title = $("<div/>").addClass("flex-grow-1").html("Subject "+name +" ["+ id+"]");
+    title = $("<div/>").addClass("flex-grow-1 d-inline-flex align-items-center");
+    title.append($("<div/>").addClass("me-3").html("Subject"));
+
+    var id_tag = $("<div/>").addClass("d-flex mx-2 badge bg-secondary rounded-pill")
+    id_tag.append($("<div/>").addClass("me-3").html("ID"));
+    id_tag.append($("<div/>").html("<strong>"+id+"</strong>"));
+    title.append(id_tag);
+    if(name!==null){
+        var name_tag = $("<div/>").addClass("d-flex mx-2 badge bg-secondary rounded-pill")
+        name_tag.append($("<div/>").addClass("me-3").html("<small>Name</small>"));
+        name_tag.append($("<div/>").html("<small>"+name+"</small>"));
+        title.append(name_tag);
     }
+
+    title.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","ID: '"+id+"'\nName: '"+name+"'");
+    
     subtitle = $("<div/>").html("<small><i>nr."+index+"</i></small>");
 
     return [title, subtitle]

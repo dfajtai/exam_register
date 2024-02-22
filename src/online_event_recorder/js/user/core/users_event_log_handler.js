@@ -10,7 +10,7 @@ var users_eventlog_lock_info = {};
 
 var users_eventlog_lock_interval = null;
 
-var user_eventlog_show_delete = true;
+var user_eventlog_show_delete = false;
 
 function users_eventlog_retrieve_subjects_ajax(params) {
     // console.log("retrieve some subj");
@@ -302,7 +302,8 @@ function create_users_eventlog_table(container, table_id, subject_info){
 
     users_eventlog_visible_subjects = [subject_index];
     users_eventlog_visible_subjects_info = [subject_info];
-    users_eventlog_subject_string_lookup[subject_index] = subject_info.Name + " [" + subject_info.SubjectID + "]";
+
+    users_eventlog_subject_string_lookup[subject_index] = (subject_info.Name==null ? "":subject_info.Name+" ") + "[" + subject_info.SubjectID + "]";
 
 
     var options = {};
@@ -407,7 +408,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
                 events: window.users_eventlog_operate_events, formatter: users_eventlog_operate_formatter, forceHide:true},
                 {title: '#', field : 'EventIndex', align:'center', sortable:true, searchable:false, visible:false, forceHide: true},
-                {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "users_eventlog_subjectFormatter"},
+                {title: 'Subject', field : 'EventSubject', align:'center', sortable:true, searchable:true,forceExport: true, formatter: "users_eventlog_subjectFormatter", visible:false},
                 {title: 'Study', field : 'EventStudy', align:'center', sortable:true, searchable:true, formatter: "studyFormatter", forceExport: true, visible:false},
                 {title: 'Event Name', field : 'EventName', align:'center', sortable:true, searchable:true,forceExport: true},
                 {title: 'Status', field : 'EventStatus', align:'center', sortable:true, searchable:true,forceExport: true,formatter: "eventStatusFormatter",},
@@ -544,8 +545,11 @@ function show_users_eventlog_modal_add(container, table){
             }
         });
 
+        var event_subject = users_eventlog_visible_subjects[0];
+
+        event_params["EventSubject"] = event_subject;
         event_params["EventData"] = nullify_obj(event_data);
-        event_params["EventStudy"] = getEntryFieldWhere(users_eventlog_visible_subjects_info,"SubjectIndex",event_params["EventSubject"],"StudyID");
+        event_params["EventStudy"] = getEntryFieldWhere(users_eventlog_visible_subjects_info,"SubjectIndex",event_subject,"StudyID");
 
         // console.log(event_params);
         // console.log(event_data);
