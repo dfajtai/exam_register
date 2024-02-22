@@ -90,20 +90,20 @@ function users_subject_title(entry){
     title = $("<div/>").addClass("flex-grow-1 d-inline-flex align-items-center");
     title.append($("<div/>").addClass("me-3").html("Subject"));
 
-    var id_tag = $("<div/>").addClass("d-flex mx-2 badge bg-secondary rounded-pill")
-    id_tag.append($("<div/>").addClass("me-3").html("ID"));
+    var id_tag = $("<div/>").addClass("d-flex mx-1 badge bg-light text-dark")
+    id_tag.append($("<div/>").addClass("me-2").html("ID"));
     id_tag.append($("<div/>").html("<strong>"+id+"</strong>"));
     title.append(id_tag);
     if(name!==null){
-        var name_tag = $("<div/>").addClass("d-flex mx-2 badge bg-secondary rounded-pill")
-        name_tag.append($("<div/>").addClass("me-3").html("<small>Name</small>"));
+        var name_tag = $("<div/>").addClass("d-none d-sm-flex mx-1 badge bg-light text-dark");
+        name_tag.append($("<div/>").addClass("me-2").html("<small>Name</small>"));
         name_tag.append($("<div/>").html("<small>"+name+"</small>"));
         title.append(name_tag);
     }
 
     title.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","ID: '"+id+"'\nName: '"+name+"'");
     
-    subtitle = $("<div/>").html("<small><i>nr."+index+"</i></small>");
+    subtitle = $("<div/>").html("<small><i>nr."+index+"</i></small>").addClass("d-none d-md-block");
 
     return [title, subtitle]
 }
@@ -510,6 +510,7 @@ function users_subject_card(container,entry){
         var checked = $(this).prop("checked");
         if(checked){
             $(form).find(".subject-resource").each(function(){$(this).prop("disabled",false)});
+            auto_refresh_switch.prop("checked",false).trigger("change");
             $(submit_subject_data_btn).prop("disabled",false);
             setLock("subjects",[users_current_subject],function(){
                 users_update_subject_lock_indicator();
@@ -717,7 +718,7 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
                 start_users_eventlog_lock_timer();
             });
             
-            subject_card_accordion_content_container.on('hide.bs.collapse', function () {
+            event_card_accordion_content_container.on('hide.bs.collapse', function () {
                 stop_users_eventlog_lock_timer();
 
             });
