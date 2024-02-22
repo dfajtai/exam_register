@@ -591,7 +591,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
     var subject_selector_container = $("<div/>");
     
     if(event_index==null){
-        subjectSelectWidget(subject_selector_container,"all",
+        subjectSearchWidget(subject_selector_container,"all",
         function(subject_indices,subject_info){
             // console.log(subject_indices);
             // console.log(subject_info);
@@ -664,7 +664,8 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 
             event_changelog_subject_string_lookup = {};
             $.each(event_changelog_visible_subjects_info,function(index,val){
-                event_changelog_subject_string_lookup[val.SubjectIndex] = val.Name + " [" + val.SubjectID + "]";
+                event_changelog_subject_string_lookup[val.SubjectIndex] =val.SubjectID + (val.Name==null ? "": " [" + val.Name+"]");
+
             });
         });
         container.append(subject_selector_container);
@@ -779,7 +780,7 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
                             event_changelog_visible_subjects_info = result;
                             event_changelog_subject_string_lookup = {};
                             $.each(event_changelog_visible_subjects_info,function(index,val){
-                                event_changelog_subject_string_lookup[val.SubjectIndex] = val.Name + " [" + val.SubjectID + "]";
+                                event_changelog_subject_string_lookup[val.SubjectIndex] =val.SubjectID + (val.Name==null ? "": " [" + val.Name+"]");
                             });
 
                             if(call_refresh){

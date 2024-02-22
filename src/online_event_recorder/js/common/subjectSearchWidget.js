@@ -121,7 +121,7 @@ function subjectSearchWidget(container, study_id = null, callback = null, single
         $.each(selected_subjects, function(index,subject){
             if(!subject.hasOwnProperty("Name")) return;
             if(!subject.hasOwnProperty("SubjectID")) return;
-            text_list.push((subject.Name==null?"":(subject.Name+" "))+ "["+subject.SubjectID+"]");                                 
+            text_list.push(subject.SubjectID + (subject.Name===null?"":" [" + subject.Name+"]"));                                 
         })
 
         if(text_list.length==0){

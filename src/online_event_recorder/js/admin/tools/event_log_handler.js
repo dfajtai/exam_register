@@ -497,7 +497,7 @@ function create_eventlog_table(container, table_id, simplify = false){
 
             eventlog_subject_string_lookup = {};
             $.each(eventlog_visible_subjects_info,function(index,val){
-                eventlog_subject_string_lookup[val.SubjectIndex] = val.Name + " [" + val.SubjectID + "]";
+                eventlog_subject_string_lookup[val.SubjectIndex] = val.SubjectID + (val.Name==null ? "": " [" + val.Name+"]");
             })
         });
 

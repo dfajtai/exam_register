@@ -303,7 +303,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
     users_eventlog_visible_subjects = [subject_index];
     users_eventlog_visible_subjects_info = [subject_info];
 
-    users_eventlog_subject_string_lookup[subject_index] = (subject_info.Name==null ? "":subject_info.Name+" ") + "[" + subject_info.SubjectID + "]";
+    users_eventlog_subject_string_lookup[subject_index] = subject_info.SubjectID + (subject_info.Name==null ? "": " [" + subject_info.Name+"]");
 
 
     var options = {};
