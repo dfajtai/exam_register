@@ -263,6 +263,79 @@ function subject_pool_modal_export(container,table){
     
 }
 
+function subject_pool_modal_export_by_subjects(container,table){
+    container.empty();
+
+    var modal_id = "subjectPoolEditorModal";
+    
+
+    var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-md");
+    var modal_content = $("<div/>").addClass("modal-content");
+
+    var modal_header= $("<div/>").addClass("modal-header");
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject pool export"));
+    modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
+
+    var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
+
+    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    // modal_body.append(pool_readable_text);
+
+    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(pool_url);
+    var qrcode_dom = $("<div/>").attr("id","qrcode")
+    modal_body.append(qrcode_dom);
+
+    
+    modal_content.append(modal_header);
+    modal_content.append(modal_body);
+
+    modal_dialog.html(modal_content);
+    modal_root.html(modal_dialog);
+
+
+    var full_url = null;
+
+    $(modal_root).on('show.bs.modal',function(){
+        var indices = getColUnique($(table).bootstrapTable("getData"),"SubjectIndex");
+        var indices_text = JSON.stringify(indices);
+        // console.log(indices_text);
+        var searchParams = new URLSearchParams();
+        searchParams.set("setSubjectPool",indices_text);
+        full_url =  window.location.host+'?' + searchParams.toString();
+
+        $(pool_url).val(full_url);
+        setSubjectPool(indices);
+
+    });
+
+    $(modal_root).on('shown.bs.modal',function(){
+        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
+
+        // qrcode gen
+        var qrcode = new QRCode("qrcode",{
+            text: full_url,
+            width: $(pool_url).width(),
+            height: $(pool_url).width(),
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    });
+
+    container.append(modal_root);
+
+    if($(table).bootstrapTable("getData").length==0){
+        var message = 'The subject pool is empty.'
+        bootbox.alert(message);
+    }
+    else{
+        modal_root.modal("show");
+    }
+    
+}
+
 function init_subject_pool_table(container, table_id, ){
     var table = $("<table/>").attr("id",table_id);
 
@@ -271,6 +344,7 @@ function init_subject_pool_table(container, table_id, ){
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the pool"));
     toolbar.append($("<button/>").attr("id","toolbar_load_data").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Load/refresh data"));
     toolbar.append($("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));
+    toolbar.append($("<button/>").attr("id","toolbar_export_by_subjects").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export by subjects"));
 
     // table.attr("data-height",String(height));
 
@@ -406,6 +480,10 @@ function showSubjectPoolEditor(container, initial_indices = null){
 
     toolbar.find("#toolbar_export").on("click",function(e){
         subject_pool_modal_export(subject_pool_editor_modals,table);
+    })
+
+    toolbar.find("#toolbar_export_by_subjects").on("click",function(e){
+        subject_pool_modal_export_by_subjects(subject_pool_editor_modals,table);
     })
 
     table.on('all.bs.table',

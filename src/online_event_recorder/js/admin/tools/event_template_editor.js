@@ -297,13 +297,13 @@ function event_template_input_form(container){
         dtypeNumericGroup.empty().removeClass("row mb-3");
         
         if(this.value=="numeric"){
-            dtypeNumericGroup.empty().addClass("row mb-3");
-            var _step = $("<div/>").addClass("col-md-4");
+            dtypeNumericGroup.empty().addClass("d-flex flex-lg-row flex-column row mb-3");
+            var _step = $("<div/>").addClass("col-lg-4 mb-lg-0 mb-2 col-12");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
             _step.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
-            var _unitType = $("<div/>").addClass("col-md-4");
+            var _unitType = $("<div/>").addClass("col-lg-4 mb-lg-0 mb-2 col-12");
             _unitType.append($("<label/>").addClass("form-label").attr("for","unitTypeSelect").html("Field Unit Type"));
             var type_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitTypeSelect");
             type_select_dropdow.append($("<option/>").html("Choose Unit Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
@@ -311,7 +311,7 @@ function event_template_input_form(container){
             _unitType.append(type_select_dropdow);
             dtypeNumericGroup.append(_unitType);
 
-            var _unit = $("<div/>").addClass("col-md-4");
+            var _unit = $("<div/>").addClass("col-lg-4 mb-lg-0 mb-2 col-12");
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
             var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit").prop('required',false);;
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
@@ -330,23 +330,23 @@ function event_template_input_form(container){
 
         }
         else if(this.value=="range"){
-            dtypeNumericGroup.empty().addClass("row mb-3");
-            var _step = $("<div/>").addClass("col-md-2");
+            dtypeNumericGroup.empty().addClass("d-flex flex-lg-row flex-column row mb-3");
+            var _step = $("<div/>").addClass("col-lg-2 mb-lg-0 mb-2 col-12");
             _step.append($("<label/>").addClass("form-label").attr("for","dtypeStepInput").html("Field Step"));
             _step.append($("<input/>").addClass("form-control data-required data-required-style").attr("type","numeric").attr("step","0.0001").attr("id","dtypeStepInput").attr("name","FieldDataStep").prop('required',true).attr("placeholder","e.g. 1, 0.1, 0.01, ..."));
             dtypeNumericGroup.append(_step);
 
-            var _min = $("<div/>").addClass("col-md-2");
+            var _min = $("<div/>").addClass("col-lg-2 mb-lg-0 mb-2 col-12");
             _min.append($("<label/>").addClass("form-label").attr("for","dtypeMinInput").html("Field Min"));
             _min.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMinInput").attr("name","FieldDataMin").prop('required',true).attr("placeholder","e.g. 0, ..."));
             dtypeNumericGroup.append(_min);
 
-            var _max = $("<div/>").addClass("col-md-2");
+            var _max = $("<div/>").addClass("col-lg-2 mb-lg-0 mb-2 col-12");
             _max.append($("<label/>").addClass("form-label").attr("for","dtypeMaxInput").html("Field Max"));
             _max.append($("<input/>").addClass("form-control").attr("type","numeric").attr("step","0.0001").attr("id","dtypeMaxInput").attr("name","FieldDataMax").prop('required',true).attr("placeholder","e.g. 100, ..."));
             dtypeNumericGroup.append(_max);
 
-            var _unitType = $("<div/>").addClass("col-md-3");
+            var _unitType = $("<div/>").addClass("col-lg-3 mb-lg-0 mb-2 col-12");
             _unitType.append($("<label/>").addClass("form-label").attr("for","unitTypeSelect").html("Field Unit Type"));
             var type_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitTypeSelect");
             type_select_dropdow.append($("<option/>").html("Choose Unit Type...").prop('selected',true).attr("disabled","disabled").attr("value",""));
@@ -354,7 +354,7 @@ function event_template_input_form(container){
             _unitType.append(type_select_dropdow);
             dtypeNumericGroup.append(_unitType);
 
-            var _unit = $("<div/>").addClass("col-md-3");
+            var _unit = $("<div/>").addClass("col-lg-3 mb-lg-0 mb-2 col-12");
             _unit.append($("<label/>").addClass("form-label").attr("for","unitSelect").html("Field Unit"));
             var unit_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","unitSelect").attr("name","FieldUnit");
             unit_select_dropdow.append($("<option/>").html("Choose Unit...").prop('selected',true).attr("disabled","disabled").attr("value",""));
@@ -458,18 +458,18 @@ function event_template_add_form(container,form_id, table){
     var labelInput = $("<input/>").addClass("form-control data-required data-required-style").attr("type","text").attr("id","label").attr("name","FieldLabel").prop('required',true).attr("placeholder","Field label in visualization.")
     labelGroup.append($("<div/>").addClass("col-md-9").append(labelInput));
 
-    var typeGroup = $("<div/>").addClass("row mb-3");
+    var typeGroup = $("<div/>").addClass("d-flex flex-column flex-md-row row mb-3");
     var typeGroupLabel = $("<div/>").addClass("form-label col-md-3").html("Field Type");
 
-    var inputGroup = $("<div/>").addClass("form-check form-check-inline col-md-2 ms-3");
+    var inputGroup = $("<div/>").addClass("form-check form-check-inline col-md-2 col-12 ms-md-3 ms-4");
     inputGroup.append($("<input/>").addClass("form-check-input data-required data-required-style").attr("type","radio").attr("id","inputRadio").attr("name","FieldType").prop('required',true).attr("value","input"));
     inputGroup.append($("<label/>").addClass("form-check-label").attr("for","inputRadio").html("Input"));
 
-    var selectGroup = $("<div/>").addClass("form-check form-check-inline col-md-2");
+    var selectGroup = $("<div/>").addClass("form-check form-check-inline col-md-2 col-12 ms-4");
     selectGroup.append($("<input/>").addClass("form-check-input data-required data-required-style").attr("type","radio").attr("id","selectRadio").attr("name","FieldType").prop('required',true).attr("value","select"));
     selectGroup.append($("<label/>").addClass("form-check-label").attr("for","selectRadio").html("Select"));
 
-    var requiredGroup = $("<div/>").addClass("form-check form-check-inline col-md-2");
+    var requiredGroup = $("<div/>").addClass("form-check form-check-inline col-md-2 col-12 ms-4");
     requiredGroup.append($("<input/>").addClass("form-check-input").attr("type","checkbox").attr("id","requiredCheckbox").attr("name","FieldRequired").attr("value","true"));
     requiredGroup.append($("<label/>").addClass("form-check-label").attr("for","requiredCheckbox").html("Required"));
 
@@ -501,7 +501,7 @@ function event_template_add_form(container,form_id, table){
     form.append(primaryProperties);
     form.append(additionalForm);
 
-    var submitButton = $("<button/>").addClass("btn btn-outline-dark col-md-12").attr("id","submitBtn").attr("type","submit").html("Add as new field");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark col-12").attr("id","submitBtn").attr("type","submit").html("Add as new field");
 
     form.append(submitButton);
 

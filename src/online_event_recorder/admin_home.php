@@ -59,6 +59,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
@@ -233,7 +234,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			clearStatusFromUrl("tool");
 			clearStatusFromUrl("uname");
 			clearStatusFromUrl("error");
-			
+
 			statusToUrl("def",def_name);
 
 			$('.navbar-collapse').collapse('hide');
