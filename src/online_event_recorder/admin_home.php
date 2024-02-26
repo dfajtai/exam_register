@@ -95,7 +95,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
 	
 
-	<script defer src="js/admin/tools/event_args_editor.js"></script>
+	<script defer src="js/admin/tools/event_template_editor.js"></script>
 	<script defer src="js/admin/tools/event_planner.js"></script>
 	<script defer src="js/admin/tools/subject_register.js"></script>
 	<script defer src="js/admin/tools/user_management.js"></script>
@@ -168,7 +168,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarEventsLink">
 							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_args_editor_tool()">Event template editor</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_event_template_editor_tool()">Event template editor</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event planner</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event log</a></li>
 							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event change log</a></li>
@@ -236,7 +236,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		}
 
 
-		function show_event_args_editor_tool(){
+		function show_event_template_editor_tool(){
 			updateLocalDefinitionDatabase(
 				function(){
 					var main_container = $("#main_container");
@@ -245,10 +245,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event template editor"));
 					main_container.append(_title);
 
-					show_event_args_editor(main_container);		
+					show_event_template_editor(main_container);		
 					
 					clearAllStatusFromUrl();
-					statusToUrl("tool","EventArgEditor");
+					statusToUrl("tool","EventTemplateEditor");
 					
 					$('.navbar-collapse').collapse('hide');
 				}
@@ -397,7 +397,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
-					if(tool=="EventArgEditor") show_event_args_editor_tool();
+					if(tool=="EventTemplateEditor") show_event_template_editor_tool();
 					if(tool=="EventPlanner") show_event_planner_tool();
 					if(tool=="SubjectRegister") show_subject_register_tool();
 					if(tool=="EventLog") show_event_log_tool();

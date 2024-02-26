@@ -1,38 +1,38 @@
-var event_args_table_id = "fieldDefTable";
-var event_args_modals  = {};
-var event_args_content_name = "";
-var event_args_lock_list = [];
-var event_args_names = [];
-var event_args_doubles = [];
+var event_template_table_id = "fieldDefTable";
+var event_template_modals  = {};
+var event_template_content_name = "";
+var event_template_lock_list = [];
+var event_template_names = [];
+var event_template_doubles = [];
 
 
-window.event_args_operate_events = {
+window.event_template_operate_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+event_args_table_id).bootstrapTable('getData');
+        var data = $('#'+event_template_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;;
-        $('#'+event_args_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
+        $('#'+event_template_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
 
-        statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_args_table_id).bootstrapTable('getData')));
+        statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_template_table_id).bootstrapTable('getData')));
 
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+event_args_table_id).bootstrapTable('getData');
+        var data = $('#'+event_template_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+event_args_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
+        $('#'+event_template_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
 
-        statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_args_table_id).bootstrapTable('getData')));
+        statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_template_table_id).bootstrapTable('getData')));
 
     },
     'click .edit': function (e, value, row, index) {
-        show_event_args_modal_edit_form(event_args_modals, $('#'+event_args_table_id),index);
+        show_event_template_modal_edit_form(event_template_modals, $('#'+event_template_table_id),index);
     },
     'click .remove': function (e, value, row, index) {
         bootbox.confirm({
@@ -49,15 +49,15 @@ window.event_args_operate_events = {
             },
             callback: function (result) {
                 if(result){
-                    $('#'+event_args_table_id).bootstrapTable('remove', {
+                    $('#'+event_template_table_id).bootstrapTable('remove', {
                         field: '$index',
                         values: [index]
                         });
-                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_args_table_id).bootstrapTable('getData')));
+                    statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_template_table_id).bootstrapTable('getData')));
 
-                    event_args_update_unique();
-                    $('#'+event_args_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-                    $('#'+event_args_table_id).bootstrapTable("uncheckAll");
+                    event_template_update_unique();
+                    $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_template_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -88,11 +88,11 @@ function eventOperateFormatter(value, row, index) {
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+event_args_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+event_template_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
-    if(event_args_lock_list.length>0){
+    if(event_template_lock_list.length>0){
         container.find("button").addClass("disabled");
     }
 
@@ -100,7 +100,7 @@ function eventOperateFormatter(value, row, index) {
 }
 
 
-function create_event_args_table(container, table_id, height){
+function create_event_template_table(container, table_id, height){
     // var table_with_controls = $("<div/>");
 
     var table = $("<table/>").attr("id",table_id);
@@ -110,9 +110,14 @@ function create_event_args_table(container, table_id, height){
     // toolbar.append($("<button/>").attr("id","toolbar_edit").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select").html($("<i/>").addClass("fa fa-pen-to-square").attr("aria-hidden","true")).append(" Edit Selected"));
     toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Duplicate selected events."));
     toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected events."));
-    toolbar.append($("<button/>").attr("id","toolbar_event_args_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
-    toolbar.append($("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export"));
+    toolbar.append($("<button/>").attr("id","toolbar_event_template_json_import").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-file-import fa-solid me-2").attr("aria-hidden","true")).append("Import"));
+    var json_btn = $("<button/>").attr("id","toolbar_generate_JSON").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-code fa-solid me-2").attr("aria-hidden","true")).append("Export");
+    json_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Export as JSON.")
+    toolbar.append(json_btn);
     toolbar.append($("<button/>").attr("id","toolbar_preview_event_form").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-eye fa-solid me-2").attr("aria-hidden","true")).append("Preview"));
+    var export_btn = $("<button/>").attr("id","toolbar_export_to_event_defs").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa-solid fa-share-from-square me-2").attr("aria-hidden","true")).append("Delegate")
+    export_btn.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Export to 'EventTempalteDefinitions'.");
+    toolbar.append(export_btn);
 
     table.attr("data-height",String(height));
 
@@ -153,7 +158,7 @@ function create_event_args_table(container, table_id, height){
             columns : [
                 {field : 'state', checkbox: true, align:'center'},
                 {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-                events: window.event_args_operate_events, formatter: eventOperateFormatter},
+                events: window.event_template_operate_events, formatter: eventOperateFormatter},
                 {title: 'Name', field : 'FieldName', align:'center', sortable:true, searchable:true, cellStyle: 'argname_validate_formatter'},
                 {title: 'Label', field : 'FieldLabel', align:'center', sortable:true, searchable:true},
                 {title: 'Type', field : 'FieldType', align:'center', sortable:true, searchable:true},
@@ -171,7 +176,7 @@ function create_event_args_table(container, table_id, height){
 
 
 function argname_validate_formatter(value, row, index){
-    if(event_args_doubles.includes(value)){
+    if(event_template_doubles.includes(value)){
         return {
             css: {
             'color': 'red',
@@ -183,7 +188,7 @@ function argname_validate_formatter(value, row, index){
 
 }
 
-function event_args_select_form(container){
+function event_template_select_form(container){
     container.empty();
 
     var defSelectGroup = $("<div/>").addClass("row mb-2").attr("id","defitinitonSelectGroup");
@@ -257,7 +262,7 @@ function event_args_select_form(container){
 }
 
 
-function event_args_input_form(container){
+function event_template_input_form(container){
     container.empty();
 
     var dtypeSelectGroup = $("<div/>").addClass("row mb-3");
@@ -407,7 +412,7 @@ function event_args_input_form(container){
     })
 }
 
-function event_args_modal(container, modal_id, title){
+function event_template_modal(container, modal_id, title){
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
     var modal_dialog = $("<div/>").addClass("modal-dialog modal-xl");
     var modal_content = $("<div/>").addClass("modal-content");
@@ -437,7 +442,7 @@ function event_args_modal(container, modal_id, title){
 }
 
 
-function event_args_add_form(container,form_id, table){
+function event_template_add_form(container,form_id, table){
     // container.empty();
 
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
@@ -484,10 +489,10 @@ function event_args_add_form(container,form_id, table){
     typeGroup.find("input[type=radio]").change(function(){
         // console.log(this.value + " : " + this.checked);
         if(this.value=="select"){
-            event_args_select_form(additionalForm);
+            event_template_select_form(additionalForm);
         }
         else{
-            event_args_input_form(additionalForm);
+            event_template_input_form(additionalForm);
         }
     })
 
@@ -529,19 +534,19 @@ function event_args_add_form(container,form_id, table){
         }
 
 
-        if(event_args_content_name.includes(values.FieldName)){
-            event_args_doubles.push(values.FieldName);
+        if(event_template_content_name.includes(values.FieldName)){
+            event_template_doubles.push(values.FieldName);
         }
 
         table.bootstrapTable("append",values);
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
 
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "add"] );
 
-        event_args_update_unique();
-        event_args_uniqueness_warning();
+        event_template_update_unique();
+        event_template_uniqueness_warning();
         table.bootstrapTable("resetSearch"); // to call the formatter...
         // container.empty();
 
@@ -550,21 +555,21 @@ function event_args_add_form(container,form_id, table){
     container.append(form);
 }
 
-function show_event_args_modal_add_form(container, table){
+function show_event_template_modal_add_form(container, table){
     container.empty();
 
-    var modal_id = "event_args_add_modal";
-    event_args_modal(container, modal_id, "Configure new argument");
+    var modal_id = "event_template_add_modal";
+    event_template_modal(container, modal_id, "Configure new argument");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
     var modal_footer = modal.find(".modal-footer");
     // modal_footer.empty();
 
-    event_args_content_name = "add";
+    event_template_content_name = "add";
     $( document ).trigger( "_lock", [ "add"] );
 
-    event_args_add_form(modal_body,"add_form", table);
+    event_template_add_form(modal_body,"add_form", table);
 
     var form = $(modal).find("form");
     console.log(form);
@@ -575,16 +580,16 @@ function show_event_args_modal_add_form(container, table){
     modal.modal('show');
 
     modal.on("hide.bs.modal",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "add" ] )
         // container.empty();
     });
 
 }
 
-function event_args_edit_form(container, form_id,  table, index, submit_callback = null){
+function event_template_edit_form(container, form_id,  table, index, submit_callback = null){
     // container.empty();
-    event_args_add_form(container, form_id, table);
+    event_template_add_form(container, form_id, table);
 
     var form = container.find("#"+form_id);
 
@@ -687,11 +692,11 @@ function event_args_edit_form(container, form_id,  table, index, submit_callback
 
         statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "edit"] );
 
-        event_args_update_unique();
-        event_args_uniqueness_warning();
+        event_template_update_unique();
+        event_template_uniqueness_warning();
         table.bootstrapTable("resetSearch"); // to call the formatter...
         
         if(submit_callback!=null){
@@ -701,11 +706,11 @@ function event_args_edit_form(container, form_id,  table, index, submit_callback
 }
 
 
-function show_event_args_modal_edit_form(container, table, index){
+function show_event_template_modal_edit_form(container, table, index){
     container.empty();
 
-    var modal_id = "event_args_add_modal";
-    event_args_modal(container, modal_id, "Configure argument");
+    var modal_id = "event_template_add_modal";
+    event_template_modal(container, modal_id, "Configure argument");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -714,10 +719,10 @@ function show_event_args_modal_edit_form(container, table, index){
 
     modal_footer.prepend($("<button/>").addClass("btn btn-outline-dark").attr("id","revert_form").attr("aria-label","Clear").html($("<i/>").addClass("fa fa-rotate-right me-2").attr("aria-hidden","true")).append("Revert"));
 
-    event_args_content_name = "edit";
+    event_template_content_name = "edit";
     $( document ).trigger( "_lock", [ "edit"] );
 
-    event_args_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
+    event_template_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
 
     var form = $(modal).find("form");
     // console.log(form);
@@ -729,18 +734,18 @@ function show_event_args_modal_edit_form(container, table, index){
 
     modal_footer.find("#revert_form").click(function(){
         modal_body.empty();
-        event_args_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
+        event_template_edit_form(modal_body, "edit_form", table, index, function(){ modal.modal('hide');});
     })
 
     modal.on("hide.bs.modal",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "edit" ] )
         // container.empty();
     });
 
 }
 
-function event_args_json_import(container,form_id, table){
+function event_template_json_import(container,form_id, table){
     var form = $("<form/>").attr("id",form_id).addClass("needs-validation");
 
     var textarea =$("<textarea/>").addClass("form-control col-md-12 mb-2").attr("placeholder","Paste your JSON").attr("rows",20).prop("required",true).attr("name","json_text");
@@ -763,11 +768,11 @@ function event_args_json_import(container,form_id, table){
 
 }
 
-function show_event_args_modal_json_import_form(container, table){
+function show_event_template_modal_json_import_form(container, table){
     container.empty();
 
-    var modal_id = "event_args_add_modal";
-    event_args_modal(container, modal_id, "Import arguments as JSON");
+    var modal_id = "event_template_add_modal";
+    event_template_modal(container, modal_id, "Import arguments as JSON");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -779,10 +784,10 @@ function show_event_args_modal_json_import_form(container, table){
         dialog.removeClass("modal-lg").addClass("modal-xl");
     }
 
-    event_args_content_name = "json_import";
+    event_template_content_name = "json_import";
     $( document ).trigger( "_lock", [ "json_import"] );
 
-    event_args_json_import(modal_body, "json_import_form",table);
+    event_template_json_import(modal_body, "json_import_form",table);
 
     var form = $(modal).find("form");
     // console.log(form);
@@ -793,14 +798,14 @@ function show_event_args_modal_json_import_form(container, table){
     modal.modal('show');
 
     modal.on("hide.bs.modal",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "json_import" ] )
         // container.empty();
     });
 
 }
 
-function event_args_json_export(container,table){
+function event_template_json_export(container,table){
     var content = $("<div/>");
 
     var textarea = $("<textarea/>").addClass("col-md-12 mb-2").attr("rows",20);
@@ -819,7 +824,7 @@ function event_args_json_export(container,table){
     textarea.text(JSON.stringify(filtered_data));
 
     content.find(".btn-close").on("click",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", ["json_export"] );
         container.empty();
     })
@@ -829,11 +834,11 @@ function event_args_json_export(container,table){
 }
 
 
-function show_event_args_modal_json_export_form(container, table){
+function show_event_template_modal_json_export_form(container, table){
     container.empty();
 
-    var modal_id = "event_args_add_modal";
-    event_args_modal(container, modal_id, "Export arguments as JSON");
+    var modal_id = "event_template_add_modal";
+    event_template_modal(container, modal_id, "Export arguments as JSON");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -845,10 +850,10 @@ function show_event_args_modal_json_export_form(container, table){
         dialog.removeClass("modal-lg").addClass("modal-xl");
     }
 
-    event_args_content_name = "json_export";
+    event_template_content_name = "json_export";
     $( document ).trigger( "_lock", [ "json_export"] );
 
-    event_args_json_export(modal_body, table);
+    event_template_json_export(modal_body, table);
 
     var form = $(modal).find("form");
     // console.log(form);
@@ -859,7 +864,7 @@ function show_event_args_modal_json_export_form(container, table){
     modal.modal('show');
 
     modal.on("hide.bs.modal",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "json_export" ] )
         // container.empty();
     });
@@ -867,10 +872,10 @@ function show_event_args_modal_json_export_form(container, table){
 }
 
 
-function show_event_args_modal_preview(container,table){
+function show_event_template_modal_preview(container,table){
     container.empty();
-    var modal_id = "event_args_preview_modal";
-    event_args_modal(container, modal_id, "Event form preview");
+    var modal_id = "event_template_preview_modal";
+    event_template_modal(container, modal_id, "Event form preview");
 
     var modal = container.find("#"+modal_id);
     var modal_body = modal.find(".modal-body");
@@ -918,16 +923,16 @@ function show_event_args_modal_preview(container,table){
     modal.modal('show');
 
     modal.on("hide.bs.modal",function(){
-        event_args_content_name = "";
+        event_template_content_name = "";
         $( document ).trigger( "_release", [ "preview_event_form" ] )
         // container.empty();
     });
 
 }
 
-function event_args_uniqueness_warning(){
-    if(event_args_doubles.length>0){
-        var message = 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/><br/>'+JSON.stringify(event_args_doubles);
+function event_template_uniqueness_warning(callback = null){
+    if(event_template_doubles.length>0){
+        var message = 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/><br/>'+JSON.stringify(event_template_doubles);
 
         bootbox.alert({
             message: message,
@@ -939,46 +944,49 @@ function event_args_uniqueness_warning(){
                 },
             });
     }
+    else{
+        if(callback!=null) callback();
+    }
 }
 
-function event_args_update_unique(){
-    var table = $('#'+event_args_table_id);
+function event_template_update_unique(){
+    var table = $('#'+event_template_table_id);
     var data = table.bootstrapTable("getData");
-    event_args_names = [];
-    $.each(data,function(index){ event_args_names.push(data[index]["FieldName"])});
-    event_args_doubles = getDoubles(event_args_names);
+    event_template_names = [];
+    $.each(data,function(index){ event_template_names.push(data[index]["FieldName"])});
+    event_template_doubles = getDoubles(event_template_names);
 }
 
 
-function show_event_args_editor(container){
-    create_event_args_table(container,event_args_table_id,500);
-    var table = $('#'+event_args_table_id);
+function show_event_template_editor(container){
+    create_event_template_table(container,event_template_table_id,500);
+    var table = $('#'+event_template_table_id);
 
     if(statusInStorage("eventArgEditorHistory")){
         var data = JSON.parse(statusFromStorage("eventArgEditorHistory"));
 
-        event_args_names = [];
-        $.each(data,function(index){ event_args_names.push(data[index]["FieldName"])});
-        event_args_doubles = getDoubles(event_args_names);
+        event_template_names = [];
+        $.each(data,function(index){ event_template_names.push(data[index]["FieldName"])});
+        event_template_doubles = getDoubles(event_template_names);
 
         table.bootstrapTable('append',data);
-        event_args_uniqueness_warning();
+        event_template_uniqueness_warning();
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
 
     toolbar.find(".needs-select").addClass("disabled");
 
-    event_args_modals  = $("<div/>");
-    container.append(event_args_modals);
+    event_template_modals  = $("<div/>");
+    container.append(event_template_modals);
 
     table.on('all.bs.table',
     // table.on('check.bs.table check-all.bs.table check-some.bs.table uncheck.bs.table uncheck-all.bs.table uncheck-some.bs.table',
         function(){
-            if(event_args_lock_list.length>0) return;
+            if(event_template_lock_list.length>0) return;
 
             var selection =  table.bootstrapTable('getSelections');
-            if(selection.length>0 && event_args_lock_list.length==0){
+            if(selection.length>0 && event_template_lock_list.length==0){
                 toolbar.find(".needs-select").removeClass("disabled");
             }
             else{
@@ -1031,9 +1039,9 @@ function show_event_args_editor(container){
                     table.bootstrapTable("remove",{field:"$index",values:indices});
                     statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-                    event_args_update_unique();
-                    $('#'+event_args_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-                    $('#'+event_args_table_id).bootstrapTable("uncheckAll");
+                    event_template_update_unique();
+                    $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+event_template_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -1042,7 +1050,7 @@ function show_event_args_editor(container){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        show_event_args_modal_add_form(event_args_modals,table);
+        show_event_template_modal_add_form(event_template_modals,table);
     })
 
     toolbar.find("#toolbar_duplicate").on("click",function(e){
@@ -1069,39 +1077,48 @@ function show_event_args_editor(container){
             statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
 
-        event_args_update_unique();
+        event_template_update_unique();
         table.bootstrapTable("resetSearch"); // to call the formatter...
     })
 
 
-    toolbar.find("#toolbar_event_args_json_import").on("click",function(e){
-        show_event_args_modal_json_import_form(event_args_modals,table);
+    toolbar.find("#toolbar_event_template_json_import").on("click",function(e){
+        show_event_template_modal_json_import_form(event_template_modals,table);
     })
 
     toolbar.find("#toolbar_generate_JSON").on("click",function(e){
-        show_event_args_modal_json_export_form(event_args_modals, table);
-        event_args_uniqueness_warning();
+        event_template_uniqueness_warning(function(){
+            show_event_template_modal_json_export_form(event_template_modals, table);
+
+        });
+    })
+
+    toolbar.find("#toolbar_export_to_event_defs").on("click",function(e){
+        event_template_uniqueness_warning(function(){
+            console.log("apadfaszat");
+
+        });
     })
 
     toolbar.find("#toolbar_preview_event_form").on("click",function(e){
-        show_event_args_modal_preview(event_args_modals, table);
+        show_event_template_modal_preview(event_template_modals, table);
 
-        event_args_content_name = "preview_event_form";
+        event_template_content_name = "preview_event_form";
         $( document ).trigger( "_lock", [ "preview_event_form" ] );
     })
 
 
     $( document ).on( "operate_lock", {},
         function( event ) {
-            if(event_args_lock_list.length!=0){
+            if(event_template_lock_list.length!=0){
                 $(document).find(".lockable").addClass("disabled");
-                if(!event_args_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
+                if(!event_template_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", true );
                 $(document).find(".sortable").prop( "disabled", true );
             }
             else{
-                // $(event_args_content).empty();
+                // $(event_template_content).empty();
                 $(document).find(".lockable").not(".needs-select").removeClass("disabled");
-                if(!event_args_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
+                if(!event_template_lock_list.includes("search")) $(document).find(".search-input").prop( "disabled", false );
                 $(document).find(".sortable").prop( "disabled", false );
             }
         }
@@ -1110,7 +1127,7 @@ function show_event_args_editor(container){
     $( document ).on( "_lock", {},
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            event_args_lock_list.push(lock_name);
+            event_template_lock_list.push(lock_name);
             // console.log("Lock ["+lock_name+"] acquired.");
             $(this).trigger("operate_lock",[]);
         }
@@ -1119,7 +1136,7 @@ function show_event_args_editor(container){
     $( document ).on( "_release", {},
     function( event, lock_name ) {
         if(!(lock_name == "" || lock_name == null )){
-            event_args_lock_list = _.without(event_args_lock_list,lock_name);
+            event_template_lock_list = _.without(event_template_lock_list,lock_name);
             // console.log("Lock ["+lock_name+"] released.");
             $(this).trigger("operate_lock",[]);
         }
