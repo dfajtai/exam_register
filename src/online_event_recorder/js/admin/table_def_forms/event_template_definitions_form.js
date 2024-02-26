@@ -174,6 +174,18 @@ function initEventDefinitionsTable(container,tableId){
         updateRemoteDefinitionChecksum("event_template_definitions",data["rows"]);
     })
 
+    if(statusInUrl("addNewEventDef")){
+        var params = statusFromUrl("addNewEventDef");
+        var modal = $("#event_modal_add_new");
+        modal.on("shown.bs.modal",function(){
+            modal.find("#EventFormJSONInput").first().val(params).trigger("change");
+            modal.off("shown.bs.modal");
+        })
+
+        var btn = container.find("#toolbar_add").first().trigger("click");
+        
+    }
+
 }
 
 function eventDefinitionInputs(container){

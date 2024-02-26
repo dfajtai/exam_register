@@ -229,7 +229,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			var fun = def_params.func;
 			fun(_table,table_id);
 
-			clearAllStatusFromUrl();
+			// clearAllStatusFromUrl();
+			clearStatusFromUrl("tool");
+			clearStatusFromUrl("uname");
+			clearStatusFromUrl("error");
+			
 			statusToUrl("def",def_name);
 
 			$('.navbar-collapse').collapse('hide');

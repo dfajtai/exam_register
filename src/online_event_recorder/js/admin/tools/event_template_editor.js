@@ -572,7 +572,7 @@ function show_event_template_modal_add_form(container, table){
     event_template_add_form(modal_body,"add_form", table);
 
     var form = $(modal).find("form");
-    console.log(form);
+    // console.log(form);
     form.on('submit',function(){
         modal.modal('hide');
     })
@@ -930,6 +930,29 @@ function show_event_template_modal_preview(container,table){
 
 }
 
+
+function show_event_template_in_template_defs(table){
+    var data = table.bootstrapTable('getData');
+
+    var filtered_data = [];
+    $.each(data,function(index,row){
+        var _data = {... row};
+        delete _data.state;
+        filtered_data.push(_data);
+    })
+
+    filtered_data_json = JSON.stringify(filtered_data);
+    
+    clearAllStatusFromUrl();
+    statusToUrl("def","events");
+    statusToUrl("addNewEventDef",filtered_data_json);
+
+    window.location.reload();
+
+
+
+}
+
 function event_template_uniqueness_warning(callback = null){
     if(event_template_doubles.length>0){
         var message = 'Warning! FieldName needs to be unique.<br/>Please check for redundant FieldNames:<br/><br/>'+JSON.stringify(event_template_doubles);
@@ -1095,7 +1118,7 @@ function show_event_template_editor(container){
 
     toolbar.find("#toolbar_export_to_event_defs").on("click",function(e){
         event_template_uniqueness_warning(function(){
-            console.log("apadfaszat");
+            show_event_template_in_template_defs(table);
 
         });
     })
