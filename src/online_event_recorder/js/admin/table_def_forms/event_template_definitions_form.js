@@ -117,8 +117,8 @@ function initEventDefinitionsTable(container,tableId){
     });
 
     preview_btn.on('click',function(){
-        var modal_id = "event_args_preview_modal";
-        event_args_modal(container, modal_id, "Event form preview");
+        var modal_id = "event_template_preview_modal";
+        event_template_modal(container, modal_id, "Event form preview");
 
         var modal = container.find("#"+modal_id);
 
@@ -176,6 +176,7 @@ function initEventDefinitionsTable(container,tableId){
 
     if(statusInUrl("addNewEventDef")){
         var params = statusFromUrl("addNewEventDef");
+        clearStatusFromUrl("addNewEventDef");
         var modal = $("#event_modal_add_new");
         modal.on("shown.bs.modal",function(){
             modal.find("#EventFormJSONInput").first().val(params).trigger("change");
