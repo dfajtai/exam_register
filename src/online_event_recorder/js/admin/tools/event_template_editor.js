@@ -934,22 +934,43 @@ function show_event_template_modal_preview(container,table){
 function show_event_template_in_template_defs(table){
     var data = table.bootstrapTable('getData');
 
-    var filtered_data = [];
-    $.each(data,function(index,row){
-        var _data = {... row};
-        delete _data.state;
-        filtered_data.push(_data);
-    })
-
-    filtered_data_json = JSON.stringify(filtered_data);
+    function delegate_params(){    
+        var filtered_data = [];
+        $.each(data,function(index,row){
+            var _data = {... row};
+            delete _data.state;
+            filtered_data.push(_data);
+        })
     
-    clearAllStatusFromUrl();
-    statusToUrl("def","events");
-    statusToUrl("addNewEventDef",filtered_data_json);
+        filtered_data_json = JSON.stringify(filtered_data);
+        
+        clearAllStatusFromUrl();
+        statusToUrl("def","events");
+        statusToUrl("addNewEventDef",filtered_data_json);
+    
+        window.location.reload();
+    }
 
-    window.location.reload();
+    var params = JSON.stringify(data);
 
-
+    bootbox.confirm({
+        message: 'You are going to export the current "EventTemplate" to "EventTemplateDefinitions" as a new event definition.</br>' + params +'</br>Do you want to proceed?',
+        buttons: {
+        confirm: {
+        label: 'Yes',
+        className: 'btn-outline-danger'
+        },
+        cancel: {
+        label: 'No',
+        className: 'btn-outline-dark'
+        }
+        },
+        callback: function (result) {
+            if(result){
+                delegate_params()
+            }
+        }
+        });
 
 }
 

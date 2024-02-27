@@ -1117,7 +1117,7 @@ function subject_modal_export(container,table){
 
         var indices = getColUnique($(table).bootstrapTable("getSelections"),"SubjectIndex");
         var indices_text = JSON.stringify(indices);
-        console.log(indices_text);
+        // console.log(indices_text);
         var searchParams = new URLSearchParams();
         searchParams.set("setSubjectPool",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();

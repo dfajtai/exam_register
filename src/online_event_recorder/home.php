@@ -113,7 +113,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 					
 					<?php if($_SESSION['isAdmin']){
-					echo('<li class="nav-item me-3"><a class = "nav-link active" href="#" id="become_admin_button">ADMIN mode</a></li>');}?>
+					echo('<li class="nav-item me-3"><a class = "nav-link active" href="#" onclick="become_admin()">ADMIN mode</a></li>');}?>
 					<li class="nav-item me-3">
 						<a class="nav-link active" href="logout.php" >Logout</a>
 					</li>
@@ -162,18 +162,22 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			})
 		}
 
+		function become_admin(){
+			clearAllStatusFromUrl();
+
+			$.ajax({
+				type: "POST",
+				url: 'php/admin_mode_switch.php',
+				dataType: "json",
+				success: function (result) {
+					// console.log(result);
+					window.location = "home.php";
+				}})
+		}
+
 		$(document).ready(function() {
 			$("#become_admin_button").click(function(){
-				// clearAllStatusFromUrl();
-
-				$.ajax({
-					type: "POST",
-					url: 'php/admin_mode_switch.php',
-					dataType: "json",
-					success: function (result) {
-						// console.log(result);
-						window.location = "home.php";
-					}});
+				become_admin();
 			});
 
 

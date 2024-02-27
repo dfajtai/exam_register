@@ -115,7 +115,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#" onclick="resolve_url_params()">ExamRegister</a>
+			<a class="navbar-brand" onclick="resolve_url_params()">ExamRegister</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -123,61 +123,61 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			<div class="collapse navbar-collapse" id="navbarNavDropdown">
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown me-3">
-						<a class="nav-link dropdown-toggle active" href="#" 
+						<a class="nav-link dropdown-toggle active"
 						id="navbarAdminLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarAdminLink">
 							<li>
-								<a class="dropdown-item" href="#" onclick="show_table('users')">Manage users</a>
+								<a class="dropdown-item" onclick="show_table('users')">Manage users</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="#" onclick="show_table('studies')">Define studies</a>
+								<a class="dropdown-item" onclick="show_table('studies')">Define studies</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="#" onclick="show_resouce_handler_tool()">Manage locks</a>
+								<a class="dropdown-item" onclick="show_resource_handler_tool()">Manage locks</a>
 							</li>
 						</ul>
 					</li>
 					
 					<li class="nav-item dropdown me-3">
-						<a class="nav-link dropdown-toggle active" href="#" 
+						<a class="nav-link dropdown-toggle active"
 						id="navbarDefsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Definitions</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDefsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_table('locations')">Location definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('bodyparts')">Bodypart definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('unit_types')">Unit Type definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('units')">Unit definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('consumable_types')">Consumable Type definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('consmables')">Consumable definitions</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('assets')">Asset definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('event_types')">Event type definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
+							<li><a class="dropdown-item"  onclick="show_table('locations')">Location definitions</a></li>
+							<li><a class="dropdown-item"  onclick="show_table('bodyparts')">Bodypart definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('unit_types')">Unit Type definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('units')">Unit definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('consumable_types')">Consumable Type definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('consmables')">Consumable definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('assets')">Asset definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_table('event_types')">Event type definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_table('events')">Event template definitons</a></li>
 						</ul>
 					</li>
 
 					<li class="nav-item dropdown me-3">
-						<a class="nav-link dropdown-toggle active" href="#" 
+						<a class="nav-link dropdown-toggle active"
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarSubjectsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_subject_register_tool()">Subjects register</a>
-							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool()">Subjects pool editor</a>
-							<li><a class="dropdown-item" href="#" onclick="show_subject_change_log_tool()">Subject change log</a>
+							<li><a class="dropdown-item" onclick="show_subject_register_tool()">Subjects register</a>
+							<li><a class="dropdown-item" onclick="show_subject_pool_tool()">Subjects pool editor</a>
+							<li><a class="dropdown-item" onclick="show_subject_change_log_tool()">Subject change log</a>
 						</ul>
 					</li>
 
 					<li class="nav-item dropdown me-3">
-						<a class="nav-link dropdown-toggle active" href="#" 
+						<a class="nav-link dropdown-toggle active" 
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarEventsLink">
-							<li><a class="dropdown-item" href="#" onclick="show_table('events')">Event template definitons</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_template_editor_tool()">Event template editor</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_planner_tool()">Event planner</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_log_tool()">Event log</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_event_change_log_tool()">Event change log</a></li>
+							<li><a class="dropdown-item" onclick="show_table('events')">Event template definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_event_template_editor_tool()">Event template editor</a></li>
+							<li><a class="dropdown-item" onclick="show_event_planner_tool()">Event planner</a></li>
+							<li><a class="dropdown-item" onclick="show_event_log_tool()">Event log</a></li>
+							<li><a class="dropdown-item" onclick="show_event_change_log_tool()">Event change log</a></li>
 						</ul>
 					</li>
 
 					<li class="nav-item me-3">
-						<a class="nav-link active" href="#" id="become_user_button" >USER mode</a>
+						<a class="nav-link active" id="become_user_button" >USER mode</a>
 					</li>
 					<li class="nav-item me-3">
 						<a class="nav-link active" href="logout.php" >Logout</a>
@@ -204,8 +204,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		var event_deleted_status =  null;
 		var event_planned_status =  null;
 
+		var title_root = "ExamRegister - ADMIN - ";
+
+
 		function show_table(def_name){
-			
 			var exists = Object.keys(available_def_tables).includes(def_name);
 			if (!exists){
 				return
@@ -231,167 +233,142 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			fun(_table,table_id);
 
 			// clearAllStatusFromUrl();
-			clearStatusFromUrl("tool");
-			clearStatusFromUrl("uname");
-			clearStatusFromUrl("error");
-
-			statusToUrl("def",def_name);
+			clearStatusFromUrl(["tool","uname","error"]);
+			
+			contentToUrl("def",def_name);
 
 			$('.navbar-collapse').collapse('hide');
 		}
 
 
 		function show_event_template_editor_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-					var main_container = $("#main_container");
-					$("#main_container").empty();
-					
-					var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event template editor"));
-					main_container.append(_title);
+			var main_container = $("#main_container");
+			$("#main_container").empty();
+			
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event template editor"));
+			main_container.append(_title);
 
-					show_event_template_editor(main_container);		
-					
-					clearAllStatusFromUrl();
-					statusToUrl("tool","EventTemplateEditor");
-					
-					$('.navbar-collapse').collapse('hide');
-				}
-			)			
+			show_event_template_editor(main_container);	
+
+
+			contentToUrl("tool","EventTemplateEditor",true);
+
+			
+			$('.navbar-collapse').collapse('hide');		
 		}
 
 		function show_event_planner_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
-				
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event planner"));
-				main_container.append(_title);
+			var main_container = $("#main_container");
+			$("#main_container").empty();
+			
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event planner"));
+			main_container.append(_title);
 
-				show_event_planner(main_container);		
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","EventPlanner");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_event_planner(main_container);
+
+			contentToUrl("tool","EventPlanner",true);
+
+			
+			$('.navbar-collapse').collapse('hide');
 		}
 
 		function show_subject_register_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject register"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject register"));
+			main_container.append(_title);
 
-				show_subject_register(main_container);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","SubjectRegister");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_subject_register(main_container);
+			contentToUrl("tool","SubjectRegister",true);
+
+
+			$('.navbar-collapse').collapse('hide');
 		}
 
 		function show_event_log_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event log"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event log"));
+			main_container.append(_title);
 
-				show_event_log_handler(main_container);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","EventLog");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_event_log_handler(main_container);
+			contentToUrl("tool","EventLog",true);
+
+			
+			$('.navbar-collapse').collapse('hide');
 
 		}
 
 		function show_event_change_log_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event change log"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event change log"));
+			main_container.append(_title);
 
-				show_event_changelog_handler(main_container);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","EventChangeLog");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_event_changelog_handler(main_container);
+
+			contentToUrl("tool","EventChangeLog",true);
+
+			
+			$('.navbar-collapse').collapse('hide');
 
 		}
 
 		function show_subject_pool_tool(init_indices = null){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+			main_container.append(_title);
 
-				showSubjectPoolEditor(main_container,init_indices);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","SubjectPool");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			showSubjectPoolEditor(main_container,init_indices);
+
+			contentToUrl("tool","SubjectPool",true);
+
+			
+			$('.navbar-collapse').collapse('hide');
 
 		}
 
 		function show_subject_change_log_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject change log"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject change log"));
+			main_container.append(_title);
 
-				show_subject_changelog_handler(main_container);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","SubjectChangeLog");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_subject_changelog_handler(main_container);
 
+			contentToUrl("tool","SubjectChangeLog",true);
+
+
+			
+			$('.navbar-collapse').collapse('hide');
 		}
 
-		function show_resouce_handler_tool(){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+		function show_resource_handler_tool(){
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Manage locks"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Manage locks"));
+			main_container.append(_title);
 
-				show_resource_handler(main_container);
-				
-				clearAllStatusFromUrl();
-				statusToUrl("tool","ResouceLocks");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			show_resource_handler(main_container);
+
+			contentToUrl("tool","ResouceLocks",true);
+
+
+			
+			$('.navbar-collapse').collapse('hide');
 
 		}
 
 		function resolve_url_params(){
+			clearStatusFromUrl(["uname","error"]);
+
 			if(statusInUrl("setSubjectPool")){
 					setSubjectPool(JSON.parse(statusFromUrl("setSubjectPool")));
 					clearStatusFromUrl("setSubjectPool");
@@ -408,7 +385,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					if(tool=="EventLog") show_event_log_tool();
 					if(tool=="EventChangeLog") show_event_change_log_tool();
 					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
-					if(tool=="ResouceLocks") show_resouce_handler_tool();
+					if(tool=="ResouceLocks") show_resource_handler_tool();
 					if(tool=="SubjectPool") show_subject_pool_tool();
 					show_table("users");
 				}
@@ -439,8 +416,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
   			});
 			
 			$(document).ready(function () {
-				clearStatusFromUrl("uname");
-				clearStatusFromUrl("error");
 				startIncativityTimer();
 			});
 
@@ -467,6 +442,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				
 				resolve_url_params();
 			});
+		});
+
+
+		window.addEventListener('popstate', function(event) {
+    		resolve_url_params();
+			document.title = title_root+ event.state["content"];
+
 		});
 
 
