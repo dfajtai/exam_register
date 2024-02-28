@@ -93,7 +93,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#"  onclick="show_users_home()">ExamRegister</a>
+			<a class="navbar-brand" href="#"  onclick="show_users_home(true)">ExamRegister</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -101,14 +101,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			<div class="collapse navbar-collapse" id="navbarNavDropdown">
 				<ul class="navbar-nav">
 					<li class="nav-item me-3">
-						<a class="nav-link active" href = "#" onclick="show_users_home()">Home</a>
+						<a class="nav-link active" href = "#" onclick="show_users_home(true)">Home</a>
 					</li>
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link dropdown-toggle active" href="#" 
 						id="navbarConfigLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configuration</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarConfigLink">
-							<li><a class="dropdown-item" href = "#" onclick="study_select()">Select study</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool()">Subjects pool editor</a>
+							<li><a class="dropdown-item" href = "#" onclick="study_select(true)">Select study</a></li>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool(null,true)">Subjects pool editor</a>
 						</ul>
 					</li>
 					
@@ -128,41 +128,56 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	</div>
 
 	<script>
-		function study_select(){
+		var available_def_tables = Object();
+		
+		var subject_deleted_status =  null;
+		var subject_planned_status =  null;
+		var event_deleted_status =  null;
+		var event_planned_status =  null;
+
+		var main_title = "ExamRegister";
+
+
+		function study_select(click = false){
 			$('.navbar-collapse').collapse('hide');
+
+            contentToUrl("tool","studySelect", true, click);
+
 			showSelectActiveStudyForm($("#main_container"),function(){
-						setTimeout(show_users_home,500);
+						setTimeout(function(){
+							
+							show_users_home(true);
+						},500);
 					});
+
+			
 		}
 
-		function show_users_home(){
+		function show_users_home(click = false){
 			$('.navbar-collapse').collapse('hide');
 
-			clearStatusFromUrl("tool");
-			statusToUrl("tool","usersMainTool");
+			contentToUrl("tool","usersMainTool",false,click);
 
 			show_users_main_tool($("#main_container"));
 		}
 
-		function show_subject_pool_tool(init_indices = null){
-			updateLocalDefinitionDatabase(
-				function(){
-				var main_container = $("#main_container");
-				$("#main_container").empty();
+		function show_subject_pool_tool(init_indices = null,click=false){
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
-				var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
-				main_container.append(_title);
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+			main_container.append(_title);
 
-				showSubjectPoolEditor(main_container,init_indices);
-				
-				clearStatusFromUrl("tool");
-				statusToUrl("tool","SubjectPool");
-				
-				$('.navbar-collapse').collapse('hide');
-			})
+			showSubjectPoolEditor(main_container,init_indices);
+			
+			contentToUrl("tool","SubjectPool",false,click);
+
+			
+			$('.navbar-collapse').collapse('hide');
 		}
 
 		function become_admin(){
+			saveCurrentStatusToHistory();
 			clearAllStatusFromUrl();
 
 			$.ajax({
@@ -173,6 +188,46 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					// console.log(result);
 					window.location = "home.php";
 				}})
+		}
+
+		function resolve_url_params(){
+			clearStatusFromUrl(["uname","error"]);
+			
+
+			if(statusInUrl("setSubjectPool")){
+				var pool_info = JSON.parse(statusFromUrl("setSubjectPool"));
+				setSubjectPool(pool_info);
+				clearStatusFromUrl("setSubjectPool");
+			}
+			else if(statusInStorage("subjectPoolData")){
+				subjectPoolFromStorage();
+			}
+
+			if(statusInUrl("activeStudy")){
+				syncStatusFromUrlToStorage("activeStudy");
+			}
+
+			if(!statusInStorage("activeStudy")){
+				study_select(true);
+			}
+			else{
+				if(statusInUrl("tool")){
+					var tool = statusFromUrl("tool");
+					switch (tool) {
+						case "SubjectPool":set_window_title(isObject(event.state)?event.state["content"]:null);
+							break;
+						case "studySelect":
+							study_select();
+							break;
+						default:
+							show_users_home();
+							break;
+					}
+				}
+				else{
+					show_users_home();
+				}
+			}
 		}
 
 		$(document).ready(function() {
@@ -189,11 +244,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
   			});
 
 
-
-
 			$(document).ready(function () {
-				clearStatusFromUrl("uname");
-				clearStatusFromUrl("error");
 				startIncativityTimer();
 			});
 			
@@ -205,38 +256,16 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				event_deleted_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","deleted","EventStatusID");
 				event_planned_status =  getDefEntryFieldWhere("event_status_definitions","EventStatusName","planned","EventStatusID");
 
-				if(statusInUrl("setSubjectPool")){
-					var pool_info = JSON.parse(statusFromUrl("setSubjectPool"));
-					setSubjectPool(pool_info);
-					clearStatusFromUrl("setSubjectPool");
-				}
-				else if(statusInStorage("subjectPoolData")){
-					subjectPoolFromStorage();
-				}
+				resolve_url_params();
 
-				if(statusInUrl("activeStudy")){
-					syncStatusFromUrlToStorage("activeStudy");
-				}
-				if(!statusInStorage("activeStudy")){
-					study_select();
-				}
-				else{
-					syncStatusFromStorageToUrl("activeStudy");
-					if(statusInUrl("tool")){
-						var tool = statusFromUrl("tool");
-						if(tool=="SubjectPool") show_subject_pool_tool();
-						if(tool=="usersMainTool") show_users_home();
-					}
-					else{
-						show_users_home();
-					}
-				}
-
-				
-
-				
-					
 			});
+		});
+
+		window.addEventListener('popstate', function(event) {
+    		resolve_url_params();
+			// console.log(event)
+			set_window_title(isObject(event.state)?event.state["content"]:null);
+
 		});
 
 	</script>

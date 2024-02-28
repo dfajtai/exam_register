@@ -59,14 +59,17 @@ function showSelectActiveStudyForm(container,callback= null){
 
         let formData = $(this).serializeArray();
 
+        var info = {};
+        $.each(formData,function(index,entry){info[entry.name]=entry.value})
+
         let selectedID = JSON.parse($(this).find("#selectedStudy").val());
         currentStudyInfoBlock.empty();
         currentStudyInfoBlock.append(createFlatDefInfoBlock("Active study's info","studies","StudyID",selectedID,1000));
 
-        $.each(formData, function( index, element ) {
-            statusToUrl(element.name,element.value)
-            statusToStorage(element.name,element.value);
-        }); 
+
+        // saveCurrentStatusToHistory(); // duplicate current history entry
+        contentToUrl("activeStudy", info.activeStudy, false, false); // add tool tag to status
+        statusToStorage("activeStudy", info.activeStudy);
 
         selectActiveStudyForm[0].reset();
         selectedStudyInfoBlock.empty().removeClass("row mb-3 mx-1");

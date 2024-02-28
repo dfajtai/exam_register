@@ -12,7 +12,7 @@ function setSubjectPool(initial_indices, update_data = false, callback=null){
         initial_indices = [];
     }
     var indices = nullify_array(initial_indices.filter(onlyUnique));
-    indices === null? []:indices;
+    indices = indices === null ? [] : indices;
     subject_pool = indices;
 
     var data = subject_pool.map((x)=>({SubjectIndex:x}));

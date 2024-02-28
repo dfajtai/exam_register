@@ -202,8 +202,9 @@ function init_users_main_tool(container){
                             var titles = users_subject_title(new_info);
                             $(users_main_tool_content).prop("hidden",false);
                             users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
-             
-                            statusToUrl("subjectIndex",new_index);
+                            
+
+                            contentToUrl("subjectIndex",new_index,false,false);
                             select_collapse.off("hidden.bs.collapse");
                         })
                     }
@@ -244,7 +245,8 @@ function init_users_main_tool(container){
                     $(users_main_tool_content).prop("hidden",false);
                     users_main_tools_view($(users_main_tool_content),new_index,titles[0],titles[1]);
      
-                    statusToUrl("subjectIndex",new_index);
+                    contentToUrl("subjectIndex",new_index,false,false);
+
                     select_from_pool_collapse.off("hidden.bs.collapse");
                 })
             }
@@ -287,7 +289,9 @@ function init_users_main_tool(container){
                     $(users_main_tool_content).prop("hidden",false);
                     users_main_tools_view($(users_main_tool_content),new_indices[0],titles[0],titles[1]);
                     var index = new_info[0].SubjectIndex;
-                    statusToUrl("subjectIndex",index);
+
+                    contentToUrl("subjectIndex",index,false,false);
+
                     search_collapse.off("hidden.bs.collapse");
                 })
                 setTimeout(function(){

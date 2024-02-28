@@ -204,7 +204,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		var event_deleted_status =  null;
 		var event_planned_status =  null;
 
-		var title_root = "ExamRegister - ADMIN - ";
+		var main_title = "ExamRegister - ADMIN";
 
 
 		function show_table(def_name, click = false){
@@ -282,23 +282,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 			$('.navbar-collapse').collapse('hide');
-		}
-
-		function show_event_log_tool( click = false){
-			var main_container = $("#main_container");
-			$("#main_container").empty();
-
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event log"));
-			main_container.append(_title);
-
-			show_event_log_handler(main_container);
-			contentToUrl("tool","EventLog",true,click);
-
-			
-			$('.navbar-collapse').collapse('hide');
-
-		}
-
+		}			if(event.state["content"])
+				document.title = title_root+ event.state["content"];
 		function show_event_change_log_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
@@ -323,21 +308,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			main_container.append(_title);
 
 			showSubjectPoolEditor(main_container,init_indices);
-
-			contentToUrl("tool","SubjectPool",true,click);
-
-			
-			$('.navbar-collapse').collapse('hide');
-
-		}
-
-		function show_subject_change_log_tool( click = false){
-			var main_container = $("#main_container");
-			$("#main_container").empty();
-
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject change log"));
-			main_container.append(_title);
-
+			if(event.state["content"])
+				document.title = title_root+ event.state["content"];
 			show_subject_changelog_handler(main_container);
 
 			contentToUrl("tool","SubjectChangeLog",true,click);
@@ -465,8 +437,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		window.addEventListener('popstate', function(event) {
     		resolve_url_params();
-			console.log(event)
-			document.title = title_root+ event.state["content"];
+			// console.log(event)
+			
+			set_window_title(isObject(event.state)?event.state["content"]:null);
 
 		});
 

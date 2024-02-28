@@ -944,8 +944,10 @@ function show_event_template_in_template_defs(table){
     
         filtered_data_json = JSON.stringify(filtered_data);
         
-        contentToUrl("def","events", true, true);
-        contentToUrl("addNewEventDef",filtered_data_json, false, false);
+        saveCurrentStatusToHistory() // duplicate current history entry
+        contentToUrl("addNewEventDef",filtered_data_json, true, false); // replace with new status - remove old tool
+        contentToUrl("def","events",  false, false); // add tool tag to status
+
     
         window.location.reload();
     }

@@ -1124,7 +1124,9 @@ function subject_modal_export(container,table){
         $(pool_url).val(full_url);
 
         to_pool_btn.off("click").on("click",function(){
-            contentToUrl("setSubjectPool",indices_text, false, false);
+            saveCurrentStatusToHistory() // duplicate current history entry
+            contentToUrl("setSubjectPool",indices_text, true, false); // replace with new status - remove old tool
+            contentToUrl("tool","SubjectPool", false, false); // add tool tag to status
             window.location.reload();
         });
     });

@@ -1,3 +1,14 @@
+var url_status_debug = true;
+
+function set_window_title(content=null){
+    if(content===null){
+        document.title = main_title;
+    }
+    else{
+        document.title = main_title + " - " + content;
+    }
+}
+
 function statusToStorage(name, value){
     localStorage.setItem(name,JSON.stringify(value));
 }
@@ -21,8 +32,8 @@ function statusToUrl(name, value){
         if(!isEqual(old_val,value)){
             searchParams.set(name,value);
             var newRelativePathQuery = window.location.pathname +'?' + searchParams.toString();
-            history.pushState({}, document.title, newRelativePathQuery);
-            console.log([document.title, newRelativePathQuery])
+            history.pushState(history.state, document.title, newRelativePathQuery);
+            if(url_status_debug) console.log([history.state, document.title, newRelativePathQuery]);
         }
     }
 }
@@ -66,7 +77,7 @@ function clearStatusFromUrl(name){
 
         var newRelativePathQuery = window.location.pathname +'?' + searchParams.toString();
         history.replaceState(history.state, document.title, newRelativePathQuery);
-        console.log([document.title, newRelativePathQuery])
+        if(url_status_debug)  console.log([history.state, document.title, newRelativePathQuery])
     }
 }
 
@@ -74,7 +85,7 @@ function clearAllStatusFromUrl(){
     if ('URLSearchParams' in window) {
         var newRelativePathQuery = window.location.pathname;
         history.replaceState(history.state, document.title, newRelativePathQuery);
-        console.log([document.title, newRelativePathQuery])
+        if(url_status_debug)  console.log([history.state, document.title, newRelativePathQuery])
     }
 }
 
@@ -97,13 +108,14 @@ function contentToUrl(content_type, content_value, clear_all = false, add_histor
             var state = {content_type:content_type, content:content_value};
 
             if(add_history){
-                $(document).prop('title',title_root + content_value);
+                set_window_title(content_value);
+                // $(document).prop('title',title_root + content_value);
                 history.pushState(state, document.title, newRelativePathQuery);
             }
             else{
                 history.replaceState(state, document.title, newRelativePathQuery);
             }
-            console.log([state, document.title, newRelativePathQuery]);
+            if(url_status_debug)  console.log([state, document.title, newRelativePathQuery]);
         }
     }
 }
@@ -118,7 +130,7 @@ function saveCurrentStatusToHistory(){
 
 
 function statusToUrlAndStorage(name,value){
-    statusToUrl(name,value);
+    contentToUrl(name,value,false,true);
     statusToStorage(name,value);
 }
 
@@ -127,5 +139,5 @@ function syncStatusFromUrlToStorage(name){
 }
 
 function syncStatusFromStorageToUrl(name){
-    statusToUrl(name,statusFromStorage(name));
+    contentToUrl(name,statusFromStorage(name),false,true);
 }
