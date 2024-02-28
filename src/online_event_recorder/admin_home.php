@@ -280,10 +280,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			show_subject_register(main_container);
 			contentToUrl("tool","SubjectRegister",true,click);
 
-
 			$('.navbar-collapse').collapse('hide');
-		}			if(event.state["content"])
-				document.title = title_root+ event.state["content"];
+		}
+
+
 		function show_event_change_log_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();

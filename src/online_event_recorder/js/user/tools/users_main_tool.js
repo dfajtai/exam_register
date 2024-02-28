@@ -149,7 +149,7 @@ function init_users_main_tool(container){
 
     select_collapse.append(select_collapse_card.append(select_collapse_card_content));
     select_collapse.on("show.bs.collapse",function(){
-        if(!statusInUrl("activeStudy")){
+        if(!statusInStorage("activeStudy")){
             var message = 'Active study not selected.';
             bootbox.alert(message);
             select_collapse_card_content.empty();
@@ -159,7 +159,7 @@ function init_users_main_tool(container){
             
             return;
         }
-        var study_id = JSON.parse(statusFromUrl("activeStudy"));
+        var study_id = JSON.parse(statusFromStorage("activeStudy"));
 
         select_collapse_card_content.empty();
         $.ajax({
@@ -642,6 +642,8 @@ function users_main_tools_view(container, subject_index, title = null, subtitle 
     container.empty();
 
     users_current_subject = subject_index;
+    statusToStorage("subjectIndex",users_current_subject);
+    contentToUrl("subjectIndex",users_current_subject,false,false);
 
     var subject_title = $("<div/>").addClass("d-flex p-2 bg-dark text-white fs-3 mb-3");
     
@@ -751,8 +753,8 @@ function show_users_main_tool(container){
     container.empty();
     init_users_main_tool(container);
     
-    var target_subject = statusFromUrl("subjectIndex");
-    var target_event = statusFromUrl("eventIndex");
+    var target_subject = statusFromStorage("subjectIndex");
+    var target_event = statusFromStorage("eventIndex");
 
     if(target_subject!=null){
         $(users_main_tool_content).prop("hidden",false);

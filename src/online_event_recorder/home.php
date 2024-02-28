@@ -145,18 +145,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			showSelectActiveStudyForm($("#main_container"),function(){
 						setTimeout(function(){
-							
 							show_users_home(true);
 						},500);
 					});
-
-			
 		}
 
 		function show_users_home(click = false){
 			$('.navbar-collapse').collapse('hide');
 
-			contentToUrl("tool","usersMainTool",false,click);
+			contentToUrl("tool","usersMainTool",true,click); // clear 
 
 			show_users_main_tool($("#main_container"));
 		}
@@ -170,7 +167,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			showSubjectPoolEditor(main_container,init_indices);
 			
-			contentToUrl("tool","SubjectPool",false,click);
+			contentToUrl("tool","SubjectPool",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
@@ -193,7 +190,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		function resolve_url_params(){
 			clearStatusFromUrl(["uname","error"]);
 			
-
 			if(statusInUrl("setSubjectPool")){
 				var pool_info = JSON.parse(statusFromUrl("setSubjectPool"));
 				setSubjectPool(pool_info);
@@ -203,10 +199,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				subjectPoolFromStorage();
 			}
 
+			if(statusInUrl("subjectIndex")) statusToStorage("subjectIndex", statusFromUrl("subjectIndex"));
+
 			if(statusInUrl("activeStudy")){
 				syncStatusFromUrlToStorage("activeStudy");
-			}
-
+			}		
 			if(!statusInStorage("activeStudy")){
 				study_select(true);
 			}
@@ -214,7 +211,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
 					switch (tool) {
-						case "SubjectPool":set_window_title(isObject(event.state)?event.state["content"]:null);
+						case "SubjectPool":
+							show_subject_pool_tool(null);
 							break;
 						case "studySelect":
 							study_select();
