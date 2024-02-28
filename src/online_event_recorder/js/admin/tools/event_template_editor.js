@@ -944,9 +944,8 @@ function show_event_template_in_template_defs(table){
     
         filtered_data_json = JSON.stringify(filtered_data);
         
-        clearAllStatusFromUrl();
-        statusToUrl("def","events");
-        statusToUrl("addNewEventDef",filtered_data_json);
+        contentToUrl("def","events", true, true);
+        contentToUrl("addNewEventDef",filtered_data_json, false, false);
     
         window.location.reload();
     }

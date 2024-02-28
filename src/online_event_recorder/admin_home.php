@@ -127,13 +127,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarAdminLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarAdminLink">
 							<li>
-								<a class="dropdown-item" onclick="show_table('users')">Manage users</a>
+								<a class="dropdown-item" onclick="show_table('users',true)">Manage users</a>
 							</li>
 							<li>
-								<a class="dropdown-item" onclick="show_table('studies')">Define studies</a>
+								<a class="dropdown-item" onclick="show_table('studies',true)">Define studies</a>
 							</li>
 							<li>
-								<a class="dropdown-item" onclick="show_resource_handler_tool()">Manage locks</a>
+								<a class="dropdown-item" onclick="show_resource_handler_tool(true)">Manage locks</a>
 							</li>
 						</ul>
 					</li>
@@ -142,15 +142,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active"
 						id="navbarDefsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Definitions</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDefsLink">
-							<li><a class="dropdown-item"  onclick="show_table('locations')">Location definitions</a></li>
-							<li><a class="dropdown-item"  onclick="show_table('bodyparts')">Bodypart definitions</a></li>
-							<li><a class="dropdown-item" onclick="show_table('unit_types')">Unit Type definitions</a></li>
-							<li><a class="dropdown-item" onclick="show_table('units')">Unit definitions</a></li>
-							<li><a class="dropdown-item" onclick="show_table('consumable_types')">Consumable Type definitions</a></li>
-							<li><a class="dropdown-item" onclick="show_table('consmables')">Consumable definitions</a></li>
-							<li><a class="dropdown-item" onclick="show_table('assets')">Asset definitons</a></li>
-							<li><a class="dropdown-item" onclick="show_table('event_types')">Event type definitons</a></li>
-							<li><a class="dropdown-item" onclick="show_table('events')">Event template definitons</a></li>
+							<li><a class="dropdown-item"  onclick="show_table('locations',true)">Location definitions</a></li>
+							<li><a class="dropdown-item"  onclick="show_table('bodyparts',true)">Bodypart definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('unit_types',true)">Unit Type definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('units',true)">Unit definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('consumable_types',true)">Consumable Type definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('consmables',true)">Consumable definitions</a></li>
+							<li><a class="dropdown-item" onclick="show_table('assets',true)">Asset definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_table('event_types',true)">Event type definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_table('events',true)">Event template definitons</a></li>
 						</ul>
 					</li>
 
@@ -158,9 +158,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active"
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarSubjectsLink">
-							<li><a class="dropdown-item" onclick="show_subject_register_tool()">Subjects register</a>
-							<li><a class="dropdown-item" onclick="show_subject_pool_tool()">Subjects pool editor</a>
-							<li><a class="dropdown-item" onclick="show_subject_change_log_tool()">Subject change log</a>
+							<li><a class="dropdown-item" onclick="show_subject_register_tool(true)">Subjects register</a>
+							<li><a class="dropdown-item" onclick="show_subject_pool_tool(null,true)">Subjects pool editor</a>
+							<li><a class="dropdown-item" onclick="show_subject_change_log_tool(true)">Subject change log</a>
 						</ul>
 					</li>
 
@@ -168,11 +168,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						<a class="nav-link dropdown-toggle active" 
 						id="navbarEventsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Events</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarEventsLink">
-							<li><a class="dropdown-item" onclick="show_table('events')">Event template definitons</a></li>
-							<li><a class="dropdown-item" onclick="show_event_template_editor_tool()">Event template editor</a></li>
-							<li><a class="dropdown-item" onclick="show_event_planner_tool()">Event planner</a></li>
-							<li><a class="dropdown-item" onclick="show_event_log_tool()">Event log</a></li>
-							<li><a class="dropdown-item" onclick="show_event_change_log_tool()">Event change log</a></li>
+							<li><a class="dropdown-item" onclick="show_table('events',true)">Event template definitons</a></li>
+							<li><a class="dropdown-item" onclick="show_event_template_editor_tool(true)">Event template editor</a></li>
+							<li><a class="dropdown-item" onclick="show_event_planner_tool(true)">Event planner</a></li>
+							<li><a class="dropdown-item" onclick="show_event_log_tool(true)">Event log</a></li>
+							<li><a class="dropdown-item" onclick="show_event_change_log_tool(true)">Event change log</a></li>
 						</ul>
 					</li>
 
@@ -207,7 +207,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		var title_root = "ExamRegister - ADMIN - ";
 
 
-		function show_table(def_name){
+		function show_table(def_name, click = false){
 			var exists = Object.keys(available_def_tables).includes(def_name);
 			if (!exists){
 				return
@@ -232,16 +232,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			var fun = def_params.func;
 			fun(_table,table_id);
 
-			// clearAllStatusFromUrl();
-			clearStatusFromUrl(["tool","uname","error"]);
-			
-			contentToUrl("def",def_name);
+			// clearAllStatusFromUrl();			
+			contentToUrl("def",def_name,true,click);
 
 			$('.navbar-collapse').collapse('hide');
 		}
 
 
-		function show_event_template_editor_tool(){
+		function show_event_template_editor_tool(click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 			
@@ -251,13 +249,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			show_event_template_editor(main_container);	
 
 
-			contentToUrl("tool","EventTemplateEditor",true);
+			contentToUrl("tool","EventTemplateEditor",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');		
 		}
 
-		function show_event_planner_tool(){
+		function show_event_planner_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 			
@@ -266,13 +264,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			show_event_planner(main_container);
 
-			contentToUrl("tool","EventPlanner",true);
+			contentToUrl("tool","EventPlanner",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
 		}
 
-		function show_subject_register_tool(){
+		function show_subject_register_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -280,13 +278,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			main_container.append(_title);
 
 			show_subject_register(main_container);
-			contentToUrl("tool","SubjectRegister",true);
+			contentToUrl("tool","SubjectRegister",true,click);
 
 
 			$('.navbar-collapse').collapse('hide');
 		}
 
-		function show_event_log_tool(){
+		function show_event_log_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -294,14 +292,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			main_container.append(_title);
 
 			show_event_log_handler(main_container);
-			contentToUrl("tool","EventLog",true);
+			contentToUrl("tool","EventLog",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
 
 		}
 
-		function show_event_change_log_tool(){
+		function show_event_change_log_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -310,14 +308,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			show_event_changelog_handler(main_container);
 
-			contentToUrl("tool","EventChangeLog",true);
+			contentToUrl("tool","EventChangeLog",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
 
 		}
 
-		function show_subject_pool_tool(init_indices = null){
+		function show_subject_pool_tool(init_indices = null, click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -326,14 +324,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			showSubjectPoolEditor(main_container,init_indices);
 
-			contentToUrl("tool","SubjectPool",true);
+			contentToUrl("tool","SubjectPool",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
 
 		}
 
-		function show_subject_change_log_tool(){
+		function show_subject_change_log_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -342,14 +340,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			show_subject_changelog_handler(main_container);
 
-			contentToUrl("tool","SubjectChangeLog",true);
+			contentToUrl("tool","SubjectChangeLog",true,click);
 
 
 			
 			$('.navbar-collapse').collapse('hide');
 		}
 
-		function show_resource_handler_tool(){
+		function show_resource_handler_tool( click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
@@ -358,7 +356,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			show_resource_handler(main_container);
 
-			contentToUrl("tool","ResouceLocks",true);
+			contentToUrl("tool","ResouceLocks",true,click);
 
 
 			
@@ -379,15 +377,35 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				}
 				else if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
-					if(tool=="EventTemplateEditor") show_event_template_editor_tool();
-					if(tool=="EventPlanner") show_event_planner_tool();
-					if(tool=="SubjectRegister") show_subject_register_tool();
-					if(tool=="EventLog") show_event_log_tool();
-					if(tool=="EventChangeLog") show_event_change_log_tool();
-					if(tool=="SubjectChangeLog") show_subject_change_log_tool();
-					if(tool=="ResouceLocks") show_resource_handler_tool();
-					if(tool=="SubjectPool") show_subject_pool_tool();
-					show_table("users");
+					switch (tool) {
+						case "EventTemplateEditor":
+							show_event_template_editor_tool();
+							break;
+						case "EventPlanner":
+							show_event_planner_tool();
+							break;
+						case "SubjectRegister":
+							show_subject_register_tool();
+							break;
+						case "EventLog":
+							show_event_log_tool();
+							break;
+						case "EventChangeLog":
+							show_event_change_log_tool();
+							break;
+						case "SubjectChangeLog":
+							show_subject_change_log_tool();
+							break;
+						case "ResouceLocks":
+							show_resource_handler_tool();
+							break;
+						case "SubjectPool":
+							show_subject_pool_tool();
+							break;					
+						default:
+							show_table("users");
+							break;
+					}
 				}
 				else{
 					show_table("users");
@@ -447,6 +465,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		window.addEventListener('popstate', function(event) {
     		resolve_url_params();
+			console.log(event)
 			document.title = title_root+ event.state["content"];
 
 		});

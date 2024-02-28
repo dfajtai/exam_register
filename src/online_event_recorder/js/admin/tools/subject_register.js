@@ -1124,8 +1124,7 @@ function subject_modal_export(container,table){
         $(pool_url).val(full_url);
 
         to_pool_btn.off("click").on("click",function(){
-            clearAllStatusFromUrl();
-            statusToUrl("setSubjectPool",indices_text);
+            contentToUrl("setSubjectPool",indices_text, false, false);
             window.location.reload();
         });
     });

@@ -63,9 +63,9 @@ function clearStatusFromUrl(name){
             searchParams.delete(name);
         }
         
-        
+
         var newRelativePathQuery = window.location.pathname +'?' + searchParams.toString();
-        history.replaceState({}, document.title, newRelativePathQuery);
+        history.replaceState(history.state, document.title, newRelativePathQuery);
         console.log([document.title, newRelativePathQuery])
     }
 }
@@ -73,7 +73,7 @@ function clearStatusFromUrl(name){
 function clearAllStatusFromUrl(){
     if ('URLSearchParams' in window) {
         var newRelativePathQuery = window.location.pathname;
-        history.replaceState({}, document.title, newRelativePathQuery);
+        history.replaceState(history.state, document.title, newRelativePathQuery);
         console.log([document.title, newRelativePathQuery])
     }
 }
@@ -90,64 +90,29 @@ function contentToUrl(content_type, content_value, clear_all = false, add_histor
             new_search_params.set(content_type,content_value);
         }
 
-        $(document).prop('title',title_root + content_value);
-
+        
         if(!isEqual(searchParamsToObject(new_search_params),searchParamsToObject(old_search_params))){
             var newRelativePathQuery = window.location.pathname +'?' + new_search_params.toString();
 
             var state = {content_type:content_type, content:content_value};
-            console.log([document.title, newRelativePathQuery]);
+
             if(add_history){
+                $(document).prop('title',title_root + content_value);
                 history.pushState(state, document.title, newRelativePathQuery);
             }
             else{
                 history.replaceState(state, document.title, newRelativePathQuery);
             }
-            
-            
+            console.log([state, document.title, newRelativePathQuery]);
         }
     }
 }
 
-
-function replaceStatusInUrl(name,value, clear_all = false){
+function saveCurrentStatusToHistory(){
     if ('URLSearchParams' in window) {
         var old_search_params = new URLSearchParams(window.location.search);
-        if(clear_all){
-            var new_search_params = new URLSearchParams()
-            new_search_params.set(name,value);
-        }
-        else{
-            var new_search_params = new URLSearchParams(window.location.search);
-            new_search_params.set(name,value);
-        }
-
-        if(!isEqual(searchParamsToObject(new_search_params),searchParamsToObject(old_search_params))){
-            var newRelativePathQuery = window.location.pathname +'?' + new_search_params.toString();
-            history.replaceState({}, document.title, newRelativePathQuery);
-            console.log([document.title, newRelativePathQuery])
-        }
-    }
-}
-
-function replaceStatusInUrlWithHistory(name,value, clear_all = false){
-    if ('URLSearchParams' in window) {
-        var old_search_params = new URLSearchParams(window.location.search);
-        if(clear_all){
-            var new_search_params = new URLSearchParams()
-            new_search_params.set(name,value);
-
-        }
-        else{
-            var new_search_params = new URLSearchParams(window.location.search);
-            new_search_params.set(name,value);
-        }
-
-        if(!isEqual(searchParamsToObject(new_search_params),searchParamsToObject(old_search_params))){
-            var newRelativePathQuery = window.location.pathname +'?' + new_search_params.toString();
-            history.pushState({}, document.title, newRelativePathQuery);
-            console.log([document.title, newRelativePathQuery])
-        }
+        var rel_path = window.location.pathname +'?' + old_search_params.toString();
+        history.pushState(null, document.title, rel_path);
     }
 }
 

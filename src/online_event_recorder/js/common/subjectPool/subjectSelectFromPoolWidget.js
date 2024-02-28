@@ -9,8 +9,7 @@ function subjectSelectFromPoolWidget(container, callback = null){
         var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject pool editor");
         container.append($("<div/>").append(to_pool_btn));
         to_pool_btn.on("click",function(){
-            clearStatusFromUrl("tool");
-            statusToUrl("tool","SubjectPool");
+            contentToUrl("tool","SubjectPool",false);
             location.reload();
         })
         
@@ -23,8 +22,7 @@ function subjectSelectFromPoolWidget(container, callback = null){
         var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject pool editor");
         container.append($("<div/>").append(to_pool_btn));
         to_pool_btn.on("click",function(){
-            clearStatusFromUrl("tool");
-            statusToUrl("tool","SubjectPool");
+            contentToUrl("tool","SubjectPool",false);
             location.reload();
         })
         return
