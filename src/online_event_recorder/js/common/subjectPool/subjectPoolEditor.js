@@ -206,12 +206,9 @@ function subject_pool_modal_export(container,table){
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
 
-    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
-    // modal_body.append(pool_readable_text);
-
     var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
     modal_body.append(pool_url);
-    var qrcode_dom = $("<div/>").attr("id","qrcode")
+    var qrcode_dom = $("<div/>").attr("id","qrcode");
     modal_body.append(qrcode_dom);
 
     
@@ -270,7 +267,7 @@ function subject_pool_modal_export_by_subjects(container,table){
     
 
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
-    var modal_dialog = $("<div/>").addClass("modal-dialog modal-md");
+    var modal_dialog = $("<div/>").addClass("modal-dialog modal-xl modal-dialog-scrollable");
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
@@ -279,50 +276,124 @@ function subject_pool_modal_export_by_subjects(container,table){
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
 
-    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
-    // modal_body.append(pool_readable_text);
+    var _table = $("<table/>").addClass("w-100 table table-bordered align-middle").attr("id","table");
+    
+    var names = ["#","ID","Name",'Study','Batch','Group','QR'];
+    var keys = ['SubjectID','Name','StudyID','Batch','Group','QR'];
 
-    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
-    modal_body.append(pool_url);
-    var qrcode_dom = $("<div/>").attr("id","qrcode")
-    modal_body.append(qrcode_dom);
 
+    var header_row = $("<tr/>");
+    $.each(names,function(name_index,name){
+        header_row.append($("<th/>").html(name).attr("scope","col").addClass("text-center"));
+    })
+    _table.append($("<thead/>").addClass("table-dark").append(header_row));
+
+    var table_body = $("<tbody/>");
+        
+    
+    var data = $(table).bootstrapTable("getData");
+    var qr_doms = [];
+    $.each(data,function(row_index,row){
+        var row_dom = $("<tr/>");
+        row_dom.append($("<th/>").html(row_index+1).attr("scope","row").css({"text-align": "center"}));
+        $.each(keys,function(key_index,key){
+            if(key=='QR'){
+                var qr_dom = $("<div/>").attr('id','qrcode'+row_index);
+                qr_dom.addClass("m-1");
+                row_dom.append($("<td/>").append(qr_dom).attr("align","center"));
+                qr_doms.push({dom:qr_dom, SubjectIndex: row['SubjectIndex']});
+            }
+            else{
+                if(key=='StudyID'){
+                    var _val = studyFormatter(row[key]);
+                }
+                else{
+                    var _val = nullify_obj(row[key]);
+                }
+                
+                var _val = parse_val(_val);
+                row_dom.append($("<td/>").html(_val == null ? "-":_val).addClass("border"));
+            }
+    
+        })
+        table_body.append(row_dom);
+
+    })
+
+    _table.append(table_body);
+    
+    modal_body.append($("<div/>").addClass("table-responsive text-nowrap").append(_table));    
+
+
+    var to_pdf_btn = $("<button/>").addClass("btn btn-outline-dark mt-2 w-100").html("Export to pdf");
+    var modal_footer= $("<div/>").addClass("modal-footer");
+    modal_footer.append(to_pdf_btn);
     
     modal_content.append(modal_header);
     modal_content.append(modal_body);
+    modal_content.append(modal_footer);
 
     modal_dialog.html(modal_content);
     modal_root.html(modal_dialog);
 
-
-    var full_url = null;
+    var imsize = 100;
 
     $(modal_root).on('show.bs.modal',function(){
-        var indices = getColUnique($(table).bootstrapTable("getData"),"SubjectIndex");
-        var indices_text = JSON.stringify(indices);
-        // console.log(indices_text);
-        var searchParams = new URLSearchParams();
-        searchParams.set("setSubjectPool",indices_text);
-        full_url =  window.location.host+'?' + searchParams.toString();
-
-        $(pool_url).val(full_url);
-        setSubjectPool(indices);
-
+        $.each(qr_doms,function(index,qr_info){
+            var dom = qr_info["dom"];
+            var SubjectIndex = qr_info["SubjectIndex"];
+    
+            var searchParams = new URLSearchParams();
+            searchParams.set("subjectIndex",SubjectIndex);
+            var url =   window.location.host+'?' + searchParams.toString();       
+    
+            // qrcode gen
+            var qrcode = new QRCode("qrcode"+index,{
+                text: url,
+                width: imsize,
+                height: imsize,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+            
+        })
     });
 
-    $(modal_root).on('shown.bs.modal',function(){
-        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
+    $(to_pdf_btn).on("click",function(){
+        const doc = new jspdf.jsPDF('p', 'mm', [297, 210]);
 
-        // qrcode gen
-        var qrcode = new QRCode("qrcode",{
-            text: full_url,
-            width: $(pool_url).width(),
-            height: $(pool_url).width(),
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+        doc.autoTable({
+            html: "#table",
+            theme:"grid",
+            styles: { cellPadding: 0, fontSize: 10, overflow: 'linebreak', },
+            bodyStyles: {minCellHeight: (imsize/4)*1.2},
+            pageBreak: 'auto',
+            rowPageBreak: 'avoid',
+            columnStyles: {
+                0: {cellWidth: 10, halign:'center',valign:'middle'},
+                1: {cellWidth: 25, halign:'center',valign:'middle' },
+                2: {cellWidth: 25, halign:'center',valign:'middle' },
+                3: {cellWidth: 25, halign:'center',valign:'middle' },
+                4: {cellWidth: 25, halign:'center',valign:'middle' },
+                5: {cellWidth: 25, halign:'center',valign:'middle' },
+                6: {cellWidth: (imsize/4)*1.2, halign:'center',valign:'middle' },
+            },
+            headStyles:{valign: 'middle',  halign : 'center',  fillColor : [0, 0, 0], padding:2, minCellHeight:10},
+            didDrawCell: function(data) {
+            if (data.column.index === 6 && data.cell.section === 'body') {
+                var td = data.cell.raw;
+                var img = $(td).find('img').first();
+                doc.addImage(img.prop("src"), data.cell.x+2 ,
+                 data.cell.y+2 , imsize/4, imsize/4);
+            }
+            }
         });
-    });
+
+        doc.save("subject_pool.pdf");
+
+    })
+
 
     container.append(modal_root);
 

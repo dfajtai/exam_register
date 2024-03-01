@@ -59,7 +59,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/additional-methods.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/polyfills.umd.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.js"></script> -->
 
 	<script defer src="js/common/definition_handler.js" ></script>
 	<script defer src="js/common/status_handler.js"></script>
@@ -104,6 +108,11 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/admin/tools/event_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/subject_changelog_handler.js"></script>
 	<script defer src="js/admin/tools/resource_handler.js"></script>
+
+	<!-- <script>
+		import jsPDF from 'jspdf'
+		import autoTable from 'jspdf-autotable'
+	</script> -->
 
 
 
@@ -197,6 +206,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 
 	<script>
+
 		var available_def_tables = Object();
 		
 		var subject_deleted_status =  null;
@@ -282,7 +292,21 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 			$('.navbar-collapse').collapse('hide');
 		}
+		
+		function show_event_log_tool( click = false){
+			var main_container = $("#main_container");
+			$("#main_container").empty();
 
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Event log"));
+			main_container.append(_title);
+
+			show_event_log_handler(main_container);
+			contentToUrl("tool","EventLog",true,click);
+
+			
+			$('.navbar-collapse').collapse('hide');
+
+		}
 
 		function show_event_change_log_tool( click = false){
 			var main_container = $("#main_container");
@@ -308,8 +332,21 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			main_container.append(_title);
 
 			showSubjectPoolEditor(main_container,init_indices);
-			if(event.state["content"])
-				document.title = title_root+ event.state["content"];
+
+			contentToUrl("tool","SubjectPool",true,click);
+
+			
+			$('.navbar-collapse').collapse('hide');
+
+		}
+
+		function show_subject_change_log_tool( click = false){
+			var main_container = $("#main_container");
+			$("#main_container").empty();
+
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject change log"));
+			main_container.append(_title);
+
 			show_subject_changelog_handler(main_container);
 
 			contentToUrl("tool","SubjectChangeLog",true,click);
