@@ -1102,7 +1102,6 @@ function subject_modal_export(container,table){
 
     
     var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark mt-2 w-100").html("Show in subject pool editor");
-
     var modal_footer= $("<div/>").addClass("modal-footer");
     modal_footer.append(to_pool_btn);
     

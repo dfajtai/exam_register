@@ -238,23 +238,40 @@ function addDynamicInputField(container, name,label,required, datatype, arg, def
 
     
     switch (datatype) {
-        case "longtext":
-            dynamicLongTextInput(container, name, label);
-        case "date":
-            dynamicDateInput(container, name, label);
-        case "time":
-            dynamicTimeInput(container, name, label);
-        case "datetime":
-            dynamicDatetimeInput(container, name, label);
-        case "numeric":
-            dynamicNumericInput(container, name, label, arg);
-        case "range":
-            dynamicRangeInput(container, name, label, arg);
-        case "text":
-            dynamicTextInput(container, name, label);
-        default:
-            dynamicTextInput(container, name, label);
+      case "longtext": {
+        dynamicLongTextInput(container, name, label);
+        break;
+      }
+      case "date": {
+        dynamicDateInput(container, name, label);
+        break;
+      }
+      case "time": {
+        dynamicTimeInput(container, name, label);
+        break;
+      }
+      case "datetime": {
+        dynamicDatetimeInput(container, name, label);
+        break;
+      }
+      case "numeric": {
+        dynamicNumericInput(container, name, label, arg);
+        break;
+      }
+      case "range": {
+        dynamicRangeInput(container, name, label, arg);
+        break;
+      }
+      case "text": {
+        dynamicTextInput(container, name, label);
+        break;
+      }
+      default: {
+        dynamicTextInput(container, name, label);
+        break;
+      }
     }
+
     
     if(required) {
         container.find("[name='"+name+"']").prop('required',true).addClass("data-required-style data-required");
@@ -471,38 +488,52 @@ function addDynamicSelectField(container, name, label, required, data_source_nam
     container.attr("id",name+"SelectGroup");
 
     switch (data_source_name) {
-        case "location":
-            dynamicLocationSelect(container, name, label);
-        case "bodypart":
-            dynamicBodypartSelect(container, name, label);
+      case "location":
+        dynamicLocationSelect(container, name, label);
+        break;
+      case "bodypart":
+        dynamicBodypartSelect(container, name, label);
+        break;
 
-        case "consumable":
-            dynamicConsumableSelect(container, name, label);
-        case "consumable_type":   
-            dynamicConsumableTypeSelect(container, name, label);
+      case "consumable":
+        dynamicConsumableSelect(container, name, label);
+        break;
+      case "consumable_type":
+        dynamicConsumableTypeSelect(container, name, label);
+        break;
 
-        case "event":
-            dynamicEventSelect(container, name, label);
-        case "event_type":
-            dynamicEventTypeSelect(container, name, label);
+      case "event":
+        dynamicEventSelect(container, name, label);
+        break;
+      case "event_type":
+        dynamicEventTypeSelect(container, name, label);
+        break;
 
-        case "side":
-            dynamicSideSelect(container, name, label);
-        case "unit":
-            dynamicUnitSelect(container, name, label);
-        case "unit_type":
-            dynamicUnitTypeSelect(container, name, label);
+      case "side":
+        dynamicSideSelect(container, name, label);
+        break;
+      case "unit":
+        dynamicUnitSelect(container, name, label);
+        break;
+      case "unit_type":
+        dynamicUnitTypeSelect(container, name, label);
+        break;
 
-        case "asset":
-            dynamicAssetSelect(container, name, label);
-        case "sex":
-            dynamicSexSelect(container, name, label);
-        case "subject_status":
-            dynamicSubjectStatusSelect(container, name, label);
-        case "event_status":
-            dynamicEventStatusSelect(container, name, label);
-        case "study":
-            dynamicStudySelect(container, name, label);
+      case "asset":
+        dynamicAssetSelect(container, name, label);
+        break;
+      case "sex":
+        dynamicSexSelect(container, name, label);
+        break;
+      case "subject_status":
+        dynamicSubjectStatusSelect(container, name, label);
+        break;
+      case "event_status":
+        dynamicEventStatusSelect(container, name, label);
+        break;
+      case "study":
+        dynamicStudySelect(container, name, label);
+        break;
     }
     
     if(required) container.find("[name='"+name+"']").prop('required',true).addClass("data-required-style data-required");

@@ -88,7 +88,7 @@ function initUsersDefinitionsTable(container,tableId){
 
             detailFormatter:userDetailFormatter
         });
-    
+            
     table.bootstrapTable('refreshOptions', { ajax:users_definition_retrieve_ajax });
 
     // modalInsert("Users", container,"users_modal_add_new",tableId, usersDefinitionInputs, users_definition_insert_ajax);
