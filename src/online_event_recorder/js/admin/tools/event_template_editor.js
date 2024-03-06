@@ -55,8 +55,8 @@ window.event_template_operate_events = {
                         });
                     statusToStorage("eventArgEditorHistory",JSON.stringify($('#'+event_template_table_id).bootstrapTable('getData')));
 
-                    event_template_update_unique();
-                    $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    // event_template_update_unique();
+                    // $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
                     $('#'+event_template_table_id).bootstrapTable("uncheckAll");
                 }
             }
@@ -545,9 +545,9 @@ function event_template_add_form(container,form_id, table){
         event_template_content_name = "";
         $( document ).trigger( "_release", [ "add"] );
 
-        event_template_update_unique();
-        event_template_uniqueness_warning();
-        table.bootstrapTable("resetSearch"); // to call the formatter...
+        // event_template_update_unique();
+        // event_template_uniqueness_warning();
+        // table.bootstrapTable("resetSearch"); // to call the formatter...
         // container.empty();
 
     });
@@ -695,9 +695,9 @@ function event_template_edit_form(container, form_id,  table, index, submit_call
         event_template_content_name = "";
         $( document ).trigger( "_release", [ "edit"] );
 
-        event_template_update_unique();
-        event_template_uniqueness_warning();
-        table.bootstrapTable("resetSearch"); // to call the formatter...
+        // event_template_update_unique();
+        // event_template_uniqueness_warning();
+        // table.bootstrapTable("resetSearch"); // to call the formatter...
         
         if(submit_callback!=null){
             submit_callback();
@@ -994,9 +994,11 @@ function event_template_uniqueness_warning(callback = null){
     }
 }
 
-function event_template_update_unique(){
-    var table = $('#'+event_template_table_id);
-    var data = table.bootstrapTable("getData");
+function event_template_update_unique(data = null){
+    if(data==null){
+        var table = $('#'+event_template_table_id);
+        var data = table.bootstrapTable("getData");
+    }
     event_template_names = [];
     $.each(data,function(index){ event_template_names.push(data[index]["FieldName"])});
     event_template_doubles = getDoubles(event_template_names);
@@ -1015,7 +1017,7 @@ function show_event_template_editor(container){
         event_template_doubles = getDoubles(event_template_names);
 
         table.bootstrapTable('append',data);
-        event_template_uniqueness_warning();
+        // event_template_uniqueness_warning();
     }
 
     var toolbar = container.find(".fixed-table-toolbar");
@@ -1059,6 +1061,13 @@ function show_event_template_editor(container){
     }
     )
 
+
+    table.on('pre-body.bs.table',function(args,data){
+        event_template_update_unique(data);
+        event_template_uniqueness_warning();
+        // event_template_uniqueness_warning();
+    })
+
     toolbar.find("#toolbar_removeSelected").on("click",function(e){
         bootbox.confirm({
             message: 'You are going to remove the selected fileds. Do you want to proceed?',
@@ -1084,8 +1093,8 @@ function show_event_template_editor(container){
                     table.bootstrapTable("remove",{field:"$index",values:indices});
                     statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
 
-                    event_template_update_unique();
-                    $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    // event_template_update_unique();
+                    // $('#'+event_template_table_id).bootstrapTable("resetSearch"); // to call the formatter...
                     $('#'+event_template_table_id).bootstrapTable("uncheckAll");
                 }
             }
@@ -1122,8 +1131,8 @@ function show_event_template_editor(container){
             statusToStorage("eventArgEditorHistory",JSON.stringify(table.bootstrapTable('getData')));
         }
 
-        event_template_update_unique();
-        table.bootstrapTable("resetSearch"); // to call the formatter...
+        // event_template_update_unique();
+        // table.bootstrapTable("resetSearch"); // to call the formatter...
     })
 
 
@@ -1187,5 +1196,9 @@ function show_event_template_editor(container){
         }
     });
 
+    table.on('all.bs.table',function(args,name){
+        console.log(name)
+    })
+    
 
 }
