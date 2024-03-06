@@ -1,4 +1,4 @@
-var url_status_debug = true;
+var url_status_debug = false;
 
 function set_window_title(content=null){
     if(content===null){

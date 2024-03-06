@@ -20,6 +20,9 @@ function setSubjectPool(initial_indices, update_data = false, callback=null){
 
     statusToStorage("subjectPoolData",JSON.stringify(data));
     subject_pool_current_index = null;
+    statusToStorage("subject_pool_current_index",subject_pool_current_index);
+
+    
 
     if(update_data){
         update_subject_pool_data(callback);
@@ -33,6 +36,8 @@ function subjectPoolFromStorage(update_data = false, callback=null){
     }
     else{
         subject_pool_data =  JSON.parse(statusFromStorage("subjectPoolData"));
+        subject_pool_current_index =  JSON.parse(statusFromStorage("subject_pool_current_index"));
+
         subject_pool = getCol(subject_pool_data,"SubjectIndex");
         if(update_data){
             update_subject_pool_data(callback);

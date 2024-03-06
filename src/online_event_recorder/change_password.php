@@ -1,12 +1,5 @@
-<?php 
-
-include_once 'php/php_functions.php';
-
-session_start();
-
-if(isset($_COOKIE['uname'])){
-	$_GET['uname'] = $_COOKIE['uname'];
-}
+<?php
+	require_once 'vendor/autoload.php';
 ?>
 
 <!DOCTYPE html>
@@ -20,22 +13,20 @@ if(isset($_COOKIE['uname'])){
 	<link rel="stylesheet" href="css/my_styles.css">
 	<link rel="stylesheet" href="css/my_sizing.css">
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
-	<script defer src="js/common/status_handler.js"></script>
-
-	<title>ExamRegister - Login</title>
+	<title>ExamRegister - Sign up</title>
 </head>
 <body>
 	<div class="d-flex align-items-center justify-content-center">
-
 		<form
 			class="shadow p-5 needs-validation col-md-6 col-lg-4 col-sm-10 col-12 align-self-center" 
-    	    action=<?php echo "'php/login.php?" . myUrlEncode($_SERVER["QUERY_STRING"]) . "'"?>			
+    	    action="php/change_pwd.php" 
     	    method="post">
-			<h4 class="display-4 fs-1">LOGIN</h4><br>
+			<h4 class="display-4 fs-1">SIGN UP</h4><br>
 
 			<?php if(isset($_GET['error'])){ ?>
     		<div class="alert alert-danger" role="alert">
@@ -49,32 +40,28 @@ if(isset($_COOKIE['uname'])){
 			</div>
 		    <?php } ?>
 			
-
 			<div class="form-group mb-2">
 				<label for="usernameInput">User name</label>
 				<input type="text" class="form-control" id="uname" placeholder="User Name" name = "uname"
 				value="<?php echo (isset($_GET['uname']))?$_GET['uname']:"" ?>" required>
 			</div>
-
-			<div class="form-group mb-3">
+			<div class="form-group mb-2">
 				<label for="password1Input">Password</label>
-				<input type="password" class="form-control" id="password1" placeholder="Password" name="pass">
+				<input type="password" class="form-control" id="password1" placeholder="Password" name="pass1" required>
 			</div>
-			<div class="d-grid gap-2 d-md-flex">
-				<button type="submit" class="btn btn-primary md-me-2">Login</button>
-				<a href="sign_up.php" class="btn btn-outline-primary">Sign Up</a>
+			<div class="form-group mb-3">
+				<label for="password2Input">Confirm password</label>
+				<input type="password" class="form-control" id="password2" placeholder="Confirm password" name = "pass2" required>
 			</div>
-			
 
+			<div class="d-grid gap-2 d-md-flex">
+				<button type="submit" class="btn btn-primary md-me-2">Change password</button>
+				<a href="index.php" class="btn btn-outline-primary">Login</a>
+			</div>
 		</form>
-	</div>
+
+	</main>		
+
 
 </body>
-<script>
-	$(document).ready(function() {
-		// saveCurrentStatusToHistory();
-
-	})
-	
-</script>
 </html>

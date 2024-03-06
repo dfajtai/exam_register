@@ -293,6 +293,56 @@ function users_eventlog_status_filter(row, filters, visible_status = null){
 }
 
 
+function users_event_log_detail_view_formatter(index,row){
+    var names = ["Parameter","Value"];
+    var keys = _.without(Object.keys(row),"EventData","state");
+    keys.push("EventData");
+
+    var table = $("<table/>").addClass("w-100 table table-sm table-striped table-bordered border-secondary");
+    
+    var header_row = $("<tr/>");
+    $.each(names,function(name_index,name){
+        header_row.append($("<th/>").html(name).attr("scope","col").addClass("text-center"));
+    })
+    table.append($("<thead/>").addClass("table-dark").append(header_row));
+
+    var table_body = $("<tbody/>");
+    $.each(keys,function(key_index,key){
+        var table_row = $("<tr/>");
+        table_row.append($("<th/>").html(key).attr("scope","row"));
+        var val = nullify_obj(users_eventlog_format_value(row[key],key));
+
+        if(key=="EventData"){
+            if(parse_val(val)!=null){
+                var data = JSON.parse(val);
+                var cell_data = $("<div/>");
+                $.each(data,function(_key,_val){
+    
+                    cell_data.append($("<b/>").append(_key))
+                    cell_data.append("&emsp;"+_val + "<br/>");
+                })
+                table_row.append($("<td/>").append(cell_data));
+            }
+            else{
+                var _val = parse_val(val);
+                table_row.append($("<td/>").html(_val == null ? "-":_val));
+            }
+        }
+        else{
+            var _val = parse_val(val);
+            table_row.append($("<td/>").html(_val == null ? "-":_val));
+        }
+        table_body.append(table_row);
+
+    })
+
+    table.append(table_body);
+
+    var content = $("<div/>").addClass("mx-3 my-3").append(table);
+
+    return content;
+}
+
 function create_users_eventlog_table(container, table_id, subject_info){
     var table = $("<table/>").attr("id",table_id);
 
@@ -312,7 +362,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
    
     $(toolbar).empty();
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New"));
-    toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Duplicate selected events."));
+    // toolbar.append($("<button/>").attr("id","toolbar_duplicate").addClass("btn btn-outline-dark admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-solid fa-copy me-2").attr("aria-hidden","true")).append("Duplicate").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Duplicate selected events."));
 
     var status_filter = statusFilterWidget("event",[event_deleted_status],
         function(vals){
@@ -387,6 +437,8 @@ function create_users_eventlog_table(container, table_id, subject_info){
     table.attr("data-search-highlight","true");
     table.attr("data-show-search-clear-button","true");
 
+    table.attr("data-detail-view","true");
+
     table.attr("data-maintain-meta-data","true");
 
     table.attr("data-locale","hu-HU");
@@ -425,6 +477,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
             smartDisplay:true,
 
             idField:"EventIndex",
+            detailFormatter: users_event_log_detail_view_formatter,
         });
 
     $(toolbar.find("#status_filter_widget").find("input")[0]).trigger("change");

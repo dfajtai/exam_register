@@ -610,7 +610,7 @@ function show_event_planner_modal_make(container, table){
         
         var subject_table = subject_container.find("#"+subject_selector_table_id);
         subject_table.bootstrapTable("resetView");
-        subject_table.bootstrapTable('hideColumn', ['operate','LastChange']);
+        subject_table.bootstrapTable('hideColumn', ['operate','locked','LastChange']);
         
     });
 

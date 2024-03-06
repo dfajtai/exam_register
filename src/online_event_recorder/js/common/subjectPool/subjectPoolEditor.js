@@ -166,6 +166,10 @@ function subject_pool_modal_add(container){
         var subject_table = form.find("#"+subject_selector_table_id);
         subject_table.bootstrapTable('hideColumn', ['operate','locked','LastChange']);
         
+        if(statusInStorage("activeStudy")){
+            form.find("#studySelect").first().val(statusFromStorage("activeStudy")).trigger("change");
+        }
+
     });
 
 

@@ -952,13 +952,14 @@ function show_event_template_in_template_defs(table){
         window.location.reload();
     }
 
-    var params = JSON.stringify(data);
+    var params = JSON.stringify(data).replaceAll(",",", ");
 
     bootbox.confirm({
-        message: 'You are going to export the current "EventTemplate" to "EventTemplateDefinitions" as a new event definition.</br>' + params +'</br>Do you want to proceed?',
+        message: '<p>You are going to export the current "EventTemplate" to "EventTemplateDefinitions" as a new event definition.</br><div>' + params +'</div></br>Do you want to proceed?</p>',
         buttons: {
         confirm: {
         label: 'Yes',
+        size:'large',
         className: 'btn-outline-danger'
         },
         cancel: {
@@ -1006,7 +1007,7 @@ function event_template_update_unique(data = null){
 
 
 function show_event_template_editor(container){
-    create_event_template_table(container,event_template_table_id,500);
+    create_event_template_table(container,event_template_table_id,750);
     var table = $('#'+event_template_table_id);
 
     if(statusInStorage("eventArgEditorHistory")){
@@ -1196,9 +1197,9 @@ function show_event_template_editor(container){
         }
     });
 
-    table.on('all.bs.table',function(args,name){
-        console.log(name)
-    })
+    // table.on('all.bs.table',function(args,name){
+    //     console.log(name)
+    // })
     
 
 }

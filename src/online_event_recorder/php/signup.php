@@ -49,6 +49,13 @@ if(isset($_POST['fname']) &&
 				header("Location: ../sign_up.php?success=Your account has been created successfully");
 			}
 			else{
+				if(count($user_name_data) > 0){
+					$em = "User already exists.";
+					header("Location: ../sign_up.php?error=$em&$data");
+				}else{
+					$em = "E-mail address already in use.";
+					header("Location: ../sign_up.php?error=$em&$data");
+				}
 				if($user_name_data[0]["CanResetPassword"] == 1){
 
 					$database -> update("users",["UserPwd"=> $pass_hash, "CanResetPassword"=> 0,"PasswordChanged"=>Medoo::raw('NOW()')],
@@ -56,13 +63,7 @@ if(isset($_POST['fname']) &&
 					header("Location: ../sign_up.php?success=Your password has been changed successfully");
 				}
 				else{
-					if(count($user_name_data) > 0){
-						$em = "User already exists.";
-						header("Location: ../sign_up.php?error=$em&$data");
-					}else{
-						$em = "E-mail address already in use.";
-						header("Location: ../sign_up.php?error=$em&$data");
-					}
+					
 				}
 			}
 			

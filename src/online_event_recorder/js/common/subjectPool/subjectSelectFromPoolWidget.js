@@ -75,6 +75,8 @@ function subjectSelectFromPoolWidget(container, callback = null){
 
             indicator.on("click",function(){
                 subject_pool_current_index = index - 1;
+                statusToStorage("subject_pool_current_index",subject_pool_current_index);
+                
                 var subject_index = subject_pool[index-1];
                 var subject_info = subject_pool_data[index-1];
                 table_indicator.find(".btn-success").each(function(){
