@@ -186,7 +186,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 					</li>
 
 					<li class="nav-item me-3">
-						<a class="nav-link active" id="become_user_button" >USER mode</a>
+						<a class="nav-link active" href="#" onclick="become_user()" >USER mode</a>
 					</li>
 					<li class="nav-item me-3">
 						<a class="nav-link active" href="logout.php" >Logout</a>
@@ -216,6 +216,19 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		var main_title = "ExamRegister - ADMIN";
 
+		function become_user(){
+			saveCurrentStatusToHistory();
+			clearAllStatusFromUrl();
+
+			$.ajax({
+				type: "POST",
+				url: 'php/admin_mode_switch.php',
+				dataType: "json",
+				success: function (result) {
+					// console.log(result);
+					window.location = "home.php";
+				}})
+		}
 
 		function show_table(def_name, click = false){
 			var exists = Object.keys(available_def_tables).includes(def_name);

@@ -3,8 +3,24 @@ var defs = Object();
 var users = {};
 var current_user = null;
 
+var date_cols = ["StudyStart","StudyEnd"]
+
 function simpleChecksum(input){
-    return (CRC32.str(JSON.stringify(input))>>>0).toString(16);
+    var formatted_input = [];
+    $.each(input,function(index,row){
+        var _row = {};
+        $.each(row,function(key,value){
+            if(key in date_cols){
+                _row[key] = moment(value).format();
+            }
+            else{
+                _row[key] = value;
+            }
+        })
+        formatted_input.push(_row);
+    })
+
+    return (CRC32.str(JSON.stringify(formatted_input))>>>0).toString(16);
 }
 
 function updateRemoteDefinitionChecksums(){
