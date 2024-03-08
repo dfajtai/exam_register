@@ -1,8 +1,8 @@
-var subject_pool_editor_table_id  = "subejctEditorTable";
-var subject_pool_editor_modals  = {};
+var subject_queue_editor_table_id  = "subejctEditorTable";
+var subject_queue_editor_modals  = {};
 
 function insert_data(indices, callback = null){
-    var table = $("#"+subject_pool_editor_table_id);
+    var table = $("#"+subject_queue_editor_table_id);
 
     $.ajax({
         type: "GET",
@@ -22,7 +22,7 @@ function insert_data(indices, callback = null){
             })
             table.bootstrapTable("append",data);
             if(data.length!=result.length){
-                var message = 'Some subject had been already added to the pool.'
+                var message = 'Some subject had been already added to the queue.'
                 bootbox.alert(message);
             }
 
@@ -37,7 +37,7 @@ function insert_data(indices, callback = null){
 }
 
 function update_load_data(data, update = false){
-    var table = $("#"+subject_pool_editor_table_id);
+    var table = $("#"+subject_queue_editor_table_id);
 
     var indices = nullify_array(getCol(data,"SubjectIndex"));
     indices = indices === null? []:indices;
@@ -67,39 +67,39 @@ function update_load_data(data, update = false){
     }
 }
 
-window.subject_pool_editor_events = {
+window.subject_queue_editor_events = {
     'click .move_up': function (e, value, row, index) {
         if(index==0){
             return
         }
-        var data = $('#'+subject_pool_editor_table_id).bootstrapTable('getData');
+        var data = $('#'+subject_queue_editor_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
-        $('#'+subject_pool_editor_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
+        $('#'+subject_queue_editor_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
 
 
     },
     'click .move_down': function (e, value, row, index) {
-        var data = $('#'+subject_pool_editor_table_id).bootstrapTable('getData');
+        var data = $('#'+subject_queue_editor_table_id).bootstrapTable('getData');
         if(index==data.length-1){
             return
         }
         var lower_data = {... data[index+1]};
         lower_data.state = lower_data.state === undefined ? false : lower_data.state;
-        $('#'+subject_pool_editor_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
+        $('#'+subject_queue_editor_table_id).bootstrapTable('updateRow',[{index:index+1,row:row},{index:index, row:lower_data}]);
 
     },
     'click .remove': function (e, value, row, index) {
-        $('#'+subject_pool_editor_table_id).bootstrapTable('remove', {
+        $('#'+subject_queue_editor_table_id).bootstrapTable('remove', {
             field: '$index',
             values: [index]
             });
-        $('#'+subject_pool_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-        $('#'+subject_pool_editor_table_id).bootstrapTable("uncheckAll");
+        $('#'+subject_queue_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+        $('#'+subject_queue_editor_table_id).bootstrapTable("uncheckAll");
     }
 }
 
-function subject_pool_operate_formatter(value, row, index){
+function subject_queue_operate_formatter(value, row, index){
     var container = $("<div/>").addClass("lockable");
     var up_down_gorup = $("<div/>").addClass("btn-group me-3 ");
     var btn_up = $("<button/>").attr("type","button").addClass("btn btn-outline-secondary btn-sm move_up lockable").append($("<i/>").addClass("fa fa-angle-up"));
@@ -120,19 +120,19 @@ function subject_pool_operate_formatter(value, row, index){
     if (index==0){
         btn_up.addClass("disabled").removeClass("lockable");
     }
-    if(index==$('#'+subject_pool_editor_table_id).bootstrapTable('getData').length-1){
+    if(index==$('#'+subject_queue_editor_table_id).bootstrapTable('getData').length-1){
         btn_down.addClass("disabled").removeClass("lockable");
     }
 
     return container.prop("outerHTML");
 }
 
-function subject_pool_modal_add(container){
+function subject_queue_modal_add(container){
     container.empty();
 
-    var modal_id = "subjectPoolEditorModal";
-    var form_id = "subjectPoolEditorForm";
-    var subject_selector_table_id = "ubjectPoolEditorSubjectSelectorTable";
+    var modal_id = "subjectQueueEditorModal";
+    var form_id = "subjectQueueEditorForm";
+    var subject_selector_table_id = "ubjectQueueEditorSubjectSelectorTable";
     
     subject_modal(container,modal_id,"Select subject(s)");
     var modal = $(container).find("#"+modal_id);
@@ -152,7 +152,7 @@ function subject_pool_modal_add(container){
     var subject_container = $("<div/>").attr("id","subjectSelector").addClass("mb-3 container");
 
     var submitForm = $("<div/>").addClass("row mb-3 text-center px-5");
-    var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Add selected subject(s) to the pool");
+    var submitButton = $("<button/>").addClass("btn btn-outline-dark").attr("type","submit").html("Add selected subject(s) to the queue");
     submitForm.append(submitButton);
 
     form.append(subject_container);
@@ -194,10 +194,10 @@ function subject_pool_modal_add(container){
     modal.modal("show");
 }
 
-function subject_pool_modal_export(container,table){
+function subject_queue_modal_export(container,table){
     container.empty();
 
-    var modal_id = "subjectPoolEditorModal";
+    var modal_id = "subjectQueueEditorModal";
     
 
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
@@ -205,13 +205,13 @@ function subject_pool_modal_export(container,table){
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject pool export"));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject queue export"));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
 
-    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
-    modal_body.append(pool_url);
+    var queue_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(queue_url);
     var qrcode_dom = $("<div/>").attr("id","qrcode");
     modal_body.append(qrcode_dom);
 
@@ -230,22 +230,22 @@ function subject_pool_modal_export(container,table){
         var indices_text = JSON.stringify(indices);
         // console.log(indices_text);
         var searchParams = new URLSearchParams();
-        searchParams.set("setSubjectPool",indices_text);
+        searchParams.set("setSubjectQueue",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();
 
-        $(pool_url).val(full_url);
-        setSubjectPool(indices);
+        $(queue_url).val(full_url);
+        setSubjectQueue(indices);
 
     });
 
     $(modal_root).on('shown.bs.modal',function(){
-        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
+        $(qrcode_dom).css({width:$(queue_url).width(),height:$(queue_url).width()});
 
         // qrcode gen
         var qrcode = new QRCode("qrcode",{
             text: full_url,
-            width: $(pool_url).width(),
-            height: $(pool_url).width(),
+            width: $(queue_url).width(),
+            height: $(queue_url).width(),
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
@@ -255,7 +255,7 @@ function subject_pool_modal_export(container,table){
     container.append(modal_root);
 
     if($(table).bootstrapTable("getData").length==0){
-        var message = 'The subject pool is empty.'
+        var message = 'The subject queue is empty.'
         bootbox.alert(message);
     }
     else{
@@ -264,10 +264,10 @@ function subject_pool_modal_export(container,table){
     
 }
 
-function subject_pool_modal_export_by_subjects(container,table){
+function subject_queue_modal_export_by_subjects(container,table){
     container.empty();
 
-    var modal_id = "subjectPoolEditorModal";
+    var modal_id = "subjectQueueEditorModal";
     
 
     var modal_root = $("<div/>").addClass("modal fade").attr("id",modal_id).attr("tabindex","-1");
@@ -275,7 +275,7 @@ function subject_pool_modal_export_by_subjects(container,table){
     var modal_content = $("<div/>").addClass("modal-content");
 
     var modal_header= $("<div/>").addClass("modal-header");
-    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject pool export"));
+    modal_header.append($("<h5/>").addClass("modal-title display-3 fs-3").html("Subject queue export"));
     modal_header.append($("<button/>").addClass("btn-close").attr("data-bs-dismiss","modal").attr("aria-label","Close"));
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
@@ -394,7 +394,7 @@ function subject_pool_modal_export_by_subjects(container,table){
             }
         });
 
-        doc.save("subject_pool.pdf");
+        doc.save("subject_queue.pdf");
 
     })
 
@@ -402,7 +402,7 @@ function subject_pool_modal_export_by_subjects(container,table){
     container.append(modal_root);
 
     if($(table).bootstrapTable("getData").length==0){
-        var message = 'The subject pool is empty.'
+        var message = 'The subject queue is empty.'
         bootbox.alert(message);
     }
     else{
@@ -411,12 +411,12 @@ function subject_pool_modal_export_by_subjects(container,table){
     
 }
 
-function init_subject_pool_table(container, table_id, ){
+function init_subject_queue_table(container, table_id, ){
     var table = $("<table/>").attr("id",table_id);
 
     var toolbar = $("<div/>").attr("id",table_id+"_toolbar");
     toolbar.append($("<button/>").attr("id","toolbar_add").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-plus me-2").attr("aria-hidden","true")).append("Add New subject(s)"));
-    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the pool"));
+    toolbar.append($("<button/>").attr("id","toolbar_removeSelected").addClass("btn btn-outline-danger admin-table-toolbar-btn needs-select lockable").html($("<i/>").addClass("fa fa-trash fa-solid me-2").attr("aria-hidden","true")).append("Remove").attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Remove selected subjects from the queue"));
     toolbar.append($("<button/>").attr("id","toolbar_load_data").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-arrows-rotate me-2").attr("aria-hidden","true")).append("Load/refresh data"));
     toolbar.append($("<button/>").attr("id","toolbar_export").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export"));
     toolbar.append($("<button/>").attr("id","toolbar_export_by_subjects").addClass("btn btn-outline-dark admin-table-toolbar-btn lockable").html($("<i/>").addClass("fa fa-solid fa-qrcode me-2").attr("aria-hidden","true")).append("Export by subjects"));
@@ -461,7 +461,7 @@ function init_subject_pool_table(container, table_id, ){
         columns : [
             {field : 'state', checkbox: true, align:'center'},
             {title: '', field: 'operate', align: 'center', sortable:false, searchable:false, clickToSelect : false,
-            events: window.subject_pool_editor_events, formatter: subject_pool_operate_formatter},
+            events: window.subject_queue_editor_events, formatter: subject_queue_operate_formatter},
             {title: '#', field : 'SubjectIndex', align:'center', sortable:false, searchable:true, visible:false},
             {title: 'ID', field : 'SubjectID', align:'center', sortable:false, searchable:true},
             {title: 'Name', field : 'Name', align:'center', sortable:false, searchable:true},
@@ -479,41 +479,41 @@ function init_subject_pool_table(container, table_id, ){
 
 
 
-function showSubjectPoolEditor(container, initial_indices = null){
-    subject_pool_editor_content = container;
-    init_subject_pool_table(subject_pool_editor_content, subject_pool_editor_table_id);
+function showSubjectQueueEditor(container, initial_indices = null){
+    subject_queue_editor_content = container;
+    init_subject_queue_table(subject_queue_editor_content, subject_queue_editor_table_id);
 
-    var table = $('#'+subject_pool_editor_table_id);
+    var table = $('#'+subject_queue_editor_table_id);
     var toolbar = container.find(".fixed-table-toolbar");
 
     if(initial_indices==null){
-        if(statusInStorage("subjectPoolData")){
-            var data = JSON.parse(statusFromStorage("subjectPoolData"));
+        if(statusInStorage("subjectQueueData")){
+            var data = JSON.parse(statusFromStorage("subjectQueueData"));
             var indices = nullify_array(getCol(data,"SubjectIndex"));
             indices = indices === null? []:indices;
             if(indices.length>0){
                 insert_data(indices);
             }
-            setSubjectPool(indices);
+            setSubjectQueue(indices);
         }
     }
     else{
-        setSubjectPool(initial_indices);
-        if(subject_pool.length>0){
-            insert_data(subject_pool);
+        setSubjectQueue(initial_indices);
+        if(subject_queue.length>0){
+            insert_data(subject_queue);
         }
     }
 
 
 
-    subject_pool_editor_modals  = $("<div/>");
-    container.append(subject_pool_editor_modals);
+    subject_queue_editor_modals  = $("<div/>");
+    container.append(subject_queue_editor_modals);
 
     toolbar.find(".needs-select").addClass("disabled");
 
     toolbar.find("#toolbar_removeSelected").on("click",function(e){
         bootbox.confirm({
-            message: 'You are going to remove the selected subjects from the pool. Do you want to proceed?',
+            message: 'You are going to remove the selected subjects from the queue. Do you want to proceed?',
             buttons: {
             confirm: {
             label: 'Yes',
@@ -534,10 +534,10 @@ function showSubjectPoolEditor(container, initial_indices = null){
                     })
                     // console.log(indices);
                     table.bootstrapTable("remove",{field:"$index",values:indices});
-                    statusToStorage("subjectPoolData",JSON.stringify(table.bootstrapTable('getData')));
+                    statusToStorage("subjectQueueData",JSON.stringify(table.bootstrapTable('getData')));
 
-                    $('#'+subject_pool_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
-                    $('#'+subject_pool_editor_table_id).bootstrapTable("uncheckAll");
+                    $('#'+subject_queue_editor_table_id).bootstrapTable("resetSearch"); // to call the formatter...
+                    $('#'+subject_queue_editor_table_id).bootstrapTable("uncheckAll");
                 }
             }
             });
@@ -546,7 +546,7 @@ function showSubjectPoolEditor(container, initial_indices = null){
     })
 
     toolbar.find("#toolbar_add").on("click",function(e){
-        subject_pool_modal_add(subject_pool_editor_modals);
+        subject_queue_modal_add(subject_queue_editor_modals);
     })
 
     toolbar.find("#toolbar_load_data").on("click",function(e){
@@ -554,11 +554,11 @@ function showSubjectPoolEditor(container, initial_indices = null){
     })
 
     toolbar.find("#toolbar_export").on("click",function(e){
-        subject_pool_modal_export(subject_pool_editor_modals,table);
+        subject_queue_modal_export(subject_queue_editor_modals,table);
     })
 
     toolbar.find("#toolbar_export_by_subjects").on("click",function(e){
-        subject_pool_modal_export_by_subjects(subject_pool_editor_modals,table);
+        subject_queue_modal_export_by_subjects(subject_queue_editor_modals,table);
     })
 
     table.on('all.bs.table',
@@ -577,9 +577,9 @@ function showSubjectPoolEditor(container, initial_indices = null){
     table.on('post-body.bs.table',function(event,data){
         // console.log(data);
         if(table.bootstrapTable('getOptions').searchText==""){
-            statusToStorage("subjectPoolData",JSON.stringify(data));
+            statusToStorage("subjectQueueData",JSON.stringify(data));
             var indices = getColUnique(data,"SubjectIndex");
-            setSubjectPool(indices);
+            setSubjectQueue(indices);
 
         }
     })
@@ -589,5 +589,5 @@ function showSubjectPoolEditor(container, initial_indices = null){
     // })
 
 
-    container.append(subject_pool_editor_content);
+    container.append(subject_queue_editor_content);
 }

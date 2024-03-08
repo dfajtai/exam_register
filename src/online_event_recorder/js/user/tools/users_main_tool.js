@@ -214,28 +214,28 @@ function init_users_main_tool(container){
     })
 
 
-    // subject select from pool
+    // subject select from queue
 
-    var subject_select_from_pool_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0 me-lg-2 ").html("Select from pool");
-    subject_select_from_pool_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_from_pool_collapse");
+    var subject_select_from_queue_btn = $("<button/>").addClass("btn btn-outline-dark px-5 flex-lg-fill mb-1 mb-lg-0 me-lg-2 ").html("Select from queue");
+    subject_select_from_queue_btn.attr("data-bs-toggle","collapse").attr("data-bs-target","#select_from_queue_collapse");
 
-    var select_from_pool_collapse = $("<div/>").addClass("collapse").attr("id","select_from_pool_collapse");
-    var select_from_pool_collapse_card = $("<div/>").addClass("card card-body");
-    var select_from_pool_collapse_card_content = $("<div/>").addClass("w-100");
+    var select_from_queue_collapse = $("<div/>").addClass("collapse").attr("id","select_from_queue_collapse");
+    var select_from_queue_collapse_card = $("<div/>").addClass("card card-body");
+    var select_from_queue_collapse_card_content = $("<div/>").addClass("w-100");
 
-    var bs_select_from_pool_collapse = new bootstrap.Collapse($(select_from_pool_collapse), {
+    var bs_select_from_queue_collapse = new bootstrap.Collapse($(select_from_queue_collapse), {
         toggle: false
     })
 
-    select_from_pool_collapse.append(select_from_pool_collapse_card.append(select_from_pool_collapse_card_content));
-    select_from_pool_collapse.on("show.bs.collapse",function(){
-        subjectSelectFromPoolWidget(select_from_pool_collapse_card_content, function(new_index,new_info){
+    select_from_queue_collapse.append(select_from_queue_collapse_card.append(select_from_queue_collapse_card_content));
+    select_from_queue_collapse.on("show.bs.collapse",function(){
+        subjectSelectFromQueueWidget(select_from_queue_collapse_card_content, function(new_index,new_info){
             
             if(new_index!==null){
                 setTimeout(function(){
-                    bs_select_from_pool_collapse.hide();
+                    bs_select_from_queue_collapse.hide();
                 },500);
-                select_from_pool_collapse.on("hidden.bs.collapse",function(){
+                select_from_queue_collapse.on("hidden.bs.collapse",function(){
                     users_subject_card_content = null;
                     users_event_content = null;
                     stop_users_subjectlock_timer();
@@ -247,18 +247,18 @@ function init_users_main_tool(container){
      
                     contentToUrl("subjectIndex",new_index,false,false);
 
-                    select_from_pool_collapse.off("hidden.bs.collapse");
+                    select_from_queue_collapse.off("hidden.bs.collapse");
                 })
             }
         });
     });   
 
-    select_from_pool_collapse.on("shown.bs.collapse",function(){
-        select_from_pool_collapse_card_content.trigger("show-indicator");
+    select_from_queue_collapse.on("shown.bs.collapse",function(){
+        select_from_queue_collapse_card_content.trigger("show-indicator");
     }); 
 
 
-    subject_handler_toolbar.append(subject_select_from_pool_btn);
+    subject_handler_toolbar.append(subject_select_from_queue_btn);
 
 
     // subject search
@@ -305,18 +305,18 @@ function init_users_main_tool(container){
     subject_handler_toolbar.append(subject_search_tool_btn);
     
     subject_search_tool_btn.on("click",function(){
-        bs_select_from_pool_collapse.hide();
+        bs_select_from_queue_collapse.hide();
         bs_select_collapse.hide();
     })
 
-    subject_select_from_pool_btn.on("click",function(){
+    subject_select_from_queue_btn.on("click",function(){
         bs_search_collapse.hide();
         bs_select_collapse.hide();
     })
 
     subject_select_btn.on("click",function(){
         bs_search_collapse.hide();
-        bs_select_from_pool_collapse.hide();
+        bs_select_from_queue_collapse.hide();
     })
     
     users_main_tool_content = $("<div/>").addClass("subject-handler-content").addClass("container shadow px-2 py-2").attr("hidden","true");
@@ -324,7 +324,7 @@ function init_users_main_tool(container){
     container.append(subject_handler_toolbar);
     container.append(search_collapse);
     container.append(select_collapse);
-    container.append(select_from_pool_collapse);
+    container.append(select_from_queue_collapse);
     container.append(users_main_tool_content);
 
 }

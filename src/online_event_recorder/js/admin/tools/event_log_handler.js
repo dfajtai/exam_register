@@ -586,20 +586,20 @@ function create_eventlog_table(container, table_id, simplify = false){
 }
 
 
-function eventlog_subject_select_from_pool(container, subject_pool, subject_index = null){
+function eventlog_subject_select_from_queue(container, subject_queue, subject_index = null){
     var subject_select =  $("<div/>").addClass("row mb-2").attr("id","eventlog_subject_input_block");
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
     var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect").attr("name","EventSubject");
     subject_select_dropdow.prop('required',true).addClass("data-required data-required-style").attr("data-name","EventSubject");
 
-    $.each(subject_pool,function(index,entry){
+    $.each(subject_queue,function(index,entry){
         if(!entry.hasOwnProperty("SubjectIndex")) return;
         let subject_index = entry["SubjectIndex"];
         subject_select_dropdow.append($("<option/>").html(eventlog_subject_string_lookup[subject_index]).attr("value",subject_index));
     });
 
-    if(subject_pool.length>1){
+    if(subject_queue.length>1){
         subject_select_dropdow.prepend($("<option/>").html("Choose subject...").prop('selected',true).attr("value",""));
     }
 
@@ -619,12 +619,12 @@ function eventlog_subject_select_from_pool(container, subject_pool, subject_inde
 }
 
 
-function eventlog_add_form_inputs(form, subject_pool, subject_index = null){
+function eventlog_add_form_inputs(form, subject_queue, subject_index = null){
     // var event_param_block =  $("<div/>").addClass("container shadow py-3 my-3");
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
 
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    eventlog_subject_select_from_pool(event_param_block,subject_pool, subject_index = null)
+    eventlog_subject_select_from_queue(event_param_block,subject_queue, subject_index = null)
 
     var event_params_config =  [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":true},
@@ -761,7 +761,7 @@ function eventlog_edit_form_inputs(form, event_id, expert_edit = false){
 
     var event_param_block = $("<div/>").addClass("expert-edit");
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
-    eventlog_subject_select_from_pool(event_param_block,eventlog_visible_subjects_info);
+    eventlog_subject_select_from_queue(event_param_block,eventlog_visible_subjects_info);
     var event_params =   [
         {"FieldName":"EventName","FieldLabel":"Event Name","FieldType":"input","FieldDataType":'text', "FieldRequired":false},
         {"FieldName":"EventTemplate","FieldLabel":"Event template","FieldType":"select","FieldSource":"event", "FieldRequired":true},
@@ -1096,7 +1096,7 @@ function show_eventlog_batch_edit(container, table){
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","eventlog_event_param_block");
     event_param_block.append($("<p/>").append($("<b/>").html("Event parameters")));
     if(eventlog_visible_subjects.length>1){
-        eventlog_subject_select_from_pool(event_param_block, eventlog_visible_subjects_info, subject_index = null);
+        eventlog_subject_select_from_queue(event_param_block, eventlog_visible_subjects_info, subject_index = null);
         $(event_param_block.find("label")[0]).html("New subject");
     }
 

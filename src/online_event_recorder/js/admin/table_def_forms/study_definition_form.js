@@ -124,8 +124,8 @@ function study_export_modal(container,table){
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
 
-    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
-    // modal_body.append(pool_readable_text);
+    // var queue_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    // modal_body.append(queue_readable_text);
 
     var study_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
     modal_body.append(study_url);

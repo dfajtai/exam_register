@@ -1092,18 +1092,18 @@ function subject_modal_export(container,table){
 
     var modal_body = $("<div/>").addClass("modal-body d-inline-flex  flex-column justify-content-center");
 
-    // var pool_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
-    // modal_body.append(pool_readable_text);
+    // var queue_readable_text = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3);
+    // modal_body.append(queue_readable_text);
 
-    var pool_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
-    modal_body.append(pool_url);
+    var queue_url = $("<textarea/>").addClass("w-100 mb-2").attr("rows",3).attr("readonly",true);
+    modal_body.append(queue_url);
     var qrcode_dom = $("<div/>").attr("id","qrcode")
     modal_body.append(qrcode_dom);
 
     
-    var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark mt-2 w-100").html("Show in subject pool editor");
+    var to_queue_btn = $("<button/>").addClass("btn btn-outline-dark mt-2 w-100").html("Show in subject queue editor");
     var modal_footer= $("<div/>").addClass("modal-footer");
-    modal_footer.append(to_pool_btn);
+    modal_footer.append(to_queue_btn);
     
     modal_content.append(modal_header);
     modal_content.append(modal_body);
@@ -1121,27 +1121,27 @@ function subject_modal_export(container,table){
         var indices_text = JSON.stringify(indices);
         // console.log(indices_text);
         var searchParams = new URLSearchParams();
-        searchParams.set("setSubjectPool",indices_text);
+        searchParams.set("setSubjectQueue",indices_text);
         full_url =  window.location.host+'?' + searchParams.toString();
-        $(pool_url).val(full_url);
+        $(queue_url).val(full_url);
 
-        to_pool_btn.off("click").on("click",function(){
+        to_queue_btn.off("click").on("click",function(){
             saveCurrentStatusToHistory() // duplicate current history entry
-            contentToUrl("setSubjectPool",indices_text, true, false); // replace with new status - remove old tool
-            contentToUrl("tool","SubjectPool", false, false); // add tool tag to status
+            contentToUrl("setSubjectQueue",indices_text, true, false); // replace with new status - remove old tool
+            contentToUrl("tool","SubjectQueue", false, false); // add tool tag to status
             window.location.reload();
         });
     });
 
 
     $(modal_root).on('shown.bs.modal',function(){
-        $(qrcode_dom).css({width:$(pool_url).width(),height:$(pool_url).width()});
+        $(qrcode_dom).css({width:$(queue_url).width(),height:$(queue_url).width()});
 
         // qrcode gen
         var qrcode = new QRCode("qrcode",{
             text: full_url,
-            width: $(pool_url).width(),
-            height: $(pool_url).width(),
+            width: $(queue_url).width(),
+            height: $(queue_url).width(),
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H

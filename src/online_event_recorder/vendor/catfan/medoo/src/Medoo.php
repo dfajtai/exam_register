@@ -375,7 +375,7 @@ class Medoo
                             'AttachDBFileName',
                             'Authentication',
                             'ColumnEncryption',
-                            'ConnectionPooling',
+                            'ConnectionQueueing',
                             'Encrypt',
                             'Failover_Partner',
                             'KeyStoreAuthentication',

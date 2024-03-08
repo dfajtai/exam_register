@@ -78,9 +78,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
 
-	<script defer src="js/common/subjectPool/subjectPoolMain.js"></script>
-	<script defer src="js/common/subjectPool/subjectPoolEditor.js"></script>
-	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
+	<script defer src="js/common/subjectQueue/subjectQueueMain.js"></script>
+	<script defer src="js/common/subjectQueue/subjectQueueEditor.js"></script>
+	<script defer src="js/common/subjectQueue/subjectSelectFromQueueWidget.js"></script>
 
 
 	<script defer src="js/user/tools/select_active_study.js" ></script>
@@ -108,7 +108,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarConfigLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Configuration</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarConfigLink">
 							<li><a class="dropdown-item" href = "#" onclick="study_select(true)">Select study</a></li>
-							<li><a class="dropdown-item" href="#" onclick="show_subject_pool_tool(null,true)">Subjects pool editor</a>
+							<li><a class="dropdown-item" href="#" onclick="show_subject_queue_tool(null,true)">Subject queue editor</a>
 						</ul>
 					</li>
 					
@@ -158,16 +158,16 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 			show_users_main_tool($("#main_container"));
 		}
 
-		function show_subject_pool_tool(init_indices = null,click=false){
+		function show_subject_queue_tool(init_indices = null,click=false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject queue editor"));
 			main_container.append(_title);
 
-			showSubjectPoolEditor(main_container,init_indices);
+			showSubjectQueueEditor(main_container,init_indices);
 			
-			contentToUrl("tool","SubjectPool",true,click);
+			contentToUrl("tool","SubjectQueue",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
@@ -190,13 +190,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		function resolve_url_params(){
 			clearStatusFromUrl(["uname","error"]);
 			
-			if(statusInUrl("setSubjectPool")){
-				var pool_info = JSON.parse(statusFromUrl("setSubjectPool"));
-				setSubjectPool(pool_info);
-				clearStatusFromUrl("setSubjectPool");
+			if(statusInUrl("setSubjectQueue")){
+				var queue_info = JSON.parse(statusFromUrl("setSubjectQueue"));
+				setSubjectQueue(queue_info);
+				clearStatusFromUrl("setSubjectQueue");
 			}
-			else if(statusInStorage("subjectPoolData")){
-				subjectPoolFromStorage();
+			else if(statusInStorage("subjectQueueData")){
+				subjectQueueFromStorage();
 			}
 
 			if(statusInUrl("subjectIndex")) statusToStorage("subjectIndex", statusFromUrl("subjectIndex"));
@@ -211,8 +211,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 				if(statusInUrl("tool")){
 					var tool = statusFromUrl("tool");
 					switch (tool) {
-						case "SubjectPool":
-							show_subject_pool_tool(null);
+						case "SubjectQueue":
+							show_subject_queue_tool(null);
 							break;
 						case "studySelect":
 							study_select();

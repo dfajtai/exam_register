@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 19, 2024 at 03:24 PM
+-- Generation Time: Mar 08, 2024 at 12:06 PM
 -- Server version: 8.0.36-0ubuntu0.22.04.1
 -- PHP Version: 8.2.15
 
@@ -221,8 +221,8 @@ INSERT INTO `definition_tables` (`TableID`, `TableName`, `LastChange`, `Checksum
 (12, 'consumable_type_definitions', '2023-12-04 12:03:30', '666ec6a2'),
 (13, 'consumable_definitions', '2024-01-15 12:40:51', 'c3ac4b16'),
 (14, 'event_type_definitions', '2024-02-01 14:46:02', 'd0e0bfd'),
-(15, 'event_template_definitions', '2024-01-17 10:48:26', 'd5e5b178'),
-(16, 'studies', '2024-02-19 15:17:13', '702d49c2');
+(15, 'event_template_definitions', '2024-01-17 10:48:26', '3cfce86f'),
+(16, 'studies', '2024-03-06 17:10:24', 'bae34dd1');
 
 -- --------------------------------------------------------
 
@@ -330,7 +330,8 @@ INSERT INTO `event_template_definitions` (`EventTemplateID`, `EventName`, `Event
 (2, 'altatás kezdete', '', 2, '[{\"FieldName\": \"anest_start\", \"FieldType\": \"input\", \"FieldLabel\": \"anest_start\", \"FieldSource\": \"location\", \"FieldDataType\": \"datetime\", \"FieldRequired\": true}, {\"FieldName\": \"anest_start_loc\", \"FieldType\": \"select\", \"FieldLabel\": \"anest start location\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"canule_loc_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 1 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_1\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 1\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}, {\"FieldName\": \"canule_loc_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule 2 location\", \"FieldSource\": \"bodypart\", \"FieldRequired\": false}, {\"FieldName\": \"canule_type_2\", \"FieldType\": \"select\", \"FieldLabel\": \"canule type 2\", \"FieldSource\": \"consumable\", \"FieldRequired\": false}]'),
 (3, 'altatás vége', '', 2, '[{\"FieldName\": \"asd\", \"FieldType\": \"input\", \"FieldLabel\": \"asasd\", \"FieldDataType\": \"date\", \"FieldRequired\": false}, {\"FieldName\": \"asd2\", \"FieldType\": \"select\", \"FieldLabel\": \"asasd\", \"FieldSource\": \"consumable\", \"FieldDataType\": \"date\", \"FieldRequired\": false, \"FieldDefaultValue\": \"heparin\"}]'),
 (4, 'beszállítás', '', 3, '[{\"FieldName\": \"from\", \"FieldType\": \"select\", \"FieldLabel\": \"From\", \"FieldSource\": \"location\", \"FieldRequired\": true}, {\"FieldName\": \"to\", \"FieldType\": \"select\", \"FieldLabel\": \"To\", \"FieldSource\": \"location\", \"FieldRequired\": true}]'),
-(6, 'note', '', 6, '[{\"FieldName\": \"NoteTimestamp\", \"FieldType\": \"input\", \"FieldLabel\": \"Timestamp\", \"FieldDataType\": \"datetime\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}, {\"FieldName\": \"Note\", \"FieldType\": \"input\", \"FieldLabel\": \"Note\", \"FieldDataType\": \"longtext\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}]');
+(6, 'note', '', 6, '[{\"FieldName\": \"NoteTimestamp\", \"FieldType\": \"input\", \"FieldLabel\": \"Timestamp\", \"FieldDataType\": \"datetime\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}, {\"FieldName\": \"Note\", \"FieldType\": \"input\", \"FieldLabel\": \"Note\", \"FieldDataType\": \"longtext\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": null}]'),
+(7, 'test', '', 6, '[{\"FieldName\": \"qwe\", \"FieldType\": \"input\", \"FieldLabel\": \"asd\", \"FieldDataType\": \"date\", \"FieldDefaultValue\": \"2024-02-26\"}, {\"FieldName\": \"qweqwe\", \"FieldType\": \"select\", \"FieldLabel\": \"asdasd\", \"FieldSource\": \"consumable\", \"FieldRequired\": \"true\", \"FieldDefaultValue\": \"heparin\"}]');
 
 --
 -- Triggers `event_template_definitions`
@@ -567,8 +568,8 @@ CREATE TABLE `studies` (
 
 INSERT INTO `studies` (`StudyID`, `StudyName`, `StudyDesc`, `StudySpecies`, `StudyStart`, `StudyEnd`, `StudyNMax`, `StudyNCurrent`) VALUES
 (1, 'TestStudy', 'This is a test Study', 'pig', '2023-11-14', '2023-11-22', 42, 0),
-(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 7),
-(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\n\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\n\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\n\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\n\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 4, 10);
+(2, 'TestStudy2', 'This is a test Study', 'monkey', '2023-11-14', '2023-11-22', 20, 13),
+(3, 'test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ullamcorper malesuada odio condimentum cursus. Praesent ac leo vitae lacus viverra rutrum id in tortor. Ut sagittis quis dui non tincidunt. Etiam sit amet pretium augue. Nam id turpis id nisl vehicula laoreet nec in metus. Donec accumsan finibus fringilla. Mauris non maximus nisi. Aliquam erat volutpat. Suspendisse mattis, purus eu malesuada eleifend, orci dui varius quam, et aliquam diam dui ornare nibh.\r\n\r\nMauris sed euismod orci, ut elementum diam. Praesent eros est, fermentum vitae aliquam convallis, porttitor sed sapien. Donec sodales nibh nec facilisis vulputate. Nam dignissim erat quis gravida sodales. Integer eget nisi a lacus semper aliquet ac at libero. Vestibulum lectus turpis, tempor at egestas quis, tincidunt ac dolor. Maecenas tristique leo a imperdiet mollis. Nunc vel laoreet velit, at lacinia erat. Nam elit nulla, sagittis et justo nec, dapibus viverra risus. Mauris lorem eros, rhoncus nec hendrerit non, ornare eu massa.\r\n\r\nPraesent blandit odio pulvinar, suscipit nibh vitae, sodales nibh. Nullam in pharetra urna, eget aliquam mauris. Etiam metus metus, ornare vitae tortor quis, faucibus suscipit quam. Nulla vel nulla sed lorem aliquam ullamcorper sit amet eget lorem. Cras arcu diam, tempor vel sem et, consectetur blandit magna. Etiam rhoncus placerat tempor. Maecenas volutpat blandit pretium. Integer gravida nisl tempor, vehicula urna quis, porttitor purus. Integer vel libero orci. Donec ligula urna, venenatis non ex vel, dignissim rutrum mi. Ut consectetur quam vel mi porta ornare. Sed congue, tortor in auctor sollicitudin, nisl nisl porta dolor, sed posuere nisi nisi sit amet tellus. Mauris placerat mi in fringilla faucibus.\r\n\r\nPhasellus auctor urna volutpat mauris posuere, nec convallis magna interdum. Morbi nisi magna, auctor quis blandit semper, elementum eu orci. Vivamus non dignissim dui. Phasellus pulvinar sed sem maximus feugiat. Phasellus elit libero, cursus ut semper et, efficitur vitae diam. Sed ut eleifend ligula. Pellentesque venenatis purus nec lorem fermentum, ac volutpat ipsum lobortis. Sed eget sagittis odio. Vivamus rhoncus pellentesque magna ultrices viverra. Maecenas sit amet metus non ex dignissim laoreet.\r\n\r\nNulla facilisi. Donec a justo nec arcu imperdiet dictum. Suspendisse quis nulla faucibus, hendrerit felis a, fermentum diam. Nulla et ex accumsan justo semper sollicitudin sit amet a dui. Proin pharetra enim ac tortor mollis, sit amet imperdiet diam volutpat. Vestibulum fermentum tortor non orci efficitur, non auctor lorem mollis. In placerat ex eget diam condimentum porta. Aliquam erat volutpat. Sed non posuere nulla, ut euismod augue. Vivamus maximus porta dolor, eu luctus sem finibus at. In hac habitasse platea dictumst. Pellentesque suscipit aliquet pellentesque. Vestibulum nibh mauris, dignissim in fringilla vel, dictum at velit. Maecenas consequat dignissim erat, sit amet sollicitudin augue porta eu. ', 'kutyámajmok', '2023-12-04', '2024-01-03', 22, 14);
 
 --
 -- Triggers `studies`
@@ -828,8 +829,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UserFullName`, `UserEmail`, `UserName`, `UserPwd`, `RegisterTimestamp`, `LastLogin`, `CanResetPassword`, `PasswordChanged`, `IsAdmin`, `IsActivated`) VALUES
-(0, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$Bpc2zYSmtVuywDr1/0HRWulGZwqBNULN3ucFsN8pBiZvcpQZ15ta2', '2023-11-14 14:20:06', '2024-02-19 15:24:01', 0, '2023-11-16 11:21:08', 1, 1),
-(6, 'qwe', 'qew@qwe.qwe', 'qwe', '$2y$10$IsgkSqMaawinbbGOp7XwsujoY5uDi7GXcyjirGjxtSBdU0ClPf1ja', '2024-02-19 15:23:54', '2024-02-19 15:24:17', 0, '2024-02-19 16:23:54', 0, 1);
+(0, 'Fajtai Dániel', 'daniel.fajtai@gmail.com', 'dani', '$2y$10$1VsD0aqoiicNLppdm80l5.ax5gkkAUomqTNxZcVv8P5oZlcFrIhO.', '2023-11-14 14:20:06', '2024-03-06 17:06:56', 0, '2024-03-06 15:23:07', 1, 1),
+(6, 'qwe', 'qew@qwe.qwe', 'qwe', '$2y$10$XVNs5TVMP/pi7xRVV7lK/.CCmhk43eVOyNiFYU4NoG/uo5E34zpRW', '2024-02-19 15:23:54', '2024-03-06 17:20:31', 0, '2024-03-06 15:23:35', 0, 1);
 
 --
 -- Triggers `users`
@@ -1067,7 +1068,7 @@ ALTER TABLE `event_status_definitions`
 -- AUTO_INCREMENT for table `event_template_definitions`
 --
 ALTER TABLE `event_template_definitions`
-  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `EventTemplateID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `event_type_definitions`

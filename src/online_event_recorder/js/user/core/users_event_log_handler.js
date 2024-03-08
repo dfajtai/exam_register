@@ -483,7 +483,7 @@ function create_users_eventlog_table(container, table_id, subject_info){
     $(toolbar.find("#status_filter_widget").find("input")[0]).trigger("change");
 }
 
-function users_eventlog_add_form_inputs(form, subject_pool, subject_index = null){
+function users_eventlog_add_form_inputs(form, subject_queue, subject_index = null){
     // var event_param_block =  $("<div/>").addClass("container shadow py-3 my-3");
     var event_param_block =  $("<div/>").addClass("row md-3").attr("id","users_eventlog_event_param_block");
 

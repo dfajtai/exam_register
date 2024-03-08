@@ -1,34 +1,34 @@
-function subjectSelectFromPoolWidget(container, callback = null){
+function subjectSelectFromQueueWidget(container, callback = null){
     var responsive_table = null;
     var table_indicator = null;
 
-    if(!isArray(subject_pool)){
-        var message = 'Subject pool had not been initialized.'
+    if(!isArray(subject_queue)){
+        var message = 'Subject queue had not been initialized.'
         container.empty();
         container.append($("<div/>").addClass("text-danger").html(message));
-        var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject pool editor");
-        container.append($("<div/>").append(to_pool_btn));
-        to_pool_btn.on("click",function(){
-            contentToUrl("tool","SubjectPool",false,true);
+        var to_queue_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject queue editor");
+        container.append($("<div/>").append(to_queue_btn));
+        to_queue_btn.on("click",function(){
+            contentToUrl("tool","SubjectQueue",false,true);
             location.reload();
         })
         
         return
     }
-    if(subject_pool.length==0){
-        var message = 'Subject pool had not been initialized or empty.'
+    if(subject_queue.length==0){
+        var message = 'Subject queue had not been initialized or empty.'
         container.empty();
         container.append($("<div/>").addClass("text-danger").html(message));
-        var to_pool_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject pool editor");
-        container.append($("<div/>").append(to_pool_btn));
-        to_pool_btn.on("click",function(){
-            contentToUrl("tool","SubjectPool",false, true);
+        var to_queue_btn = $("<button/>").addClass("btn btn-outline-dark w-100 mt-2").html("Jump to subject queue editor");
+        container.append($("<div/>").append(to_queue_btn));
+        to_queue_btn.on("click",function(){
+            contentToUrl("tool","SubjectQueue",false, true);
             location.reload();
         })
         return
     }
  
-    update_subject_pool_data(function(){
+    update_subject_queue_data(function(){
         container.empty();
         showContent();
         container.off().on('show-indicator',function(){
@@ -37,14 +37,14 @@ function subjectSelectFromPoolWidget(container, callback = null){
 
     },
     function(){
-        var message = 'Subject pool data can not be loaded.'
+        var message = 'Subject queue data can not be loaded.'
         container.empty();
         container.append($("<div/>").addClass("text-danger").html(message));
         return
     })
 
     function add_indicator(){
-        var current_pool_index = subject_pool_current_index === null ? -2 : subject_pool_current_index;
+        var current_queue_index = subject_queue_current_index === null ? -2 : subject_queue_current_index;
 
         table_indicator.empty();
 
@@ -61,7 +61,7 @@ function subjectSelectFromPoolWidget(container, callback = null){
 
             var indicator = $("<i/>");
             
-            if(index-1==current_pool_index){
+            if(index-1==current_queue_index){
                 indicator.addClass("bi bi-caret-right-fill btn btn-success btn-sm");
                 indicator.attr("data-bs-toggle","tooltip").attr("data-bs-placement","right").attr("title","Reload current subject");
             }
@@ -74,11 +74,11 @@ function subjectSelectFromPoolWidget(container, callback = null){
             table_indicator.append(placeholder);
 
             indicator.on("click",function(){
-                subject_pool_current_index = index - 1;
-                statusToStorage("subject_pool_current_index",subject_pool_current_index);
+                subject_queue_current_index = index - 1;
+                statusToStorage("subject_queue_current_index",subject_queue_current_index);
                 
-                var subject_index = subject_pool[index-1];
-                var subject_info = subject_pool_data[index-1];
+                var subject_index = subject_queue[index-1];
+                var subject_info = subject_queue_data[index-1];
                 table_indicator.find(".btn-success").each(function(){
                     $(this).removeClass("btn-success bi-caret-right-fill").addClass("btn-outline-dark bi-caret-right")
                 });
@@ -117,7 +117,7 @@ function subjectSelectFromPoolWidget(container, callback = null){
 
         var responsive_remainder = $(window).width()>992 ? 0:1;
         
-        $.each(subject_pool_data,function(index,entry){
+        $.each(subject_queue_data,function(index,entry){
 
             var responsive_row = $("<div/>").addClass("d-flex justify-content-evenly flex-lg-nowrap flex-wrap w-100 p-2");
             responsive_row.append(responsive_row);

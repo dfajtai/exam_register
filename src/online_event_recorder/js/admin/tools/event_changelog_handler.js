@@ -801,20 +801,20 @@ function create_event_changelog_table(container, table_id, simplify = false, eve
 }
 
 
-function event_changelog_subject_select_from_pool(container, subject_pool, subject_index = null){
+function event_changelog_subject_select_from_queue(container, subject_queue, subject_index = null){
     var subject_select =  $("<div/>").addClass("row mb-2").attr("id","event_changelog_subject_input_block");
 
     var subject_label =  $("<label/>").addClass("col-md-3 col-form-label").html("Subject");
     var subject_select_dropdow = $("<select/>").addClass("form-select").attr("type","text").attr("id","subjectSelect").attr("name","EventSubject");
     subject_select_dropdow.prop('required',true).addClass("data-required data-required-style").attr("data-name","EventSubject");
 
-    $.each(subject_pool,function(index,entry){
+    $.each(subject_queue,function(index,entry){
         if(!entry.hasOwnProperty("SubjectIndex")) return;
         let subject_index = entry["SubjectIndex"];
         subject_select_dropdow.append($("<option/>").html(event_changelog_subject_string_lookup[subject_index]).attr("value",subject_index));
     });
 
-    if(subject_pool.length>1){
+    if(subject_queue.length>1){
         subject_select_dropdow.prepend($("<option/>").html("Choose subject...").prop('selected',true).attr("value",""));
     }
 

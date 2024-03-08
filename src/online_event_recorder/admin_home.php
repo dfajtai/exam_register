@@ -95,9 +95,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 	<script defer src="js/common/subjectSearchWidget.js"></script>
 	<script defer src="js/common/status_filter_widget.js"></script>
-	<script defer src="js/common/subjectPool/subjectPoolMain.js"></script>
-	<script defer src="js/common/subjectPool/subjectPoolEditor.js"></script>
-	<script defer src="js/common/subjectPool/subjectSelectFromPoolWidget.js"></script>
+	<script defer src="js/common/subjectQueue/subjectQueueMain.js"></script>
+	<script defer src="js/common/subjectQueue/subjectQueueEditor.js"></script>
+	<script defer src="js/common/subjectQueue/subjectSelectFromQueueWidget.js"></script>
 	
 
 	<script defer src="js/admin/tools/event_template_editor.js"></script>
@@ -168,7 +168,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						id="navbarSubjectsLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Subjects</a>
 						<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarSubjectsLink">
 							<li><a class="dropdown-item" onclick="show_subject_register_tool(true)">Subjects register</a>
-							<li><a class="dropdown-item" onclick="show_subject_pool_tool(null,true)">Subjects pool editor</a>
+							<li><a class="dropdown-item" onclick="show_subject_queue_tool(null,true)">Subject queue editor</a>
 							<li><a class="dropdown-item" onclick="show_subject_change_log_tool(true)">Subject change log</a>
 						</ul>
 					</li>
@@ -337,16 +337,16 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 
 		}
 
-		function show_subject_pool_tool(init_indices = null, click = false){
+		function show_subject_queue_tool(init_indices = null, click = false){
 			var main_container = $("#main_container");
 			$("#main_container").empty();
 
-			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject pool editor"));
+			var _title = $("<div/>").addClass("row").html($("<div/>").addClass("display-3 fs-3").html("Subject queue editor"));
 			main_container.append(_title);
 
-			showSubjectPoolEditor(main_container,init_indices);
+			showSubjectQueueEditor(main_container,init_indices);
 
-			contentToUrl("tool","SubjectPool",true,click);
+			contentToUrl("tool","SubjectQueue",true,click);
 
 			
 			$('.navbar-collapse').collapse('hide');
@@ -389,9 +389,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 		function resolve_url_params(){
 			clearStatusFromUrl(["uname","error"]);
 
-			if(statusInUrl("setSubjectPool")){
-					setSubjectPool(JSON.parse(statusFromUrl("setSubjectPool")));
-					clearStatusFromUrl("setSubjectPool");
+			if(statusInUrl("setSubjectQueue")){
+					setSubjectQueue(JSON.parse(statusFromUrl("setSubjectQueue")));
+					clearStatusFromUrl("setSubjectQueue");
 				}
 				
 				if(statusInUrl("def")){
@@ -421,8 +421,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['fname'])) {
 						case "ResouceLocks":
 							show_resource_handler_tool();
 							break;
-						case "SubjectPool":
-							show_subject_pool_tool();
+						case "SubjectQueue":
+							show_subject_queue_tool();
 							break;					
 						default:
 							show_table("users");
