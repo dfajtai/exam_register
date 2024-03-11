@@ -37,7 +37,7 @@ function subjectSelectFromQueueWidget(container, callback = null){
 
     },
     function(){
-        var message = 'Subject queue data can not be loaded.'
+        var message = 'Subject queue can not be loaded.'
         container.empty();
         container.append($("<div/>").addClass("text-danger").html(message));
         return
