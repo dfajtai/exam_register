@@ -32,7 +32,7 @@ window.event_planner_operate_events = {
         if(index==0){
             return
         }
-        var data = table.bootstrapTable('getData');
+        var data = $('#'+event_planner_table_id).bootstrapTable('getData');
         var upper_data = {... data[index-1]};
         upper_data.state = upper_data.state===undefined ? false : upper_data.state;
         $('#'+event_planner_table_id).bootstrapTable('updateRow',[{index:index-1,row:row},{index:index, row:upper_data}]);
