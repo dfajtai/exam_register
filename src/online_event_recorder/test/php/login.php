@@ -26,6 +26,12 @@ if (
    global $database;
    $user_data = $database->select("users", ["CanResetPassword"], ["UserName" => $uname]);
 
+   if(count($user_data)<1){
+      $em = "Incorect User name or password";
+      header("Location: ../index.php?error=$em&$data&" . $_SERVER["QUERY_STRING"]);
+      exit;
+   }
+
    if ($user_data[0]["CanResetPassword"] == 1) {
       header("Location: ../change_password.php?&$data");
       exit;
