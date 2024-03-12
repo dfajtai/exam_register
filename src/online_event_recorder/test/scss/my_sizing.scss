@@ -1,0 +1,32 @@
+// https://dev.to/shhdharmen/responsive-size-classes-in-bootstrap-3ojl
+// https://www.youtube.com/watch?v=4k3AiwXrfig
+
+$accordion-padding-y:0.75rem;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+$sizes: () !default;
+$sizes: map-merge(
+  (
+    25: 25%,
+    50: 50%,
+    75: 75%,
+    100: 100%,
+    auto: auto
+  ),
+  $sizes
+);
+
+@each $breakpoint in map-keys($grid-breakpoints){
+    @include media-breakpoint-up($breakpoint){
+        $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+        @each $prop, $abbrev in (width: w, height: h){
+            @each $size, $length in $sizes {
+                .#{$abbrev}#{$infix}-#{$size} {
+                    #{$prop}: $length !important;
+                }
+            }
+        }
+    }
+}

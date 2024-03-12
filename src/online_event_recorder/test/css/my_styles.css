@@ -1,0 +1,52 @@
+.admin-table-toolbar-btn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.data-required-style{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+.event-custom-field{
+    margin-bottom: 5px;
+}
+
+.mt-6 {
+    margin-top: 4rem; 
+}
+
+/* body {
+    padding-top: 4rem;
+} */
+
+
+.w-40 {
+    width: 40%;
+}
+
+
+#instruction_textarea {
+    resize: none;
+}
+
+body {
+    height: 100vh
+}
+
+.main-container{
+    height: 100%;
+
+}
+
+.flex-even {
+    flex: 1;
+}
+
+
+.hidden {
+    position: absolute;
+    visibility: hidden;
+    display: block;
+}
