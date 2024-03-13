@@ -27,7 +27,7 @@ if (
    $user_data = $database->select("users", ["CanResetPassword"], ["UserName" => $uname]);
 
    if(count($user_data)<1){
-      $em = "Incorect User name or password";
+      $em = "Incorect user name or password";
       header("Location: ../index.php?error=$em&$data&" . $_SERVER["QUERY_STRING"]);
       exit;
    }
@@ -75,19 +75,19 @@ if (
             // header("Location: ../home.php?");
             exit;
          } else {
-            $em = "Incorect User name or password";
+            $em = "Incorect user name or password";
             header("Location: ../index.php?error=$em&$data&" . $_SERVER["QUERY_STRING"]);
             exit;
          }
 
       } else {
-         $em = "Incorect User name or password";
+         $em = "Incorect user name or password";
          header("Location: ../index.php?error=$em&$data&" . $_SERVER["QUERY_STRING"]);
          exit;
       }
 
    } else {
-      $em = "Incorect User name or password";
+      $em = "Incorect user name or password";
       header("Location: ../index.php?error=$em&$data&" . $_SERVER["QUERY_STRING"]);
       exit;
    }
