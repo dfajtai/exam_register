@@ -191,7 +191,7 @@ function dynamicRangeInput(container,name,label,arg){
 
     var group_container = $("<div/>").addClass("input-group");
     
-    var _input = $("<input/>").addClass("form-control form-range w-50 mt-2 me-2");
+    var _input = $("<input/>").addClass("form-range w-50 mt-2 me-2");
     _input.attr("type","range").attr("id",name+"Input").attr("name",name).attr("data-name",name).attr("data-label",label);
     $(_input).attr("data-value","");
     if(arg.hasOwnProperty("FieldDataStep")) _input.attr("step",arg.FieldDataStep);
